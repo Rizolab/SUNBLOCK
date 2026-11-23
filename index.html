@@ -146,17 +146,17 @@
     }
     .progress-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.3s; }
 
-    .week-map {
-      display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 8px;
+.week-map {
+      display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-top: 8px;
     }
     .day-node {
-      background: var(--surface-2); border: 1px solid var(--border);
-      border-radius: 10px; padding: 8px 4px; text-align: center;
+      min-width: 0; background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 7px 2px; text-align: center;
       cursor: pointer; transition: transform 0.12s, border-color 0.12s;
     }
     .day-node:hover { border-color: var(--accent); transform: translateY(-1px); }
     .day-node .d-code { font-size: 11px; font-weight: 800; display: block; }
-    .day-node .d-short { font-size: 10px; color: var(--text-muted); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .day-node .d-short { font-size: 9px; color: var(--text-muted); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
     .day-node .d-status { font-size: 12px; margin-top: 4px; display: block; }
     .day-node.done { background: var(--green-soft); border-color: rgba(16, 185, 129, 0.45); }
     .day-node.rest { background: rgba(156, 163, 175, 0.06); opacity: 0.85; }
