@@ -936,18 +936,25 @@
         return matchQ && matchCat && matchLvl;
       });
 
-      const lvlLabel = { "1": "Nivel 1 · Básico", "2": "Nivel 2 · Intermedio", "3": "Nivel 3 · Avanzado" };
+const lvlConfig = {
+        "1": { text: "Nivel 1 · Base / Prehab", cls: "pill-green" },
+        "2": { text: "Nivel 2 · Fuerza / Intermedio", cls: "pill-accent" },
+        "3": { text: "Nivel 3 · Alta Intensidad", cls: "pill-red" }
+      };
 
-      document.getElementById("ency-list").innerHTML = list.map(e => `
-        <div class="ency-card" onclick="openExModal('${e.id}')">
-          <div class="ency-top">
-            <span class="pill-stat pill-accent">${e.category}</span>
-            <span style="font-size:11px; color:var(--text-muted); font-weight:700;">${lvlLabel[e.level] || "Nivel " + e.level}</span>
+      document.getElementById("ency-list").innerHTML = list.map(e => {
+        const cfg = lvlConfig[String(e.level)] || { text: `Nivel ${e.level}`, cls: "pill-blue" };
+        return `
+          <div class="ency-card" onclick="openExModal('${e.id}')">
+            <div class="ency-top">
+              <span class="pill-stat pill-blue">${e.category}</span>
+              <span class="pill-stat ${cfg.cls}">${cfg.text}</span>
+            </div>
+            <div class="ency-title">${e.name}</div>
+            <p style="font-size:12.5px; color:var(--text-muted); margin-top:4px;">${e.goal}</p>
           </div>
-          <div class="ency-title">${e.name}</div>
-          <p style="font-size:12.5px; color:var(--text-muted); margin-top:4px;">${e.goal}</p>
-        </div>
-      `).join("");
+        `;
+      }).join("");
     }
 
     // MODAL EJERCICIO
