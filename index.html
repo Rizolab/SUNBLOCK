@@ -4,986 +4,1061 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>SUNBLOCK · Sistema de Entrenamiento para Escalada</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --accent: #f97316;
-      --accent-soft: rgba(249, 115, 22, 0.12);
       --bg: #0f1115;
       --surface: #171a21;
       --surface-2: #1f242e;
-      --border: #2a303d;
+      --border: #2a303c;
       --text: #f3f4f6;
       --text-muted: #9ca3af;
+      --accent: #f97316;
+      --accent-soft: rgba(249, 115, 22, 0.14);
       --green: #10b981;
+      --green-soft: rgba(16, 185, 129, 0.14);
       --yellow: #f59e0b;
+      --yellow-soft: rgba(245, 158, 11, 0.14);
       --red: #ef4444;
+      --red-soft: rgba(239, 68, 68, 0.14);
+      --blue: #3b82f6;
+      --blue-soft: rgba(59, 130, 246, 0.14);
       --radius: 14px;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: var(--bg);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-    }
-
-    .app-shell {
-      width: 100%;
-      max-width: 780px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
       padding-bottom: 84px;
     }
 
-    #lock-screen {
-      position: fixed;
-      inset: 0;
+    /* PIN GATE */
+    #pin-gate {
+      position: fixed; inset: 0; z-index: 9999;
       background: var(--bg);
-      z-index: 999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       padding: 24px;
     }
-
-    .brand-mark {
-      font-size: 1.75rem;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 6px;
+    .pin-card {
+      width: 100%; max-width: 360px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 28px 24px; text-align: center;
     }
-
-    .brand-mark span { color: var(--accent); }
-
-    .pin-dots {
-      display: flex;
-      gap: 14px;
-      margin: 24px 0 32px;
+    .brand-badge {
+      display: inline-block; font-size: 11px; font-weight: 800;
+      letter-spacing: 0.14em; color: var(--accent);
+      background: var(--accent-soft); padding: 5px 12px;
+      border-radius: 999px; margin-bottom: 12px;
     }
-
-    .pin-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      transition: all 0.15s ease;
+    .pin-card h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .pin-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+    .pin-input {
+      width: 100%; padding: 14px; font-size: 20px; font-weight: 700;
+      text-align: center; letter-spacing: 0.3em;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 12px; color: var(--text); outline: none;
+      margin-bottom: 14px;
     }
-
-    .pin-dot.filled {
-      background: var(--accent);
-      border-color: var(--accent);
-      transform: scale(1.1);
+    .pin-input:focus { border-color: var(--accent); }
+    .btn-primary {
+      width: 100%; padding: 13px 16px; font-size: 14px; font-weight: 700;
+      background: var(--accent); color: #fff; border: none;
+      border-radius: 12px; cursor: pointer; transition: opacity 0.15s;
     }
+    .btn-primary:active { opacity: 0.85; }
+    .pin-err { color: var(--red); font-size: 12px; margin-top: 10px; min-height: 18px; }
 
-    .numpad {
-      display: grid;
-      grid-template-columns: repeat(3, 72px);
-      gap: 14px;
-    }
-
-    .num-btn {
-      height: 64px;
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      font-size: 1.35rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .num-btn:active { background: var(--accent); color: #000; }
-
+    /* HEADER */
     header {
-      padding: 18px 20px 14px;
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(15, 17, 21, 0.92); backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      background: rgba(15, 17, 21, 0.92);
-      backdrop-filter: blur(10px);
-      z-index: 20;
+      padding: 12px 16px;
     }
-
-    .header-title { font-weight: 800; letter-spacing: 0.08em; font-size: 1.1rem; }
-    .header-title span { color: var(--accent); }
-
-    .sync-badge {
-      font-size: 0.72rem;
-      padding: 5px 11px;
-      border-radius: 99px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
+    .header-top {
+      max-width: 820px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
     }
+    .logo { font-weight: 800; font-size: 17px; letter-spacing: 0.04em; display: flex; align-items: center; gap: 8px; }
+    .logo span { color: var(--accent); }
+    .sync-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600;
+      padding: 6px 11px; border-radius: 999px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--text); cursor: pointer;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); }
+    .dot.online { background: var(--green); }
+    .dot.offline { background: var(--red); }
 
-    .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--yellow); }
-    .sync-dot.online { background: var(--green); }
-
-    main { padding: 18px 20px; display: flex; flex-direction: column; gap: 18px; }
-    .view { display: none; flex-direction: column; gap: 18px; }
-    .view.active { display: flex; }
-
+    /* LAYOUT */
+    main { max-width: 820px; margin: 0 auto; padding: 16px; }
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; margin-bottom: 14px;
+    }
+    .card-title {
+      font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 10px;
+      display: flex; align-items: center; justify-content: space-between;
     }
 
-    .label-xs {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--text-muted);
-      font-weight: 700;
-      margin-bottom: 6px;
-      display: block;
+    /* CONTROLS */
+    .control-grid {
+      display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center;
     }
-
-    select, input[type="text"], input[type="date"], textarea {
-      width: 100%;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 0.92rem;
-      outline: none;
+    select, input[type="text"], input[type="number"], textarea {
+      width: 100%; background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--text); border-radius: 10px; padding: 10px 12px;
+      font-family: inherit; font-size: 13px; font-weight: 500; outline: none;
     }
-
     select:focus, input:focus, textarea:focus { border-color: var(--accent); }
-
-    .pill-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
-    .pill-row::-webkit-scrollbar { display: none; }
-
-    .pill {
-      padding: 8px 14px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--surface-2);
-      color: var(--text-muted);
-      font-size: 0.84rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
+    .week-stepper {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 4px 8px;
     }
-
-    .pill.active { background: var(--accent); color: #0b0d10; border-color: var(--accent); font-weight: 700; }
-
-    .day-pill { min-width: 68px; text-align: center; display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; }
-    .day-pill small { font-size: 0.65rem; opacity: 0.85; font-weight: 500; }
-
-    .phase-box { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 12px 14px; border-radius: 0 10px 10px 0; }
-    .phase-box h3 { font-size: 0.92rem; margin-bottom: 4px; color: var(--text); }
-    .phase-box p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
-
-    .safety-alert {
-      background: rgba(245, 158, 11, 0.1);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      color: #fcd34d;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-size: 0.82rem;
-      line-height: 1.4;
+    .week-stepper button {
+      background: transparent; border: none; color: var(--text);
+      font-size: 16px; font-weight: 700; width: 26px; height: 28px; cursor: pointer;
     }
+    .week-stepper span { font-size: 12px; font-weight: 700; min-width: 58px; text-align: center; }
 
-    .section-header { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 700; margin: 14px 0 8px; }
+    /* DASHBOARD */
+    .dash-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 14px;
+    }
+    @media (max-width: 600px) {
+      .dash-grid { grid-template-columns: 1fr; }
+    }
+    .kpi-value { font-size: 26px; font-weight: 800; line-height: 1.15; margin: 4px 0; }
+    .kpi-sub { font-size: 12px; color: var(--text-muted); }
+    .progress-bar {
+      width: 100%; height: 8px; background: var(--surface-2);
+      border-radius: 999px; overflow: hidden; margin-top: 10px;
+    }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.3s; }
 
+    .week-map {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 8px;
+    }
+    .day-node {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 8px 4px; text-align: center;
+      cursor: pointer; transition: transform 0.12s, border-color 0.12s;
+    }
+    .day-node:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .day-node .d-code { font-size: 11px; font-weight: 800; display: block; }
+    .day-node .d-short { font-size: 10px; color: var(--text-muted); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .day-node .d-status { font-size: 12px; margin-top: 4px; display: block; }
+    .day-node.done { background: var(--green-soft); border-color: rgba(16, 185, 129, 0.45); }
+    .day-node.rest { background: rgba(156, 163, 175, 0.06); opacity: 0.85; }
+    .day-node.pending { border-style: dashed; }
+
+    .traffic-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .pill-stat {
+      font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
+    }
+    .pill-green { background: var(--green-soft); color: var(--green); }
+    .pill-yellow { background: var(--yellow-soft); color: var(--yellow); }
+    .pill-red { background: var(--red-soft); color: var(--red); }
+    .pill-blue { background: var(--blue-soft); color: var(--blue); }
+    .pill-accent { background: var(--accent-soft); color: var(--accent); }
+
+    /* TABS ENTRENAR */
+    .day-tabs {
+      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 12px;
+    }
+    .day-tab {
+      flex: 0 0 auto; background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-muted); border-radius: 10px; padding: 8px 12px;
+      font-size: 12px; font-weight: 700; cursor: pointer; text-align: left;
+    }
+    .day-tab.active {
+      background: var(--accent-soft); border-color: var(--accent); color: var(--text);
+    }
+    .day-tab small { display: block; font-size: 10px; font-weight: 500; opacity: 0.85; }
+
+    /* WORKOUT SECTIONS */
+    .focus-banner {
+      background: var(--accent-soft); border-left: 3px solid var(--accent);
+      padding: 10px 12px; border-radius: 8px; font-size: 12.5px; margin-bottom: 14px;
+    }
+    .sec-header {
+      font-size: 13px; font-weight: 800; color: var(--accent);
+      margin: 14px 0 8px; letter-spacing: 0.02em;
+    }
     .ex-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 12px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      margin-bottom: 8px;
+      display: flex; align-items: flex-start; gap: 10px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 11px; padding: 11px 12px; margin-bottom: 8px;
+      transition: opacity 0.2s;
     }
-
-    .ex-item.done { opacity: 0.55; }
-
+    .ex-item.checked { opacity: 0.55; }
     .ex-check {
-      width: 22px;
-      height: 22px;
-      border-radius: 6px;
-      border: 2px solid var(--border);
-      background: transparent;
-      cursor: pointer;
-      flex-shrink: 0;
-      margin-top: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #000;
-      font-weight: 800;
-      font-size: 0.85rem;
+      width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); cursor: pointer;
     }
-
-    .ex-item.done .ex-check { background: var(--accent); border-color: var(--accent); }
     .ex-body { flex: 1; cursor: pointer; }
-    .ex-title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 4px; }
-    .ex-name { font-weight: 600; font-size: 0.95rem; line-height: 1.3; }
-    .ex-item.done .ex-name { text-decoration: line-through; }
-    .ex-meta { font-size: 0.82rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+    .ex-name { font-size: 13.5px; font-weight: 700; color: var(--text); }
+    .ex-meta { font-size: 12px; color: var(--text-muted); margin-top: 3px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .ex-meta span { background: var(--surface); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border); }
 
-    .badge { font-size: 0.65rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
-    .lvl-1 { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .lvl-2 { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-    .lvl-3 { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-    .cat-badge { background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); }
+    /* ENCYCLOPEDIA */
+    .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .ency-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px; margin-bottom: 10px; cursor: pointer;
+    }
+    .ency-card:hover { border-color: var(--accent); }
+    .ency-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .ency-title { font-size: 14px; font-weight: 700; }
 
-    .btn { padding: 11px 16px; border-radius: 10px; border: none; font-weight: 700; font-size: 0.88rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-primary { background: var(--accent); color: #0b0d10; width: 100%; }
-    .btn-secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); width: 100%; }
+    /* LOG FORM */
+    .traffic-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
+    .t-btn {
+      padding: 9px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface-2); color: var(--text); font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .t-btn.active.verde { background: var(--green-soft); border-color: var(--green); color: var(--green); }
+    .t-btn.active.amarillo { background: var(--yellow-soft); border-color: var(--yellow); color: var(--yellow); }
+    .t-btn.active.rojo { background: var(--red-soft); border-color: var(--red); color: var(--red); }
 
-    .semaforo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .sem-opt { padding: 9px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text-muted); font-size: 0.8rem; font-weight: 600; text-align: center; cursor: pointer; }
-    .sem-opt.selected[data-val="verde"] { background: rgba(16,185,129,0.2); border-color: var(--green); color: #34d399; }
-    .sem-opt.selected[data-val="amarillo"] { background: rgba(245,158,11,0.2); border-color: var(--yellow); color: #fbbf24; }
-    .sem-opt.selected[data-val="rojo"] { background: rgba(239,68,68,0.2); border-color: var(--red); color: #f87171; }
-
+    /* BOTTOM NAV */
     nav.bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 780px;
-      background: rgba(23, 26, 33, 0.96);
-      backdrop-filter: blur(12px);
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
+      background: rgba(23, 26, 33, 0.96); backdrop-filter: blur(12px);
       border-top: 1px solid var(--border);
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      padding: 8px 12px 12px;
-      z-index: 30;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      height: 64px;
     }
+    .nav-btn {
+      background: transparent; border: none; color: var(--text-muted);
+      font-size: 11px; font-weight: 700; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    }
+    .nav-btn.active { color: var(--accent); }
+    .nav-icon { font-size: 17px; }
 
-    .nav-item { background: transparent; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer; padding: 6px; }
-    .nav-item.active { color: var(--accent); }
-
-    .modal-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); z-index: 100; display: none; align-items: flex-end; justify-content: center; }
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0, 0, 0, 0.75);
+      display: none; align-items: flex-end; justify-content: center;
+      padding: 12px;
+    }
     .modal-backdrop.open { display: flex; }
-    .modal-sheet { background: var(--surface); border-top: 1px solid var(--border); border-radius: 20px 20px 0 0; width: 100%; max-width: 780px; max-height: 88vh; overflow-y: auto; padding: 22px 20px 32px; display: flex; flex-direction: column; gap: 14px; }
-
-    @media (min-width: 640px) {
-      .modal-backdrop { align-items: center; padding: 20px; }
-      .modal-sheet { border-radius: 18px; border: 1px solid var(--border); }
+    .modal-box {
+      width: 100%; max-width: 560px; max-height: 85vh; overflow-y: auto;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 18px; padding: 20px;
     }
-
-    .step-list { padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 0.88rem; color: var(--text); line-height: 1.45; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-    .toast {
-      position: fixed;
-      top: 72px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent);
-      color: #000;
-      font-weight: 700;
-      font-size: 0.82rem;
-      padding: 8px 16px;
-      border-radius: 99px;
-      z-index: 200;
-      display: none;
-    }
+    .modal-steps { padding-left: 18px; margin: 10px 0; font-size: 13px; color: var(--text); }
+    .modal-steps li { margin-bottom: 6px; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <div id="lock-screen">
-    <div class="brand-mark">SUN<span>BLOCK</span></div>
-    <p style="color: var(--text-muted); font-size: 0.85rem;">Ingresa PIN de acceso (2026)</p>
-    <div class="pin-dots" id="pin-dots">
-      <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-    </div>
-    <div class="numpad">
-      <button class="num-btn" onclick="pressPin('1')">1</button>
-      <button class="num-btn" onclick="pressPin('2')">2</button>
-      <button class="num-btn" onclick="pressPin('3')">3</button>
-      <button class="num-btn" onclick="pressPin('4')">4</button>
-      <button class="num-btn" onclick="pressPin('5')">5</button>
-      <button class="num-btn" onclick="pressPin('6')">6</button>
-      <button class="num-btn" onclick="pressPin('7')">7</button>
-      <button class="num-btn" onclick="pressPin('8')">8</button>
-      <button class="num-btn" onclick="pressPin('9')">9</button>
-      <button class="num-btn" style="font-size:0.85rem; color:var(--text-muted);" onclick="clearPin()">BORRAR</button>
-      <button class="num-btn" onclick="pressPin('0')">0</button>
-      <button class="num-btn" style="font-size:0.85rem; color:var(--accent);" onclick="unlockBypass()">ENTRAR</button>
+  <!-- PIN GATE -->
+  <div id="pin-gate">
+    <div class="pin-card">
+      <div class="brand-badge">SUNBLOCK · ELBLOQUE</div>
+      <h1>Acceso al Sistema</h1>
+      <p>Ingresa tu PIN de entrenamiento para cargar tus mesociclos y bitácora.</p>
+      <input id="pin-input" class="pin-input" type="password" inputmode="numeric" maxlength="6" placeholder="••••" />
+      <button class="btn-primary" onclick="unlockApp()">Entrar</button>
+      <div id="pin-err" class="pin-err"></div>
     </div>
   </div>
 
-  <div class="toast" id="toast">Mensaje</div>
-
-  <div class="app-shell">
-    <header>
-      <div class="header-title">SUN<span>BLOCK</span></div>
-      <div class="sync-badge" onclick="syncFromCloud()" title="Toca para sincronizar con Google Sheets">
-        <span class="sync-dot" id="sync-dot"></span>
-        <span id="sync-status">Conectando...</span>
+  <!-- HEADER -->
+  <header>
+    <div class="header-top">
+      <div class="logo">SUN<span>BLOCK</span></div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="sync-pill" onclick="openConfigModal()" title="Configurar URL de Apps Script">⚙️</button>
+        <button class="sync-pill" onclick="syncFromSheets()">
+          <span id="sync-dot" class="dot"></span>
+          <span id="sync-label">Sincronizando...</span>
+        </button>
       </div>
-    </header>
-
-    <main>
-      <!-- VISTA 1: ENTRENAR -->
-      <section id="view-train" class="view active">
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <span class="label-xs" style="margin:0;">Mesociclo Activo</span>
-            <button onclick="openNewBlockModal()" style="background:none; border:none; color:var(--accent); font-size:0.78rem; font-weight:700; cursor:pointer;">+ Nuevo Bloque</button>
-          </div>
-          <select id="meso-select" onchange="changeMesocycle()"></select>
-
-          <div style="margin-top:14px;">
-            <span class="label-xs">Semana del Mesociclo</span>
-            <div class="pill-row" id="week-pills"></div>
-          </div>
-
-          <div class="phase-box" id="phase-info" style="margin-top:12px;"></div>
-        </div>
-
-        <div>
-          <span class="label-xs">Microciclo Semanal (D1 - D7)</span>
-          <div class="pill-row" id="day-pills"></div>
-        </div>
-
-        <div class="card" id="daily-card">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px;">
-            <div>
-              <span class="badge cat-badge" id="day-tag">DEDOS</span>
-              <h2 id="day-title" style="font-size:1.15rem; margin-top:6px;">Cargando...</h2>
-            </div>
-            <span id="day-duration" style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">--</span>
-          </div>
-
-          <div class="safety-alert" id="day-rule"></div>
-          <div id="exercise-sections"></div>
-        </div>
-
-        <div class="card">
-          <span class="label-xs">Bitácora de Ejecución y Semáforo Articular</span>
-          <div class="grid-2" style="margin-bottom:12px;">
-            <div>
-              <label class="label-xs">Fecha real</label>
-              <input type="date" id="log-date" />
-            </div>
-            <div>
-              <label class="label-xs">Esfuerzo Percibido (RPE: <span id="rpe-val">7</span>/10)</label>
-              <input type="range" min="1" max="10" value="7" id="log-rpe" oninput="document.getElementById('rpe-val').textContent=this.value" style="margin-top:8px; accent-color:var(--accent);" />
-            </div>
-          </div>
-
-          <div style="margin-bottom:12px;">
-            <label class="label-xs">Estado de Dedos y Poleas</label>
-            <div class="semaforo-grid" id="sem-dedos">
-              <div class="sem-opt selected" data-val="verde" onclick="selectSemaforo('dedos', 'verde', this)">🟢 Sin molestia</div>
-              <div class="sem-opt" data-val="amarillo" onclick="selectSemaforo('dedos', 'amarillo', this)">🟡 Tensión leve</div>
-              <div class="sem-opt" data-val="rojo" onclick="selectSemaforo('dedos', 'rojo', this)">🔴 Dolor / Alerta</div>
-            </div>
-          </div>
-
-          <div style="margin-bottom:12px;">
-            <label class="label-xs">Estado de Codos y Hombros</label>
-            <div class="semaforo-grid" id="sem-codos">
-              <div class="sem-opt selected" data-val="verde" onclick="selectSemaforo('codos', 'verde', this)">🟢 Sin molestia</div>
-              <div class="sem-opt" data-val="amarillo" onclick="selectSemaforo('codos', 'amarillo', this)">🟡 Cargados</div>
-              <div class="sem-opt" data-val="rojo" onclick="selectSemaforo('codos', 'rojo', this)">🔴 Dolor / Alerta</div>
-            </div>
-          </div>
-
-          <div style="margin-bottom:12px;">
-            <label class="label-xs">Nota de sesión o imprevisto / ajuste</label>
-            <textarea id="log-note" rows="2" placeholder="Ej. Subí +2kg en 20mm, o cambié sesión por lluvia..."></textarea>
-          </div>
-
-          <div class="grid-2">
-            <button class="btn btn-primary" id="btn-save-log" onclick="saveSessionLog()">Guardar en Sheets</button>
-            <button class="btn btn-secondary" onclick="copyDocsReport()">Copiar para Docs</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- VISTA 2: ENCICLOPEDIA -->
-      <section id="view-encyclopedia" class="view">
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <div>
-              <h2 style="font-size:1.1rem;">Enciclopedia de Ejercicios</h2>
-              <p style="font-size:0.8rem; color:var(--text-muted);">Sincronizada con pestaña 2_ENCICLOPEDIA</p>
-            </div>
-            <button class="btn btn-primary" style="width:auto; padding:8px 14px; font-size:0.8rem;" onclick="openNewExerciseModal()">+ Registrar</button>
-          </div>
-
-          <input type="text" id="ency-search" placeholder="Buscar ejercicio, músculo o autor..." oninput="renderEncyclopedia()" style="margin-bottom:12px;" />
-
-          <span class="label-xs">Filtrar por Categoría</span>
-          <div class="pill-row" id="cat-filters" style="margin-bottom:10px;"></div>
-
-          <span class="label-xs">Filtrar por Complejidad (Cuadro Hörst)</span>
-          <div class="pill-row" id="lvl-filters">
-            <button class="pill active" onclick="setLvlFilter('ALL', this)">Todos los niveles</button>
-            <button class="pill" onclick="setLvlFilter('1', this)">Nivel 1 · Base</button>
-            <button class="pill" onclick="setLvlFilter('2', this)">Nivel 2 · Intermedio</button>
-            <button class="pill" onclick="setLvlFilter('3', this)">Nivel 3 · Avanzado</button>
-          </div>
-        </div>
-
-        <div id="ency-list" style="display:flex; flex-direction:column; gap:10px;"></div>
-      </section>
-
-      <!-- VISTA 3: HISTORIAL Y CONFIG -->
-      <section id="view-settings" class="view">
-        <div class="card">
-          <h2 style="font-size:1.05rem; margin-bottom:6px;">Conexión Google Apps Script (Cloud DB)</h2>
-          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Sincronizado directamente con tus pestañas de Google Sheets (sin <code>localStorage</code>).</p>
-          <input type="text" id="gas-url" />
-          <button class="btn btn-primary" style="margin-top:10px;" onclick="connectAndSync()">Sincronizar Ahora con Sheets</button>
-        </div>
-
-        <div class="card">
-          <h2 style="font-size:1.05rem; margin-bottom:12px;">Personalización Visual (HEX)</h2>
-          <div style="display:flex; gap:10px; align-items:center;">
-            <input type="color" id="hex-picker" value="#f97316" onchange="updateAccentColor(this.value)" style="width:52px; height:42px; border:none; background:none; cursor:pointer;" />
-            <input type="text" id="hex-input" value="#f97316" oninput="updateAccentColor(this.value)" maxlength="7" />
-          </div>
-          <div class="pill-row" style="margin-top:10px;">
-            <button class="pill" onclick="updateAccentColor('#f97316')">Naranja Bloque</button>
-            <button class="pill" onclick="updateAccentColor('#10b981')">Verde Magnesio</button>
-            <button class="pill" onclick="updateAccentColor('#38bdf8')">Azul Roca</button>
-            <button class="pill" onclick="updateAccentColor('#e879f9')">Magenta Neón</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2 style="font-size:1.05rem; margin-bottom:10px;">Historial de Sesiones (4_BITACORA)</h2>
-          <div id="history-list" style="display:flex; flex-direction:column; gap:8px;">
-            <p style="font-size:0.84rem; color:var(--text-muted);">Cargando historial desde Sheets...</p>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <nav class="bottom-nav">
-      <button class="nav-item active" onclick="switchView('train', this)">
-        <span style="font-size:1.1rem;">🧗</span><span>Entrenar</span>
-      </button>
-      <button class="nav-item" onclick="switchView('encyclopedia', this)">
-        <span style="font-size:1.1rem;">📘</span><span>Enciclopedia</span>
-      </button>
-      <button class="nav-item" onclick="switchView('settings', this)">
-        <span style="font-size:1.1rem;">📊</span><span>Historial / Config</span>
-      </button>
-    </nav>
-  </div>
-
-  <!-- MODALES -->
-  <div class="modal-backdrop" id="ex-modal" onclick="closeModal('ex-modal', event)">
-    <div class="modal-sheet">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
-        <div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px;" id="modal-ex-badges"></div>
-          <h3 id="modal-ex-title" style="font-size:1.2rem;">Nombre</h3>
-        </div>
-        <button onclick="document.getElementById('ex-modal').classList.remove('open')" style="background:var(--surface-2); border:1px solid var(--border); color:var(--text); width:32px; height:32px; border-radius:8px; cursor:pointer;">✕</button>
-      </div>
-      <div class="phase-box"><h3>¿Para qué sirve?</h3><p id="modal-ex-goal"></p></div>
-      <div><span class="label-xs">Ejecución Paso a Paso</span><ol class="step-list" id="modal-ex-steps"></ol></div>
-      <div class="safety-alert"><strong>Alternativa Segura:</strong> <span id="modal-ex-alt"></span></div>
-      <p style="font-size:0.75rem; color:var(--text-muted);" id="modal-ex-author"></p>
     </div>
-  </div>
+  </header>
 
-  <div class="modal-backdrop" id="new-ex-modal" onclick="closeModal('new-ex-modal', event)">
-    <div class="modal-sheet">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3 style="font-size:1.15rem;">Registrar Ejercicio en Sheets</h3>
-        <button onclick="document.getElementById('new-ex-modal').classList.remove('open')" style="background:var(--surface-2); border:1px solid var(--border); color:var(--text); width:32px; height:32px; border-radius:8px; cursor:pointer;">✕</button>
+  <main>
+    <!-- SELECTOR GLOBAL DE MESOCICLO Y SEMANA -->
+    <div class="card">
+      <div class="card-title">
+        <span>Mesociclo Activo</span>
+        <span id="phase-badge" class="pill-stat pill-accent">Fase 1</span>
       </div>
-      <div><label class="label-xs">Nombre del ejercicio</label><input type="text" id="new-ex-name" placeholder="Ej. Bloqueo a 90° en barra" /></div>
-      <div class="grid-2">
-        <div>
-          <label class="label-xs">Categoría</label>
-          <select id="new-ex-cat">
-            <option value="Fuerza de Dedos">Fuerza de Dedos</option>
-            <option value="Búlder y Técnica">Búlder y Técnica</option>
-            <option value="Tracción Superior">Tracción Superior</option>
-            <option value="Empuje y Cara B">Empuje y Cara B</option>
-            <option value="Pierna Funcional">Pierna Funcional</option>
-            <option value="Core, Psoas y Lumbar">Core, Psoas y Lumbar</option>
+      <div class="control-grid">
+        <select id="block-select" onchange="onBlockChange()"></select>
+        <div class="week-stepper">
+          <button onclick="changeWeek(-1)">−</button>
+          <span id="week-label">Sem 1 / 6</span>
+          <button onclick="changeWeek(1)">+</button>
+        </div>
+      </div>
+      <p id="phase-desc" style="font-size:12px; color:var(--text-muted); margin-top:8px;"></p>
+    </div>
+
+    <!-- VISTA 1: DASHBOARD -->
+    <section id="view-dashboard">
+      <div class="dash-grid">
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-title"><span>Progreso del Bloque</span><span id="dash-pct">0%</span></div>
+          <div id="dash-week-kpi" class="kpi-value">Semana 1 de 6</div>
+          <div id="dash-sessions-kpi" class="kpi-sub">0 sesiones registradas en este bloque</div>
+          <div class="progress-bar"><div id="dash-progress-fill" class="progress-fill" style="width:0%"></div></div>
+        </div>
+
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-title"><span>Semáforo Articular y RPE</span><span id="dash-rpe-badge" class="pill-stat pill-blue">RPE —</span></div>
+          <div id="dash-joint-status" class="kpi-value" style="font-size:20px;">Sin registros aún</div>
+          <div id="dash-traffic-pills" class="traffic-row"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>Estado de Microciclos · Semana <span id="dash-map-week">1</span></span>
+          <span style="font-size:10px; font-weight:500;">Toca un día para abrir</span>
+        </div>
+        <div id="dash-week-map" class="week-map"></div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; font-size:11px; color:var(--text-muted);">
+          <span>✅ Completado en Bitácora</span>
+          <span>⏳ Pendiente</span>
+          <span>🛌 Descanso Programado</span>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-title"><span>Balance Muro vs. Cara B</span></div>
+          <div id="dash-balance-kpi" class="kpi-value" style="font-size:22px;">—</div>
+          <div id="dash-balance-sub" class="kpi-sub">Relación entre sesiones de escalada y acondicionamiento preventivo.</div>
+        </div>
+
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-title"><span>Última Sesión Registrada</span></div>
+          <div id="dash-last-session" style="font-size:13px; font-weight:600;">Aún no hay registros en 4_BITACORA.</div>
+          <div id="dash-last-note" class="kpi-sub" style="margin-top:4px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 2: ENTRENAR -->
+    <section id="view-train" class="hidden">
+      <div id="day-tabs" class="day-tabs"></div>
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px;">
+          <div>
+            <span id="day-tag" class="pill-stat pill-accent">SESIÓN</span>
+            <h2 id="day-title" style="font-size:18px; font-weight:800; margin-top:6px;">Título del día</h2>
+          </div>
+          <span id="day-duration" style="font-size:12px; font-weight:700; color:var(--text-muted); white-space:nowrap;">90 min</span>
+        </div>
+        <div id="day-focus" class="focus-banner"></div>
+        <div id="day-sections"></div>
+        <button class="btn-primary" style="margin-top:12px;" onclick="goToLogCurrentDay()">Registrar esta sesión en Bitácora</button>
+      </div>
+    </section>
+
+    <!-- VISTA 3: ENCICLOPEDIA -->
+    <section id="view-ency" class="hidden">
+      <div class="card">
+        <div class="card-title"><span>Directorio de Ejercicios (37 Fichas)</span></div>
+        <div class="filter-bar">
+          <input id="ency-search" type="text" placeholder="Buscar ejercicio, objetivo o agarre..." oninput="renderEncyclopedia()" style="flex:1; min-width:180px;" />
+          <select id="ency-cat" onchange="renderEncyclopedia()" style="width:auto;">
+            <option value="">Todas las categorías</option>
           </select>
-        </div>
-        <div>
-          <label class="label-xs">Complejidad (Hörst)</label>
-          <select id="new-ex-lvl">
-            <option value="1">Nivel 1 · Base</option>
+          <select id="ency-lvl" onchange="renderEncyclopedia()" style="width:auto;">
+            <option value="">Todos los niveles</option>
+            <option value="1">Nivel 1 · Básico</option>
             <option value="2">Nivel 2 · Intermedio</option>
             <option value="3">Nivel 3 · Avanzado</option>
           </select>
         </div>
       </div>
-      <div><label class="label-xs">¿Para qué sirve?</label><input type="text" id="new-ex-goal" placeholder="Ej. Estabilidad de hombro en regletas." /></div>
-      <div><label class="label-xs">Pasos (separados por ";")</label><textarea id="new-ex-steps" rows="3" placeholder="Paso 1; Paso 2; Paso 3"></textarea></div>
-      <div class="grid-2">
-        <div><label class="label-xs">Alternativa segura</label><input type="text" id="new-ex-alt" placeholder="Ej. Banda elástica" /></div>
-        <div><label class="label-xs">Fuente / Autor</label><input type="text" id="new-ex-author" placeholder="Ej. Coach ELBLOQUE" /></div>
-      </div>
-      <button class="btn btn-primary" onclick="saveNewExercise()">Guardar en 2_ENCICLOPEDIA</button>
-    </div>
-  </div>
+      <div id="ency-list"></div>
+    </section>
 
-  <div class="modal-backdrop" id="new-block-modal" onclick="closeModal('new-block-modal', event)">
-    <div class="modal-sheet">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3 style="font-size:1.15rem;">Crear Nuevo Mesociclo</h3>
-        <button onclick="document.getElementById('new-block-modal').classList.remove('open')" style="background:var(--surface-2); border:1px solid var(--border); color:var(--text); width:32px; height:32px; border-radius:8px; cursor:pointer;">✕</button>
-      </div>
-      <div><label class="label-xs">Nombre del Bloque</label><input type="text" id="nb-title" placeholder="Ej. Bloque 2: Potencia y Dinamismo (4 Sem)" /></div>
-      <div>
-        <label class="label-xs">Duración</label>
-        <select id="nb-weeks"><option value="4">4 Semanas</option><option value="6" selected>6 Semanas</option></select>
-      </div>
-      <button class="btn btn-primary" onclick="createCloudBlock()">Crear en 1_MESOCICLOS</button>
-    </div>
-  </div>
-
-<script>
-  // URL CONECTADA A TU GOOGLE APPS SCRIPT
-  const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbyZNbEWVu5_YoxPGNeeEJppnAo3WOuPtAy0nHZdVuZOV9iY-d5G1OjTaB0MVwIlA9iV0g/exec";
-
-  // BACKUP EN MEMORIA VOLÁTIL (PARA OPERACIÓN SIN SEÑAL EN EL GIMNASIO)
-  const BACKUP_ENCYCLOPEDIA = [
-    { id: "ex-mov", name: "Movilidad Articular + Activación Escapular", category: "Búlder y Técnica", level: "1", goal: "Lubricar cápsulas articulares y despertar retractores escapulares antes de cargar dedos.", steps: ["Realiza círculos amplios de hombros, muñecas y cadera durante 4 min.", "Haz 3x8 retracciones escapulares en barra sin doblar codos.", "Escala 3 bloques muy fáciles (V0-V1) pisando en silencio."], safeAlt: "Extender 5 minutos adicionales si hace frío.", author: "Sistema · Base Hörst" },
-    { id: "ex-hang20", name: "Suspensiones Máximas (Regleta 20mm)", category: "Fuerza de Dedos", level: "2", goal: "Aumentar el reclutamiento neural de los flexores de dedos sin generar fatiga metabólica.", steps: ["Usa agarre semi-arqueado (half-crimp) con pulgar relajado al costado.", "Mantén hombros activos hacia abajo y atrás con micro-flexión en codos.", "Sostén 10 segundos dejando siempre 1-2 segundos de reserva."], safeAlt: "Usar regleta de 25-30mm o apoyar puntas de pies suavemente.", author: "Eric Hörst · Adaptación" },
-    { id: "ex-limit", name: "Búlder Límite (Proyectos Cortos)", category: "Búlder y Técnica", level: "3", goal: "Transferir la fuerza máxima a movimientos de alta intensidad y coordinación real en muro.", steps: ["Elige 2 o 3 bloques en ELBLOQUE de máximo 4 a 6 movimientos duros.", "Descansa de 3 a 4 minutos completos entre cada pegue.", "Detén el bloque apenas notes pérdida de potencia o precisión."], safeAlt: "Evitar lanzamientos dinámicos hacia bidedos o regletas cortantes.", author: "Eric Hörst · Adaptación" },
-    { id: "ex-push", name: "Flexiones con Pausa + Press de Hombro", category: "Empuje y Cara B", level: "1", goal: "Equilibrar la musculatura anterior del torso para prevenir pinzamientos de hombro.", steps: ["Baja controlado en 2 seg, pausa 1 seg abajo y empuja explosivo.", "Mantén glúteos y abdomen contraídos para proteger la zona lumbar."], safeAlt: "Apoyar rodillas o elevar las manos sobre un cajón.", author: "Sistema · Cara B" },
-    { id: "ex-skull", name: "Rompecráneos con Mancuerna (Tríceps)", category: "Empuje y Cara B", level: "1", goal: "Fortalecer el tendón del tríceps y estabilizar el codo frente al estrés de tracción.", steps: ["Acostado boca arriba, lleva mancuernas a los lados de la cabeza doblando solo codos.", "Extiende controlado sin bloquear bruscamente."], safeAlt: "Reducir el peso y subir a 12-15 repeticiones.", author: "Adaptación Cara B" },
-    { id: "ex-stepup", name: "Step-Up Alto Controlado / Pistol Asistido", category: "Pierna Funcional", level: "1", goal: "Desarrollar fuerza unilateral de empuje para pies altos (rock-overs) sin hipertrofia pesada.", steps: ["Coloca un pie sobre un cajón a la altura de la rodilla.", "Sube impulsándote solo con la pierna de arriba.", "Baja en 3 segundos controlando la alineación de la rodilla."], safeAlt: "Usar cajón más bajo o sujetarse suavemente de una cinta.", author: "Sistema · Pierna Escalada" },
-    { id: "ex-hamstring", name: "Puente de Glúteo Unilateral (Taloneo)", category: "Pierna Funcional", level: "1", goal: "Fortalecer isquiotibiales y glúteo para taloneos agresivos sin riesgo de tirón.", steps: ["Acostado boca arriba con una pierna flexionada y talón apoyado, eleva cadera.", "Sostén 2 segundos arriba y baja sin tocar el suelo."], safeAlt: "Hacer el puente con ambos pies apoyados.", author: "Sistema · Pierna Escalada" },
-    { id: "ex-psoas", name: "Elevación de Piernas Colgado (Psoas y Core)", category: "Core, Psoas y Lumbar", level: "2", goal: "Potenciar la flexión de cadera y compresión abdominal para mantener pies altos en desplome.", steps: ["Cuélgate con hombros activos y sube piernas estiradas sin balancearte.", "Controla la bajada durante 2 segundos."], safeAlt: "Flexionar rodillas a 90° o hacer Dead Bug en colchoneta.", author: "Sistema · Cadena Central" },
-    { id: "ex-lumbar", name: "Arch Hold Isométrico (Cadena Lumbar)", category: "Core, Psoas y Lumbar", level: "1", goal: "Fortalecer erectores espinales y glúteos para evitar que la cadera caiga en techos.", steps: ["Boca abajo, eleva suavemente pecho y piernas manteniendo cuello neutro.", "Sostén 20 segundos respirando corto."], safeAlt: "Bird-Dog alternando brazo y pierna contraria en cuadrupedia.", author: "Sistema · Cadena Central" },
-    { id: "ex-chestpull", name: "Dominadas Explosivas al Pecho", category: "Tracción Superior", level: "2", goal: "Desarrollar potencia de tracción superior sustituyendo el campus board de forma segura.", steps: ["Inicia desde escápulas activas y tracciona explosivo llevando el pecho a la barra.", "Baja controlado en 2 segundos."], safeAlt: "Dominadas estrictas a velocidad media o jalón en polea.", author: "Adaptación Hörst · Sin Campus" },
-    { id: "ex-4x4", name: "Circuito 4x4 Técnico (Resistencia a la Fuerza)", category: "Búlder y Técnica", level: "2", goal: "Tolerar la acumulación de lactato manteniendo técnica limpia de pies bajo fatiga.", steps: ["Elige 4 bloques de 2 grados por debajo de tu máximo.", "Escálalos seguidos sin descanso; descansa 3 min al terminar la ronda (x4)."], safeAlt: "Reducir a 3 bloques por ronda o bajar un grado.", author: "Eric Hörst · Resistencia" }
-  ];
-
-  const BACKUP_MESOCYCLES = [
-    {
-      id: "horst-6w",
-      title: "Bloque 1: Fuerza Base, Dedos y Cara B (6 Semanas)",
-      weeks: 6,
-      phases: [
-        { weeks: [1, 2, 3], name: "Fase 1 · Adaptación Neural y Tejidos", desc: "Enfoque en técnica limpia (half-crimp), cero fallo muscular y consolidación de hábitos Cara B." },
-        { weeks: [4, 5], name: "Fase 2 · Intensificación y Transferencia", desc: "Sube ligeramente la carga (+2 a +5 kg) o dificultad en muro SOLO si tu semáforo articular cerró en verde." },
-        { weeks: [6], name: "Fase 3 · Descarga (Deload 50%)", desc: "Reduce series a la mitad manteniendo intensidad moderada para supercompensar tendones." }
-      ],
-      microcycle: [
-        { code: "D1", short: "Dedos", title: "Fuerza de Dedos + Búlder Límite", tag: "DEDOS Y POTENCIA", duration: "90 min", rule: "Regla Hörst: Descansa 3 min completos entre series. Si fallas 2 pegues seguidos por fatiga, corta el bloque.", sections: [{ name: "1. Calentamiento Progresivo", items: [{ exId: "ex-mov", rx: "15 min", rest: "Continuo" }] }, { name: "2. Bloque Principal", items: [{ exId: "ex-hang20", rx: "5 series x 10 seg", rest: "3 min", p2: "5x10s (+2.5 kg si RPE <= 8)", p3: "3x10s (Peso corporal - Descarga)" }, { exId: "ex-limit", rx: "35 min (3 bloques)", rest: "3-4 min", p3: "20 min (Bloques técnicos)" }] }] },
-        { code: "D2", short: "Cara B", title: "Cara B: Empuje, Pierna y Psoas/Lumbar", tag: "ACONDICIONAMIENTO", duration: "50 min", rule: "Descanso total de agarre: Cero colgadas ni tracción pesada hoy. Deja 2 reps en reserva (RIR 2).", sections: [{ name: "1. Empuje y Estabilidad de Codo", items: [{ exId: "ex-push", rx: "3 x 8-10 reps", rest: "90 seg" }, { exId: "ex-skull", rx: "3 x 10-12 reps", rest: "90 seg" }] }, { name: "2. Pierna Funcional (Unilateral y Taloneo)", items: [{ exId: "ex-stepup", rx: "3 x 6 por pierna", rest: "90 seg" }, { exId: "ex-hamstring", rx: "3 x 8 por pierna", rest: "60 seg" }] }, { name: "3. Cadena Abdominal, Psoas y Lumbar", items: [{ exId: "ex-psoas", rx: "3 x 6-8 reps", rest: "90 seg" }, { exId: "ex-lumbar", rx: "3 x 20 seg", rest: "60 seg" }] }] },
-        { code: "D3", short: "Descanso", title: "Recuperación de Sistema Nervioso y Poleas", tag: "DESCANSO TOTAL", duration: "0 min", rule: "Los tendones sintetizan colágeno mientras descansas. Hidrátate bien y prioriza el sueño.", sections: [] },
-        { code: "D4", short: "Tracción", title: "Potencia de Tracción + Tensión en Desplome", tag: "TRACCIÓN Y TENSIÓN", duration: "85 min", rule: "Hombros activos en todo momento. Evita regletas cortantes si sientes fatiga del D1.", sections: [{ name: "1. Calentamiento", items: [{ exId: "ex-mov", rx: "15 min", rest: "Continuo" }] }, { name: "2. Potencia y Tensión", items: [{ exId: "ex-chestpull", rx: "4 x 4-5 reps", rest: "3 min", p2: "4x4 (+lastre ligero)", p3: "2x4 (Descarga)" }, { exId: "ex-limit", rx: "30 min (Foco desplome)", rest: "3 min" }, { exId: "ex-psoas", rx: "2 x 6 reps (Finisher)", rest: "90 seg" }] }] },
-        { code: "D5", short: "Descanso", title: "Descanso Previo a Sesión Social / Volumen", tag: "DESCANSO TOTAL", duration: "0 min", rule: "Si hubo carga en codos el D4, realiza 5 min de movilidad suave de muñecas.", sections: [] },
-        { code: "D6", short: "Volumen", title: "Resistencia a la Fuerza y Fluidez (ELBLOQUE)", tag: "RESISTENCIA / SOCIAL", duration: "80 min", rule: "Prioriza volumen de calidad y silencio de pies sobre el grado máximo.", sections: [{ name: "1. Activación", items: [{ exId: "ex-mov", rx: "15 min", rest: "Continuo" }] }, { name: "2. Circuito de Continuidad", items: [{ exId: "ex-4x4", rx: "4 rondas x 4 bloques", rest: "3 min entre rondas", p3: "2 rondas (Descarga)" }] }] },
-        { code: "D7", short: "Descanso", title: "Cierre de Microciclo y Revisión Articular", tag: "DESCANSO OBLIGATORIO", duration: "0 min", rule: "Revisa tu semáforo de dedos y codos de la semana antes de iniciar la siguiente.", sections: [] }
-      ]
-    }
-  ];
-
-  let state = {
-    gasUrl: DEFAULT_GAS_URL,
-    pinBuffer: "",
-    mesocycles: BACKUP_MESOCYCLES,
-    encyclopedia: BACKUP_ENCYCLOPEDIA,
-    logs: [],
-    mesoIndex: 0,
-    week: 1,
-    dayIndex: 0,
-    checkedItems: {},
-    semDedos: "verde",
-    semCodos: "verde",
-    catFilter: "ALL",
-    lvlFilter: "ALL"
-  };
-
-  function pressPin(digit) {
-    if (state.pinBuffer.length >= 4) return;
-    state.pinBuffer += digit;
-    updatePinDots();
-    if (state.pinBuffer.length === 4) {
-      if (state.pinBuffer === "2026") {
-        setTimeout(() => { document.getElementById("lock-screen").style.display = "none"; }, 120);
-      } else {
-        showToast("PIN incorrecto (usa 2026)");
-        setTimeout(clearPin, 350);
-      }
-    }
-  }
-  function clearPin() { state.pinBuffer = ""; updatePinDots(); }
-  function unlockBypass() { document.getElementById("lock-screen").style.display = "none"; }
-  function updatePinDots() {
-    document.querySelectorAll(".pin-dot").forEach((d, idx) => d.classList.toggle("filled", idx < state.pinBuffer.length));
-  }
-
-  function init() {
-    document.getElementById("log-date").valueAsDate = new Date();
-    document.getElementById("gas-url").value = state.gasUrl;
-    renderCatFilters();
-    renderMesoSelect();
-    renderTrainView();
-    renderEncyclopedia();
-    if (state.gasUrl) {
-      syncFromCloud();
-    }
-  }
-
-  function connectAndSync() {
-    const url = document.getElementById("gas-url").value.trim();
-    if (!url) return showToast("Pega la URL /exec de Apps Script");
-    state.gasUrl = url;
-    syncFromCloud();
-  }
-
-  async function syncFromCloud() {
-    if (!state.gasUrl) return showToast("Configura primero la URL de Apps Script");
-    setSyncUI("Sincronizando...", false);
-    try {
-      const res = await fetch(state.gasUrl);
-      const data = await res.json();
-      if (data.ok) {
-        if (data.mesocycles && data.mesocycles.length) state.mesocycles = data.mesocycles;
-        if (data.encyclopedia && data.encyclopedia.length) state.encyclopedia = data.encyclopedia;
-        state.logs = data.logs || [];
-        setSyncUI("Conectado a Sheets", true);
-        renderMesoSelect();
-        renderTrainView();
-        renderEncyclopedia();
-        renderHistory();
-        showToast("Sincronizado con Google Sheets");
-      }
-    } catch (err) {
-      setSyncUI("Modo Backup (Sin red)", false);
-      showToast("Usando respaldo en memoria (revisa conexión)");
-    }
-  }
-
-  async function postToCloud(payload) {
-    if (!state.gasUrl) return showToast("Falta URL de Apps Script");
-    setSyncUI("Guardando...", false);
-    try {
-      await fetch(state.gasUrl, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      setTimeout(() => syncFromCloud(), 1200);
-    } catch (e) {
-      setSyncUI("Error al guardar", false);
-      showToast("No se pudo enviar a Sheets");
-    }
-  }
-
-  function setSyncUI(text, online) {
-    document.getElementById("sync-status").textContent = text;
-    document.getElementById("sync-dot").classList.toggle("online", online);
-  }
-
-  function renderMesoSelect() {
-    const sel = document.getElementById("meso-select");
-    sel.innerHTML = state.mesocycles.map((m, i) => `<option value="${i}">${m.title}</option>`).join("");
-  }
-
-  function changeMesocycle() {
-    state.mesoIndex = parseInt(document.getElementById("meso-select").value, 10);
-    state.week = 1;
-    state.dayIndex = 0;
-    renderTrainView();
-  }
-
-  function renderTrainView() {
-    if (!state.mesocycles.length) return;
-    const meso = state.mesocycles[state.mesoIndex];
-
-    let weekHTML = "";
-    for (let w = 1; w <= meso.weeks; w++) {
-      weekHTML += `<button class="pill ${state.week === w ? 'active' : ''}" onclick="setWeek(${w})">Sem ${w}</button>`;
-    }
-    document.getElementById("week-pills").innerHTML = weekHTML;
-
-    const phase = meso.phases.find(p => p.weeks.includes(state.week)) || meso.phases[0] || { name: "Fase Activa", desc: "" };
-    document.getElementById("phase-info").innerHTML = `<h3>${phase.name}</h3><p>${phase.desc}</p>`;
-
-    document.getElementById("day-pills").innerHTML = meso.microcycle.map((d, idx) => `
-      <button class="pill day-pill ${state.dayIndex === idx ? 'active' : ''}" onclick="setDay(${idx})">
-        <span>${d.code}</span><small>${d.short}</small>
-      </button>
-    `).join("");
-
-    const day = meso.microcycle[state.dayIndex];
-    document.getElementById("day-tag").textContent = day.tag;
-    document.getElementById("day-title").textContent = `${day.code} · ${day.title}`;
-    document.getElementById("day-duration").textContent = day.duration;
-    document.getElementById("day-rule").textContent = day.rule;
-
-    const secContainer = document.getElementById("exercise-sections");
-    if (!day.sections || day.sections.length === 0) {
-      secContainer.innerHTML = `<div style="padding:20px 0; text-align:center; color:var(--text-muted); font-size:0.88rem;">Día de descanso total. Recuperación articular.</div>`;
-      return;
-    }
-
-    const isPhase2 = phase.name.includes("Fase 2");
-    const isPhase3 = phase.name.includes("Fase 3");
-
-    secContainer.innerHTML = day.sections.map((sec, sIdx) => {
-      const itemsHTML = sec.items.map((item, iIdx) => {
-        const ex = state.encyclopedia.find(e => e.id === item.exId);
-        if (!ex) return "";
-        const checkKey = `${meso.id}-w${state.week}-d${state.dayIndex}-s${sIdx}-i${iIdx}`;
-        const isDone = !!state.checkedItems[checkKey];
-        let prescription = item.rx;
-        if (isPhase2 && item.p2) prescription = item.p2;
-        if (isPhase3 && item.p3) prescription = item.p3;
-
-        return `
-          <div class="ex-item ${isDone ? 'done' : ''}">
-            <button class="ex-check" onclick="toggleCheck('${checkKey}')">${isDone ? '✓' : ''}</button>
-            <div class="ex-body" onclick="openExerciseModal('${ex.id}')">
-              <div class="ex-title-row">
-                <span class="ex-name">${ex.name}</span>
-                <span class="badge lvl-${ex.level}">Nivel ${ex.level}</span>
-              </div>
-              <div class="ex-meta">
-                <span><strong>${prescription}</strong></span>
-                <span>Descanso: ${item.rest}</span>
-                <span style="color:var(--accent);">Ver guía →</span>
-              </div>
+    <!-- VISTA 4: BITÁCORA -->
+    <section id="view-log" class="hidden">
+      <div class="card">
+        <div class="card-title"><span>Registrar Sesión en Google Sheets</span></div>
+        <div style="display:grid; gap:10px;">
+          <div>
+            <label style="font-size:12px; color:var(--text-muted);">Día del Microciclo</label>
+            <select id="log-day"></select>
+          </div>
+          <div>
+            <label style="font-size:12px; color:var(--text-muted);">Esfuerzo Percibido (RPE 1 a 10)</label>
+            <input id="log-rpe" type="number" min="1" max="10" value="7" />
+          </div>
+          <div>
+            <label style="font-size:12px; color:var(--text-muted);">Semáforo Dedos / Poleas</label>
+            <div class="traffic-selector" id="dedos-selector">
+              <button type="button" class="t-btn active verde" onclick="setTraffic('dedos','verde',this)">🟢 Verde</button>
+              <button type="button" class="t-btn amarillo" onclick="setTraffic('dedos','amarillo',this)">🟡 Amarillo</button>
+              <button type="button" class="t-btn rojo" onclick="setTraffic('dedos','rojo',this)">🔴 Rojo</button>
             </div>
+          </div>
+          <div>
+            <label style="font-size:12px; color:var(--text-muted);">Semáforo Codos / Hombros</label>
+            <div class="traffic-selector" id="codos-selector">
+              <button type="button" class="t-btn active verde" onclick="setTraffic('codos','verde',this)">🟢 Verde</button>
+              <button type="button" class="t-btn amarillo" onclick="setTraffic('codos','amarillo',this)">🟡 Amarillo</button>
+              <button type="button" class="t-btn rojo" onclick="setTraffic('codos','rojo',this)">🔴 Rojo</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:12px; color:var(--text-muted);">Notas de sesión o desvíos</label>
+            <textarea id="log-note" rows="2" placeholder="Ej. Regleta 20mm sólida, cambié jueves por viernes..."></textarea>
+          </div>
+          <button id="btn-save-log" class="btn-primary" onclick="submitLog()">Guardar en Bitácora</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>Historial Reciente (4_BITACORA)</span></div>
+        <div id="log-history"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- NAVEGACIÓN INFERIOR -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-view="dashboard" onclick="switchView('dashboard', this)">
+      <span class="nav-icon">📊</span><span>Dashboard</span>
+    </button>
+    <button class="nav-btn" data-view="train" onclick="switchView('train', this)">
+      <span class="nav-icon">🧗</span><span>Entrenar</span>
+    </button>
+    <button class="nav-btn" data-view="ency" onclick="switchView('ency', this)">
+      <span class="nav-icon">📘</span><span>Enciclopedia</span>
+    </button>
+    <button class="nav-btn" data-view="log" onclick="switchView('log', this)">
+      <span class="nav-icon">📝</span><span>Bitácora</span>
+    </button>
+  </nav>
+
+  <!-- MODAL DETALLE EJERCICIO -->
+  <div id="ex-modal" class="modal-backdrop" onclick="if(event.target===this) closeExModal()">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+        <span id="m-cat" class="pill-stat pill-accent">Categoría</span>
+        <button onclick="closeExModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
+      </div>
+      <h3 id="m-title" style="font-size:18px; font-weight:800; margin-top:8px;">Nombre</h3>
+      <p id="m-goal" style="font-size:13px; color:var(--text-muted); margin-top:6px;"></p>
+      <div style="font-size:12px; font-weight:700; margin-top:14px; color:var(--accent);">Ejecución paso a paso:</div>
+      <ol id="m-steps" class="modal-steps"></ol>
+      <div style="background:var(--green-soft); border:1px solid rgba(16,185,129,0.3); padding:10px 12px; border-radius:10px; font-size:12.5px; margin-top:10px;">
+        <strong style="color:var(--green);">Alternativa Segura:</strong> <span id="m-alt"></span>
+      </div>
+      <div id="m-source" style="font-size:11px; color:var(--text-muted); margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIGURACIÓN URL APPS SCRIPT -->
+  <div id="cfg-modal" class="modal-backdrop" onclick="if(event.target===this) closeConfigModal()">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:16px; font-weight:800;">Conexión Google Sheets (/exec)</h3>
+        <button onclick="closeConfigModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
+      </div>
+      <p style="font-size:12px; color:var(--text-muted); margin:8px 0 12px;">
+        Pega la URL de implementación web de tu proyecto Apps Script para sincronizar bloques, enciclopedia y bitácora.
+      </p>
+      <input id="api-url-input" type="text" placeholder="https://script.google.com/macros/s/.../exec" />
+      <button class="btn-primary" style="margin-top:12px;" onclick="saveApiUrl()">Guardar y Sincronizar</button>
+    </div>
+  </div>
+
+  <script>
+    const PIN_CODE = "2026";
+    const STORAGE_KEYS = {
+      AUTH: "sunblock_auth_ok",
+      API_URL: "sunblock_api_url",
+      BLOCK: "sunblock_selected_block",
+      WEEK: "sunblock_selected_week",
+      CHECKS: "sunblock_checks_v2",
+      CACHE: "sunblock_data_cache_v2"
+    };
+
+    // RESPALDO OFFLINE COMPLETO (5 BLOQUES + 37 EJERCICIOS EN ESPAÑOL)
+    const BACKUP_DATA = {
+      blocks: [
+        {
+          id: "cimiento-4w",
+          title: "Bloque 0 · CIMIENTO · Nivel Básico (4 Semanas)",
+          weeks: 4,
+          phases: [
+            { weeks: [1, 2], name: "Fase 1 · Pies Silenciosos y Control Postural", desc: "Cero regletas de 20mm. Prioriza pausas de 3 seg antes de agarrar, postura de cadera y prehab de codos." },
+            { weeks: [3, 4], name: "Fase 2 · Consolidación y Volumen Seguro", desc: "Aumenta el volumen técnico continuo manteniendo 100% control articular y tendinoso." }
+          ]
+        },
+        {
+          id: "horst-6w",
+          title: "Bloque 1 · ANCLAJE · Nivel Intermedio (6 Semanas)",
+          weeks: 6,
+          phases: [
+            { weeks: [1, 2], name: "Fase 1 · Adaptación Anatómica y Base", desc: "Construye tolerancia en regleta de 20mm, pinza, bloqueos isométricos y Cara B completa." },
+            { weeks: [3, 4, 5], name: "Fase 2 · Reclutamiento y Fuerza Máxima", desc: "Aumenta intensidad de búlder límite y carga controlada dejando 1-2 seg en reserva." },
+            { weeks: [6], name: "Fase 3 · Descarga y Supercompensación (Deload)", desc: "Reduce volumen un 40-50% para disipar fatiga tendinosa y consolidar ganancias." }
+          ]
+        },
+        {
+          id: "impulso-4w",
+          title: "Bloque 2 · IMPULSO · Nivel Intermedio (4 Semanas)",
+          weeks: 4,
+          phases: [
+            { weeks: [1, 2, 3], name: "Fase 1 · Potencia de Contacto y Coordinación", desc: "Contactos rápidos (5 seg), dinámicos y explosividad de tronco con descanso completo (3-4 min)." },
+            { weeks: [4], name: "Fase 2 · Descarga Neural (Deload)", desc: "Reduce el volumen al 50% para asimilar velocidad y proteger hombros y dedos." }
+          ]
+        },
+        {
+          id: "flujo-4w",
+          title: "Bloque 3 · FLUJO · Nivel Intermedio (4 Semanas)",
+          weeks: 4,
+          phases: [
+            { weeks: [1, 2, 3], name: "Fase 1 · Resistencia Local y Continuidad", desc: "Repeaters 7:3, Up-Down-Up, Pirámides y circuitos 4x4 sosteniendo técnica bajo fatiga." },
+            { weeks: [4], name: "Fase 2 · Descarga y Supercompensación", desc: "Sesiones fluidas sin acumulación de lactato para recuperar frescura muscular." }
+          ]
+        },
+        {
+          id: "cumbre-4w",
+          title: "Bloque 4 · CUMBRE · Nivel Avanzado (4 Semanas)",
+          weeks: 4,
+          phases: [
+            { weeks: [1, 2, 3], name: "Fase 1 · Alta Intensidad y Micro-Agarres", desc: "Regleta mínima 10-12mm, bolsillos de 2 dedos, Frenchies y búlder límite máximo (solo tendones acondicionados)." },
+            { weeks: [4], name: "Fase 2 · Pico de Rendimiento (Tapering)", desc: "Descarga profunda de volumen manteniendo breves estímulos neurales de alta calidad." }
+          ]
+        }
+      ],
+      encyclopedia: [
+        { id: "ex-mov", name: "Movilidad Articular + Activación Escapular", category: "Calentamiento", level: "1", goal: "Lubricar cápsulas articulares y activar estabilizadores de hombro y flexores antes de cargar peso.", steps: ["Realiza círculos controlados de cuello, hombros, codos y muñecas durante 5 min.", "Haz 2 series de 6 retracciones escapulares colgado en barra con brazos rectos.", "Escala 3 bloques muy fáciles enfocando respiración y pies suaves."], alt: "Activación escapular con bandas elásticas de resistencia baja.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-hang20", name: "Suspensiones Máximas en Regleta (20 mm)", category: "Fuerza de Dedos", level: "2", goal: "Aumentar la fuerza máxima isométrica de flexores de dedos y rigidez tendinosa sin estrés extremo.", steps: ["Usa agarre semi-arqueado (half crimp) con el pulgar relajado al costado.", "Mantén hombros activos (lejos de las orejas) y cuelga 10 seg dejando 1-2 seg en reserva.", "Descansa 3 minutos completos entre cada serie."], alt: "Regleta de 25-30 mm o descargar peso apoyando un pie en cajón.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-limit", name: "Búlder Límite (4-6 Movimientos Máx.)", category: "Búlder y Técnica", level: "3", goal: "Reclutar unidades motoras de alto umbral y transferir fuerza máxima a movimientos complejos.", steps: ["Elige 2 o 3 bloques cerca de tu límite máximo (4 a 6 movimientos).", "Realiza intentos de máxima calidad descansando 3 a 4 minutos entre pegues.", "Corta la sesión apenas notes que pierdes potencia o precisión."], alt: "Aislar 2 movimientos duros de un bloque sin necesidad de encadenarlo.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-chestpull", name: "Dominadas al Pecho (Reemplazo Seguro Campus)", category: "Tracción Superior", level: "2", goal: "Desarrollar potencia de tracción explosiva y cierre escapular profundo protegiendo poleas.", steps: ["Desde colgado activo, tracciona explosivamente llevando el pecho hacia la barra.", "Controla la fase de bajada durante 2 a 3 segundos.", "Descansa 3 minutos entre series."], alt: "Dominadas estrictas al mentón o asistidas con banda elástica.", source: "Adaptación ELBLOQUE" },
+        { id: "ex-4x4", name: "Circuitos 4x4 en Muro", category: "Búlder y Técnica", level: "2", goal: "Desarrollar resistencia a la fuerza anaeróbica láctica y eficiencia técnica bajo fatiga.", steps: ["Selecciona 4 bloques unos 2 grados por debajo de tu máximo.", "Escala los 4 bloques seguidos sin descanso entre ellos (1 ronda).", "Descansa 3 minutos entre rondas hasta completar el volumen prescrito."], alt: "Reducir a 3 bloques por ronda o bajar un grado la dificultad.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-push", name: "Flexiones de Pecho (Push-Ups)", category: "Empuje y Cara B", level: "1", goal: "Equilibrar la cadena anterior (pectoral y serrato) para prevenir hombros adelantados.", steps: ["Mantén abdomen y glúteos contraídos formando una línea recta.", "Baja con los codos a 45° del torso hasta rozar el suelo y empuja firme."], alt: "Apoyo de rodillas o manos elevadas sobre un cajón.", source: "Sistema · Cara B" },
+        { id: "ex-skull", name: "Rompecráneos con Mancuernas", category: "Empuje y Cara B", level: "1", goal: "Fortalecer la cabeza larga del tríceps para estabilizar el codo y prevenir epicondilitis.", steps: ["Tumbado boca arriba con mancuernas, flexiona solo los codos bajando hacia los lados de la frente.", "Extiende de forma controlada manteniendo los brazos perpendiculares al suelo."], alt: "Extensión de tríceps con banda elástica.", source: "Sistema · Cara B" },
+        { id: "ex-stepup", name: "Subida al Cajón Unilateral (Step-Up)", category: "Pierna Funcional", level: "1", goal: "Desarrollar fuerza de empuje a una pierna para incorporaciones sobre pies altos en el muro.", steps: ["Apoya un pie completo sobre un cajón a altura de rodilla.", "Sube impulsando únicamente con esa pierna sin ayudarte con el pie de abajo.", "Desciende lentamente en 3 segundos."], alt: "Usar un cajón más bajo o asistirse levemente con una mano.", source: "Sistema · Cara B" },
+        { id: "ex-hamstring", name: "Puente de Glúteo / Isquios a una Pierna", category: "Pierna Funcional", level: "1", goal: "Activar la cadena posterior para potenciar los taloneos (heel hooks) y pegar la cadera al muro.", steps: ["Tumbado boca arriba, apoya un solo talón en el suelo o cajón.", "Eleva la cadera contrayendo glúteo e isquiotibial y sostén 2 seg arriba."], alt: "Ejecución bilateral con ambos talones apoyados.", source: "Sistema · Cara B" },
+        { id: "ex-psoas", name: "Elevación de Rodillas / Piernas Colgado (Psoas)", category: "Core y Cadena Central", level: "2", goal: "Fortalecer el psoas-ilíaco y abdomen inferior para mantener los pies pegados en desplomes.", steps: ["Cuélgate en barra con escápulas activas para evitar balanceo.", "Eleva rodillas al pecho o piernas rectas de forma controlada y baja en 3 seg."], alt: "Elevaciones tumbado boca arriba en colchoneta.", source: "Sistema · Cara B" },
+        { id: "ex-lumbar", name: "Extensión Lumbar en Suelo (Arch Hold)", category: "Core y Cadena Central", level: "1", goal: "Fortalecer erectores espinales y glúteos para evitar desconexión de pies en techos.", steps: ["Tumbado boca abajo, eleva simultáneamente pecho y piernas manteniendo el cuello neutro.", "Sostén la contracción isométrica durante 20 a 25 segundos."], alt: "Elevación alterna de brazo y pierna contraria (Bird-Dog).", source: "Sistema · Cara B" },
+        { id: "ex-silent", name: "Pies Silenciosos y Pirámide Técnica (V0-V2)", category: "Búlder y Técnica", level: "1", goal: "Desarrollar precisión de apoyos, colocación de cadera y economía de movimiento sin estrés en poleas.", steps: ["Sube 3 bloques fáciles pisando cada presa sin hacer ruido.", "Mantén la vista en el pie hasta que quede firme antes de mover las manos."], alt: "Escalar solo en placa vertical con cantos grandes.", source: "Sistema · Base Técnica" },
+        { id: "ex-scap-pull", name: "Dominadas Escapulares + Estrictas Controladas", category: "Tracción Superior", level: "1", goal: "Fortalecer depresores escapulares y dorsal ancho sin sobrecargar tendones de codos ni dedos.", steps: ["Cuélgate con brazos estirados y junta escápulas hacia abajo (5 reps).", "Continúa con 4-6 dominadas estrictas subiendo en 2 seg y bajando en 3 seg."], alt: "Usar banda elástica de asistencia o remo invertido.", source: "Sistema · Base Tracción" },
+        { id: "ex-contact5", name: "Potencia de Contacto en Canto Cómodo (5 seg)", category: "Fuerza de Dedos", level: "2", goal: "Mejorar la velocidad de reclutamiento neural al agarrar una presa sin dañar poleas.", steps: ["Usa una regleta cómoda (25-30 mm) o canto profundo.", "Toma el agarre y aplica tensión máxima explosiva durante 5 segundos exactos.", "Descansa 3 minutos completos entre series."], alt: "Suspensiones rápidas con pies apoyados.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-dyno", name: "Bloque Dinámico y Coordinaciones", category: "Búlder y Técnica", level: "3", goal: "Entrenar la transferencia de impulso de piernas y cadera hacia agarres dinámicos.", steps: ["Elige 2-3 bloques de 3 a 4 movimientos que exijan impulso o coordinación.", "Visualiza el punto exacto de recepción antes de saltar y descansa 3-4 min entre pegues."], alt: "Practicar lanzamientos cortos hacia agarres grandes.", source: "Adaptación ELBLOQUE" },
+        { id: "ex-plyo-push", name: "Flexiones Explosivas + Salto Controlado", category: "Empuje y Cara B", level: "2", goal: "Desarrollar potencia rápida en tren superior para movimientos dinámicos.", steps: ["Haz 5 flexiones empujando rápido para despegar ligeramente las manos del suelo.", "Descansa 90 segundos entre series."], alt: "Flexiones rápidas sobre banco elevado.", source: "Sistema · Cara B Potencia" },
+        { id: "ex-repeaters", name: "Intermitentes Repeaters 7:3 (Resistencia Local)", category: "Fuerza de Dedos", level: "2", goal: "Aumentar la capacidad oxidativa y tolerancia al ácido láctico en los flexores del antebrazo.", steps: ["Usa regleta cómoda de 22-25 mm en agarre semi-arqueado.", "Cuélgate 7 seg y descansa 3 seg; repite 6 veces para completar 1 serie.", "Descansa 3 minutos entre series."], alt: "Reducir a 4 repeticiones por serie o usar canto más grande.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-pinch", name: "Pinza en Bloque", category: "Fuerza de Dedos", level: "2", goal: "Fortalecer el aductor del pulgar y los flexores profundos para dominar volúmenes y presas de pinza.", steps: ["Sujeta un bloque de madera o disco con el pulgar opuesto a los 4 dedos.", "Despega el peso del suelo manteniendo la muñeca neutra y sostén 8-10 seg por mano.", "Descansa 2-3 minutos entre series."], alt: "Pinza estática en una presa ancha del muro con los pies apoyados.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-sloper", name: "Suspensiones en Romos", category: "Fuerza de Dedos", level: "2", goal: "Desarrollar fuerza de fricción, compresión de muñeca y tensión de hombros en agarres abiertos.", steps: ["Coloca las manos abiertas sobre los romos superiores de la multipresa.", "Cuelga con muñecas neutras, hombros activos y codos ligeramente flexionados por 8-10 seg.", "Descansa 3 minutos completos entre series."], alt: "Romos más profundos o descargar peso apoyando un pie en un cajón.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-pockets", name: "Bolsillos de 2 Dedos", category: "Fuerza de Dedos", level: "3", goal: "Acondicionar los tendones flexores profundos para monodedos y bidedos en roca o competencia.", steps: ["Usa la pareja de dedos medios (anular y corazón) en un bolsillo profundo sin arquear.", "Cuelga 7-8 seg manteniendo el resto de dedos relajados.", "Descansa 3 minutos completos entre series."], alt: "Usar 3 dedos (índice, medio y anular) o evitar en bloques de iniciación.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-maxedge", name: "Regleta Mínima (10-12 mm)", category: "Fuerza de Dedos", level: "3", goal: "Maximizar la fuerza de contacto en micro-regletas manteniendo un ángulo articular seguro.", steps: ["Usa exclusivamente agarre semi-arqueado; queda prohibido el arqueo cerrado.", "Cuelga 6-8 seg sin lastre excesivo dejando 2 seg en reserva.", "Descansa 3-4 minutos entre series."], alt: "Mantenerse en regleta de 18-20 mm añadiendo lastre moderado.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-lightrep", name: "Protocolo Tendinoso Ligero", category: "Fuerza de Dedos", level: "1", goal: "Estimular la síntesis de colágeno y la vascularización tendinosa en días de descarga o retorno.", steps: ["Mantén los pies apoyados en el suelo descargando el 60-70% de tu peso corporal.", "Sostén una regleta cómoda 10 seg y descansa 5 seg (6 repeticiones por serie).", "Realiza 2-3 series con 2 min de pausa."], alt: "Terapia con plastilina terapéutica o apertura de dedos con banda elástica.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-lockoff", name: "Bloqueos Isométricos a 90° y 120°", category: "Tracción Superior", level: "2", goal: "Desarrollar fuerza estática para sostener posiciones mientras se alcanza una presa lejana.", steps: ["Sube en dominada y mantén la barbilla sobre la barra 4 segundos.", "Baja a un ángulo de 90° y sostén 4 seg; baja a 120° y sostén otros 4 seg.", "Descansa 3 minutos entre repeticiones."], alt: "Realizar un solo ángulo (90°) asistido con banda elástica.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-archer", name: "Dominadas Tipo Arquero", category: "Tracción Superior", level: "3", goal: "Desarrollar fuerza unilateral de tracción y control escapular asimétrico.", steps: ["Toma la barra con agarre ancho y sube hacia una mano extendiendo el brazo contrario.", "Desplázate horizontalmente hacia la otra mano sin perder altura.", "Baja controlado y descansa 3 minutos."], alt: "Dominadas con una mano agarrando la muñeca contraria.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-frenchies", name: "Dominada con Paradas Isométricas", category: "Tracción Superior", level: "3", goal: "Combinar fuerza máxima de tracción y resistencia isométrica al bloqueo en una misma serie.", steps: ["Haz 1 dominada completa y bloquea arriba 4 seg; baja hasta extender los brazos.", "Sube y bloquea a 90° por 4 seg; baja y sube para bloquear a 120° por 4 seg.", "Descansa 3-4 minutos entre series."], alt: "Reducir las paradas isométricas a 2 segundos por ángulo.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-invrow", name: "Remo Invertido en Anillas o Barra Baja", category: "Tracción Superior", level: "1", goal: "Fortalecer romboides, trapecio medio y deltoides posterior para dar estabilidad escapular en techos.", steps: ["Colócate bajo la barra o anillas con el cuerpo recto y talones apoyados.", "Tira del pecho hacia las manos juntando las escápulas al final del recorrido.", "Baja controlado en 2 segundos."], alt: "Aumentar el ángulo vertical del cuerpo (pies más cerca de la vertical).", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-hovering", name: "Pausa Suspendida de 3 Segundos", category: "Búlder y Técnica", level: "1", goal: "Eliminar el impulso descontrolado y obligar al cuerpo a encontrar el equilibrio sobre los pies.", steps: ["Escala un bloque fácil o moderado en silencio.", "Antes de agarrar cada presa de mano, mantén la mano suspendida a 5 cm durante 3 segundos.", "Fija el pie antes de mover la mano."], alt: "Aplicar pausa de 2 segundos en bloques de placa vertical.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-updown", name: "Subir, Destrepar y Volver a Subir", category: "Búlder y Técnica", level: "2", goal: "Mejorar la precisión de pies en destrepe y aumentar el tiempo bajo tensión sin sobrecargar dedos.", steps: ["Escala un bloque de dificultad media hasta el final con control.", "Destrepa el mismo bloque hasta el inicio sin bajar a la colchoneta.", "Vuelve a subirlo de inmediato y descansa 3 minutos."], alt: "Subir y destrepar una sola vez por serie.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-pyramid", name: "Pirámide de Resistencia (V1-V2-V3-V2-V1)", category: "Búlder y Técnica", level: "2", goal: "Entrenar la recuperación activa y el ritmo respiratorio a través de intensidades crecientes.", steps: ["Escala 5 bloques seguidos subiendo hasta tu grado medio y bajando nuevamente.", "Descansa exactamente 1 minuto entre bloque y bloque.", "Mantén la respiración fluida en cada secuencia."], alt: "Pirámide corta de 3 bloques (V1-V2-V1).", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-traverse", name: "Travesía Continua (15-20 Movimientos)", category: "Búlder y Técnica", level: "1", goal: "Desarrollar capacidad aeróbica local en antebrazos y fluidez en transiciones largas.", steps: ["Desplázate lateralmente en el muro realizando 15 a 20 movimientos seguidos.", "Mantén un ritmo constante sin detenerte a sacudir demasiado.", "Descansa 3-4 minutos entre rondas."], alt: "Dividir en dos tramos de 10 movimientos con 1 minuto de reposo.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-toesbar", name: "Elevaciones de Pies a la Barra", category: "Core y Cadena Central", level: "2", goal: "Maximizar la compresión abdominal y la conexión entre manos y pies en techos horizontales.", steps: ["Cuélgate en la barra con escápulas activas y piernas extendidas.", "Eleva las piernas rectas hasta tocar la barra con los empeines sin balanceo lumbar.", "Baja controlado en 3 segundos."], alt: "Elevar rodillas al pecho con pausa de 2 seg arriba.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-rkcplank", name: "Plancha Abdominal de Máxima Tensión", category: "Core y Cadena Central", level: "1", goal: "Generar máxima tensión de cuerpo completo para evitar que los pies resbalen en desplomes.", steps: ["Apoya antebrazos y puntas de pies en el suelo con la pelvis en retroversión.", "Contrae glúteos, cuádriceps y abdomen al 100% tirando codos hacia pies por 15-20 seg.", "Descansa 60 seg entre series."], alt: "Plancha estándar con apoyo de rodillas manteniendo el abdomen firme.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-bodysaw", name: "Deslizamiento Abdominal en Plancha", category: "Core y Cadena Central", level: "2", goal: "Fortalecer la estabilidad anti-extensión lumbar cuando el cuerpo se estira hacia presas lejanas.", steps: ["Desde plancha sobre antebrazos (o rueda abdominal), desliza el cuerpo hacia atrás.", "Extiende los hombros sin dejar que la zona lumbar se arquee.", "Regresa a la posición inicial apretando el abdomen."], alt: "Recorrido corto con apoyo de rodillas en colchoneta.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-wipers", name: "Limpiaparabrisas Colgado en Barra", category: "Core y Cadena Central", level: "3", goal: "Desarrollar fuerza rotacional extrema de oblicuos y dorsal para evitar el efecto bandera.", steps: ["Cuélgate en barra y eleva las piernas rectas hasta formar 90° con el torso.", "Rota las piernas lentamente de lado a lado manteniendo el control escapular.", "Realiza 4-6 repeticiones por lado."], alt: "Giros rusos sentado o limpiaparabrisas tumbado en el suelo.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-bulgarian", name: "Sentadilla Búlgara Unilateral", category: "Pierna Funcional", level: "2", goal: "Construir fuerza unilateral profunda de cuádriceps y glúteo para incorporaciones sobre pies altos.", steps: ["Apoya el empeine trasero sobre un banco o cajón a altura de rodilla.", "Baja verticalmente hasta 90° y empuja fuerte con el talón delantero.", "Realiza 6-8 reps por pierna."], alt: "Zancada estática en el suelo sin elevación trasera.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-calfraise", name: "Elevación de Talones Excéntrica", category: "Pierna Funcional", level: "1", goal: "Fortalecer el tendón de Aquiles y la pantorrilla para sostener apoyos en micro-regletas de pie.", steps: ["Párate sobre el borde de un escalón o cajón con ambos pies.", "Sube con los dos pies y baja lentamente en 4 segundos apoyando un solo pie.", "Realiza 10-12 reps por pierna."], alt: "Subir y bajar con ambos pies en suelo plano.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-wristcurl", name: "Curl Excéntrico de Muñeca (Prevención Codo)", category: "Empuje y Cara B", level: "1", goal: "Prevenir y rehabilitar la tendinopatía medial y lateral de codo mediante carga excéntrica lenta.", steps: ["Apoya el antebrazo sobre el muslo sosteniendo una mancuerna ligera.", "Sube la muñeca con ayuda de la otra mano y bájala lentamente en 4 segundos.", "Haz 12-15 reps por brazo (palma arriba y palma abajo)."], alt: "Usar una banda elástica suave o botella de agua.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-pronation", name: "Pronación y Supinación de Antebrazo", category: "Empuje y Cara B", level: "1", goal: "Equilibrar los músculos rotadores del antebrazo sometidos a torsión en agarres laterales.", steps: ["Mantén el codo pegado al costado a 90° sujetando una mancuerna por un extremo.", "Gira lentamente la muñeca llevando la palma hacia arriba y hacia abajo.", "Realiza 12-15 giros controlados por brazo."], alt: "Reducir palanca agarrando la mancuerna por el centro.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-facepull", name: "Tirón Facial y Rotación Externa de Hombro", category: "Empuje y Cara B", level: "1", goal: "Fortalecer el manguito rotador para blindar el hombro en bloqueos altos y movimientos dinámicos.", steps: ["Ancla una banda elástica a altura del rostro y tira hacia las orejas.", "Separa las manos rotando los pulgares hacia atrás al final del movimiento.", "Sostén 2 seg y regresa controlado (12-15 reps)."], alt: "Rotación externa tumbado de lado con mancuerna ligera.", source: "Eric Hörst · Entrenamiento para Escalada" }
+      ],
+      microcycles: [
+        // BLOQUE 1 · ANCLAJE (Respaldo offline principal)
+        { blockId: "horst-6w", code: "D1", shortTitle: "Dedos + Límite", title: "Fuerza Máxima de Dedos, Pinza y Búlder Límite", tag: "FUERZA MÁXIMA", duration: "90 min", focus: "Regla de oro: Deja 1-2 seg en reserva. Nunca arqueo cerrado (full crimp).", sections: [
+          { name: "1. Calentamiento Progresivo", items: [{ exId: "ex-mov", rx: "15 min", rest: "Continuo" }] },
+          { name: "2. Fuerza Específica de Agarre", items: [{ exId: "ex-hang20", rx: "4 series x 10 seg", rest: "3 min", p2: "5 series x 10 seg", p3: "3 series x 8 seg (Descarga)" }, { exId: "ex-pinch", rx: "3 series x 8-10 seg/mano", rest: "2 min", p2: "4 series x 8-10 seg", p3: "2 series (Descarga)" }] },
+          { name: "3. Transferencia en Muro", items: [{ exId: "ex-limit", rx: "35 min (2-3 bloques máx)", rest: "3-4 min", p2: "40 min (3 bloques)", p3: "20 min (Técnica suave)" }] }
+        ]},
+        { blockId: "horst-6w", code: "D2", shortTitle: "Cara B", title: "Cara B Completa: Empuje, Pierna Unilateral y Core", tag: "ACONDICIONAMIENTO", duration: "55 min", focus: "Cero agarre hoy. Equilibra antagonistas y potencia pierna alta para taloneos.", sections: [
+          { name: "1. Empuje Antagonista", items: [{ exId: "ex-push", rx: "3 x 10-12 reps", rest: "90 seg", p2: "4 x 10-12 reps", p3: "2 x 10 reps" }, { exId: "ex-skull", rx: "3 x 10-12 reps", rest: "90 seg", p2: "4 x 10 reps", p3: "2 x 10 reps" }] },
+          { name: "2. Pierna Alta, Taloneo y Pantorrilla", items: [{ exId: "ex-bulgarian", rx: "3 x 6-8 por pierna", rest: "90 seg", p2: "4 x 6-8 por pierna", p3: "2 x 6 por pierna" }, { exId: "ex-hamstring", rx: "3 x 8 por pierna", rest: "60 seg", p2: "4 x 8 por pierna", p3: "2 x 8 por pierna" }, { exId: "ex-calfraise", rx: "3 x 10 excéntricas/pie", rest: "60 seg" }] },
+          { name: "3. Cadena Central (Psoas y Lumbar)", items: [{ exId: "ex-psoas", rx: "3 x 8 reps", rest: "90 seg", p2: "4 x 8 reps", p3: "2 x 6 reps" }, { exId: "ex-lumbar", rx: "3 x 20-25 seg", rest: "60 seg", p2: "4 x 25 seg", p3: "2 x 20 seg" }] }
+        ]},
+        { blockId: "horst-6w", code: "D3", shortTitle: "Descanso", title: "Recuperación Tendinosa y Neural", tag: "DESCANSO TOTAL", duration: "0 min", focus: "Las poleas de los dedos se recuperan en 48-72h. Prioriza sueño e hidratación.", sections: [] },
+        { blockId: "horst-6w", code: "D4", shortTitle: "Tracción + 4x4", title: "Barra al Pecho, Bloqueos Isométricos y Circuitos 4x4", tag: "POTENCIA Y RESISTENCIA", duration: "90 min", focus: "Barra al pecho explosiva (reemplazo seguro del campus) + bloqueos a 90°/120°.", sections: [
+          { name: "1. Calentamiento Progresivo", items: [{ exId: "ex-mov", rx: "15 min", rest: "Continuo" }] },
+          { name: "2. Potencia y Bloqueo", items: [{ exId: "ex-chestpull", rx: "4 x 4-5 reps explosivas", rest: "3 min", p2: "5 x 4-5 reps", p3: "2 x 4 reps (Descarga)" }, { exId: "ex-lockoff", rx: "3 series (4s arriba / 90° / 120°)", rest: "3 min", p2: "4 series", p3: "2 series" }] },
+          { name: "3. Resistencia a la Fuerza", items: [{ exId: "ex-4x4", rx: "3 rondas x 4 bloques", rest: "3 min entre rondas", p2: "4 rondas x 4 bloques", p3: "2 rondas (Descarga)" }] }
+        ]},
+        { blockId: "horst-6w", code: "D5", shortTitle: "Descanso", title: "Descanso Previo a Sesión Social", tag: "DESCANSO TOTAL", duration: "0 min", focus: "Llega fresco al sábado para escalar con amigos.", sections: [] },
+        { blockId: "horst-6w", code: "D6", shortTitle: "Búlder Social", title: "Escalada Libre y Romos en ELBLOQUE", tag: "VOLUMEN Y TÉCNICA", duration: "90 min", focus: "Escala libremente con amigos y corta apenas baje tu calidad de movimiento.", sections: [
+          { name: "1. Activación", items: [{ exId: "ex-mov", rx: "15 min", rest: "Continuo" }] },
+          { name: "2. Trabajo en Romos y Muro", items: [{ exId: "ex-sloper", rx: "3 series x 8-10 seg", rest: "3 min", p2: "4 series", p3: "2 series" }, { exId: "ex-traverse", rx: "2 rondas suaves (15 movs)", rest: "3 min", p2: "3 rondas", p3: "1 ronda" }] }
+        ]},
+        { blockId: "horst-6w", code: "D7", shortTitle: "Descanso", title: "Descanso Obligatorio y Cierre de Semana", tag: "DESCANSO OBLIGATORIO", duration: "0 min", focus: "Registra el semáforo de dedos y codos en tu bitácora antes de iniciar la nueva semana.", sections: [] }
+      ],
+      logs: []
+    };
+
+    let state = {
+      data: JSON.parse(localStorage.getItem(STORAGE_KEYS.CACHE) || "null") || BACKUP_DATA,
+      blockId: localStorage.getItem(STORAGE_KEYS.BLOCK) || "horst-6w",
+      week: Number(localStorage.getItem(STORAGE_KEYS.WEEK)) || 1,
+      dayCode: "D1",
+      checks: JSON.parse(localStorage.getItem(STORAGE_KEYS.CHECKS) || "{}"),
+      traffic: { dedos: "verde", codos: "verde" }
+    };
+
+    // AUTH
+    function unlockApp() {
+      const val = document.getElementById("pin-input").value.trim();
+      if (val === PIN_CODE) {
+        localStorage.setItem(STORAGE_KEYS.AUTH, "1");
+        document.getElementById("pin-gate").classList.add("hidden");
+        initApp();
+      } else {
+        document.getElementById("pin-err").textContent = "PIN incorrecto. Intenta nuevamente.";
+      }
+    }
+    document.getElementById("pin-input").addEventListener("keydown", e => {
+      if (e.key === "Enter") unlockApp();
+    });
+
+    // INIT
+    window.addEventListener("DOMContentLoaded", () => {
+      if (localStorage.getItem(STORAGE_KEYS.AUTH) === "1") {
+        document.getElementById("pin-gate").classList.add("hidden");
+        initApp();
+      }
+    });
+
+    function initApp() {
+      renderAll();
+      syncFromSheets();
+    }
+
+    // SYNC WITH GOOGLE SHEETS
+    async function syncFromSheets() {
+      const url = localStorage.getItem(STORAGE_KEYS.API_URL);
+      const dot = document.getElementById("sync-dot");
+      const label = document.getElementById("sync-label");
+
+      if (!url) {
+        dot.className = "dot offline";
+        label.textContent = "Modo Offline (Configurar URL)";
+        return;
+      }
+
+      dot.className = "dot";
+      label.textContent = "Sincronizando...";
+
+      try {
+        const res = await fetch(url);
+        const json = await res.json();
+        if (json && json.ok) {
+          state.data = {
+            blocks: json.blocks && json.blocks.length ? json.blocks : BACKUP_DATA.blocks,
+            encyclopedia: json.encyclopedia && json.encyclopedia.length ? json.encyclopedia : BACKUP_DATA.encyclopedia,
+            microcycles: json.microcycles && json.microcycles.length ? json.microcycles : BACKUP_DATA.microcycles,
+            logs: Array.isArray(json.logs) ? json.logs : []
+          };
+          localStorage.setItem(STORAGE_KEYS.CACHE, JSON.stringify(state.data));
+          dot.className = "dot online";
+          label.textContent = "Conectado a Sheets";
+          renderAll();
+        } else {
+          throw new Error("Respuesta inválida");
+        }
+      } catch (err) {
+        dot.className = "dot offline";
+        label.textContent = "Respaldo Local";
+      }
+    }
+
+    function openConfigModal() {
+      document.getElementById("api-url-input").value = localStorage.getItem(STORAGE_KEYS.API_URL) || "";
+      document.getElementById("cfg-modal").classList.add("open");
+    }
+    function closeConfigModal() { document.getElementById("cfg-modal").classList.remove("open"); }
+    function saveApiUrl() {
+      const val = document.getElementById("api-url-input").value.trim();
+      if (val) localStorage.setItem(STORAGE_KEYS.API_URL, val);
+      closeConfigModal();
+      syncFromSheets();
+    }
+
+    // RENDER ALL
+    function renderAll() {
+      renderBlockSelector();
+      renderDashboard();
+      renderTrainView();
+      renderEncyclopediaFilters();
+      renderEncyclopedia();
+      renderLogView();
+    }
+
+    function getActiveBlock() {
+      return state.data.blocks.find(b => b.id === state.blockId) || state.data.blocks[0];
+    }
+
+    function getBlockDays() {
+      const days = state.data.microcycles.filter(m => m.blockId === state.blockId);
+      return days.length ? days : BACKUP_DATA.microcycles;
+    }
+
+    function renderBlockSelector() {
+      const sel = document.getElementById("block-select");
+      sel.innerHTML = state.data.blocks.map(b =>
+        `<option value="${b.id}" ${b.id === state.blockId ? "selected" : ""}>${b.title}</option>`
+      ).join("");
+
+      const block = getActiveBlock();
+      if (state.week > block.weeks) state.week = 1;
+      document.getElementById("week-label").textContent = `Sem ${state.week} / ${block.weeks}`;
+
+      const phase = (block.phases || []).find(p => p.weeks && p.weeks.includes(state.week)) || (block.phases || [])[0];
+      document.getElementById("phase-badge").textContent = phase ? phase.name.split("·")[0].trim() : `Semana ${state.week}`;
+      document.getElementById("phase-desc").textContent = phase ? `${phase.name}: ${phase.desc}` : "";
+    }
+
+    function onBlockChange() {
+      state.blockId = document.getElementById("block-select").value;
+      state.week = 1;
+      state.dayCode = "D1";
+      localStorage.setItem(STORAGE_KEYS.BLOCK, state.blockId);
+      localStorage.setItem(STORAGE_KEYS.WEEK, String(state.week));
+      renderAll();
+    }
+
+    function changeWeek(delta) {
+      const block = getActiveBlock();
+      let next = state.week + delta;
+      if (next < 1) next = block.weeks;
+      if (next > block.weeks) next = 1;
+      state.week = next;
+      localStorage.setItem(STORAGE_KEYS.WEEK, String(state.week));
+      renderAll();
+    }
+
+    // DASHBOARD
+    function renderDashboard() {
+      const block = getActiveBlock();
+      const days = getBlockDays();
+      const logs = state.data.logs || [];
+      const blockLogs = logs.filter(l => l.blockId === block.id);
+      const weekLogs = blockLogs.filter(l => Number(l.week) === Number(state.week));
+      const completedCodes = new Set(weekLogs.map(l => l.dayCode));
+
+      // 1. Progreso del bloque
+      const pct = Math.round((state.week / block.weeks) * 100);
+      document.getElementById("dash-pct").textContent = `${pct}%`;
+      document.getElementById("dash-week-kpi").textContent = `Semana ${state.week} de ${block.weeks}`;
+      document.getElementById("dash-sessions-kpi").textContent = `${blockLogs.length} sesiones registradas en este bloque`;
+      document.getElementById("dash-progress-fill").style.width = `${pct}%`;
+
+      // 2. Mapa semanal D1-D7
+      document.getElementById("dash-map-week").textContent = state.week;
+      const mapEl = document.getElementById("dash-week-map");
+      mapEl.innerHTML = days.map(d => {
+        const isDone = completedCodes.has(d.code);
+        const isRest = !d.sections || d.sections.length === 0;
+        const cls = isDone ? "done" : (isRest ? "rest" : "pending");
+        const icon = isDone ? "✅" : (isRest ? "🛌" : "⏳");
+        return `
+          <div class="day-node ${cls}" onclick="openDayFromDashboard('${d.code}')">
+            <span class="d-code">${d.code}</span>
+            <span class="d-short">${d.shortTitle}</span>
+            <span class="d-status">${icon}</span>
           </div>
         `;
       }).join("");
-      return `<div class="section-header">${sec.name}</div>${itemsHTML}`;
-    }).join("");
-  }
 
-  function setWeek(w) { state.week = w; renderTrainView(); }
-  function setDay(idx) { state.dayIndex = idx; renderTrainView(); }
-  function toggleCheck(key) { state.checkedItems[key] = !state.checkedItems[key]; renderTrainView(); }
+      // 3. Semáforo articular y RPE (últimos 10 registros globales)
+      const recent = logs.slice(-10);
+      if (recent.length > 0) {
+        const avgRpe = (recent.reduce((acc, r) => acc + (Number(r.rpe) || 0), 0) / recent.length).toFixed(1);
+        document.getElementById("dash-rpe-badge").textContent = `RPE ${avgRpe} / 10`;
 
-  function renderCatFilters() {
-    const cats = ["ALL", "Fuerza de Dedos", "Búlder y Técnica", "Tracción Superior", "Empuje y Cara B", "Pierna Funcional", "Core, Psoas y Lumbar"];
-    document.getElementById("cat-filters").innerHTML = cats.map(c => `
-      <button class="pill ${state.catFilter === c ? 'active' : ''}" onclick="setCatFilter('${c}', this)">${c === 'ALL' ? 'Todas' : c}</button>
-    `).join("");
-  }
+        const counts = { verde: 0, amarillo: 0, rojo: 0 };
+        recent.forEach(r => {
+          if (r.dedos === "rojo" || r.codos === "rojo") counts.rojo++;
+          else if (r.dedos === "amarillo" || r.codos === "amarillo") counts.amarillo++;
+          else counts.verde++;
+        });
 
-  function setCatFilter(cat, btn) {
-    state.catFilter = cat;
-    document.querySelectorAll("#cat-filters .pill").forEach(p => p.classList.remove("active"));
-    btn.classList.add("active");
-    renderEncyclopedia();
-  }
+        document.getElementById("dash-joint-status").textContent =
+          counts.rojo > 0 ? "Alerta Articular" : (counts.amarillo > 1 ? "Precaución Moderada" : "Estado Óptimo");
 
-  function setLvlFilter(lvl, btn) {
-    state.lvlFilter = lvl;
-    document.querySelectorAll("#lvl-filters .pill").forEach(p => p.classList.remove("active"));
-    btn.classList.add("active");
-    renderEncyclopedia();
-  }
+        document.getElementById("dash-traffic-pills").innerHTML = `
+          <span class="pill-stat pill-green">🟢 ${counts.verde} Óptimas</span>
+          <span class="pill-stat pill-yellow">🟡 ${counts.amarillo} Alerta</span>
+          <span class="pill-stat pill-red">🔴 ${counts.rojo} Parar</span>
+        `;
+      } else {
+        document.getElementById("dash-rpe-badge").textContent = "RPE —";
+        document.getElementById("dash-joint-status").textContent = "Sin registros aún";
+        document.getElementById("dash-traffic-pills").innerHTML = `<span class="pill-stat pill-green">🟢 Listo para iniciar</span>`;
+      }
 
-  function renderEncyclopedia() {
-    const q = document.getElementById("ency-search").value.toLowerCase();
-    const filtered = state.encyclopedia.filter(ex => {
-      const matchCat = state.catFilter === "ALL" || ex.category === state.catFilter;
-      const matchLvl = state.lvlFilter === "ALL" || ex.level === state.lvlFilter;
-      const matchQ = ex.name.toLowerCase().includes(q) || ex.goal.toLowerCase().includes(q) || ex.author.toLowerCase().includes(q);
-      return matchCat && matchLvl && matchQ;
-    });
+      // 4. Balance Muro vs Cara B + Última sesión
+      if (blockLogs.length > 0) {
+        const caraBCount = blockLogs.filter(l => l.dayCode === "D2" || /cara b/i.test(l.dayTitle)).length;
+        const muroCount = blockLogs.length - caraBCount;
+        document.getElementById("dash-balance-kpi").textContent = `${muroCount} Muro · ${caraBCount} Cara B`;
+        document.getElementById("dash-balance-sub").textContent =
+          caraBCount === 0 ? "Recuerda no descuidar Cara B (D2) para blindar codos y psoas." : "Buen equilibrio entre escalada específica y prevención articular.";
+      } else {
+        document.getElementById("dash-balance-kpi").textContent = "3 Muro · 1 Cara B";
+        document.getElementById("dash-balance-sub").textContent = "Estructura semanal recomendada del microciclo activo.";
+      }
 
-    document.getElementById("ency-list").innerHTML = filtered.map(ex => `
-      <div class="card" style="cursor:pointer;" onclick="openExerciseModal('${ex.id}')">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;">
-          <strong style="font-size:0.96rem;">${ex.name}</strong>
-          <span class="badge lvl-${ex.level}">Nivel ${ex.level} · ${ex.level === '1' ? 'Base' : ex.level === '2' ? 'Intermedio' : 'Avanzado'}</span>
+      const last = logs[logs.length - 1];
+      if (last) {
+        document.getElementById("dash-last-session").textContent = `${last.date} · ${last.dayCode} (${last.dayTitle}) · RPE ${last.rpe}`;
+        document.getElementById("dash-last-note").textContent = last.note || `Dedos: ${last.dedos} · Codos: ${last.codos}`;
+      } else {
+        document.getElementById("dash-last-session").textContent = "Aún no hay registros en 4_BITACORA.";
+        document.getElementById("dash-last-note").textContent = "Completa una sesión en Entrenar y guárdala en Bitácora.";
+      }
+    }
+
+    function openDayFromDashboard(code) {
+      state.dayCode = code;
+      const btn = document.querySelector('.nav-btn[data-view="train"]');
+      switchView("train", btn);
+    }
+
+    // ENTRENAR
+    function renderTrainView() {
+      const days = getBlockDays();
+      if (!days.some(d => d.code === state.dayCode)) state.dayCode = days[0].code;
+
+      const tabsEl = document.getElementById("day-tabs");
+      tabsEl.innerHTML = days.map(d => `
+        <button class="day-tab ${d.code === state.dayCode ? "active" : ""}" onclick="selectDay('${d.code}')">
+          ${d.code} · ${d.shortTitle}
+          <small>${d.duration}</small>
+        </button>
+      `).join("");
+
+      const day = days.find(d => d.code === state.dayCode) || days[0];
+      const block = getActiveBlock();
+      document.getElementById("day-tag").textContent = day.tag;
+      document.getElementById("day-title").textContent = day.title;
+      document.getElementById("day-duration").textContent = day.duration;
+      document.getElementById("day-focus").textContent = day.focus;
+
+      const secEl = document.getElementById("day-sections");
+      if (!day.sections || day.sections.length === 0) {
+        secEl.innerHTML = `<p style="font-size:13px; color:var(--text-muted); padding:8px 0;">Día de descanso programado. Sin ejercicios de carga.</p>`;
+        return;
+      }
+
+      // Determinar prescripción según semana (p1, p2 o descarga p3)
+      const isDeload = state.week === block.weeks && block.weeks >= 4;
+      const isPhase2 = !isDeload && state.week >= 3;
+
+      secEl.innerHTML = day.sections.map((sec, sIdx) => {
+        const itemsHtml = sec.items.map((item, iIdx) => {
+          const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { name: item.exId };
+          const checkKey = `${state.blockId}_w${state.week}_${day.code}_s${sIdx}_i${iIdx}`;
+          const isChecked = !!state.checks[checkKey];
+          const rxText = (isDeload && item.p3) ? item.p3 : ((isPhase2 && item.p2) ? item.p2 : item.rx);
+
+          return `
+            <div class="ex-item ${isChecked ? "checked" : ""}">
+              <input type="checkbox" class="ex-check" ${isChecked ? "checked" : ""} onchange="toggleCheck('${checkKey}')" />
+              <div class="ex-body" onclick="openExModal('${item.exId}')">
+                <div class="ex-name">${ex.name}</div>
+                <div class="ex-meta">
+                  <span>📋 ${rxText}</span>
+                  ${item.rest ? `<span>⏱ Descanso: ${item.rest}</span>` : ""}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        return `<div class="sec-header">${sec.name}</div>${itemsHtml}`;
+      }).join("");
+    }
+
+    function selectDay(code) {
+      state.dayCode = code;
+      renderTrainView();
+    }
+
+    function toggleCheck(key) {
+      state.checks[key] = !state.checks[key];
+      localStorage.setItem(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
+      renderTrainView();
+    }
+
+    function goToLogCurrentDay() {
+      const btn = document.querySelector('.nav-btn[data-view="log"]');
+      switchView("log", btn);
+      document.getElementById("log-day").value = state.dayCode;
+    }
+
+    // ENCICLOPEDIA
+    function renderEncyclopediaFilters() {
+      const catSel = document.getElementById("ency-cat");
+      const current = catSel.value;
+      const cats = [...new Set(state.data.encyclopedia.map(e => e.category).filter(Boolean))];
+      catSel.innerHTML = `<option value="">Todas las categorías</option>` +
+        cats.map(c => `<option value="${c}" ${c === current ? "selected" : ""}>${c}</option>`).join("");
+    }
+
+    function renderEncyclopedia() {
+      const q = document.getElementById("ency-search").value.toLowerCase().trim();
+      const cat = document.getElementById("ency-cat").value;
+      const lvl = document.getElementById("ency-lvl").value;
+
+      const list = state.data.encyclopedia.filter(e => {
+        const matchQ = !q || e.name.toLowerCase().includes(q) || (e.goal || "").toLowerCase().includes(q);
+        const matchCat = !cat || e.category === cat;
+        const matchLvl = !lvl || String(e.level) === lvl;
+        return matchQ && matchCat && matchLvl;
+      });
+
+      const lvlLabel = { "1": "Nivel 1 · Básico", "2": "Nivel 2 · Intermedio", "3": "Nivel 3 · Avanzado" };
+
+      document.getElementById("ency-list").innerHTML = list.map(e => `
+        <div class="ency-card" onclick="openExModal('${e.id}')">
+          <div class="ency-top">
+            <span class="pill-stat pill-accent">${e.category}</span>
+            <span style="font-size:11px; color:var(--text-muted); font-weight:700;">${lvlLabel[e.level] || "Nivel " + e.level}</span>
+          </div>
+          <div class="ency-title">${e.name}</div>
+          <p style="font-size:12.5px; color:var(--text-muted); margin-top:4px;">${e.goal}</p>
         </div>
-        <p style="font-size:0.83rem; color:var(--text-muted); margin-bottom:8px;">${ex.goal}</p>
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span class="badge cat-badge">${ex.category}</span>
-          <span style="font-size:0.74rem; color:var(--text-muted);">${ex.author}</span>
+      `).join("");
+    }
+
+    // MODAL EJERCICIO
+    function openExModal(exId) {
+      const ex = state.data.encyclopedia.find(e => e.id === exId);
+      if (!ex) return;
+      document.getElementById("m-cat").textContent = `${ex.category} · Nivel ${ex.level}`;
+      document.getElementById("m-title").textContent = ex.name;
+      document.getElementById("m-goal").textContent = ex.goal;
+      document.getElementById("m-steps").innerHTML = (ex.steps || []).map(s => `<li>${s}</li>`).join("");
+      document.getElementById("m-alt").textContent = ex.alt || "Ajustar volumen o descargar peso.";
+      document.getElementById("m-source").textContent = `Fuente: ${ex.source || "Eric Hörst"}`;
+      document.getElementById("ex-modal").classList.add("open");
+    }
+    function closeExModal() { document.getElementById("ex-modal").classList.remove("open"); }
+
+    // BITÁCORA
+    function renderLogView() {
+      const days = getBlockDays();
+      const sel = document.getElementById("log-day");
+      sel.innerHTML = days.map(d =>
+        `<option value="${d.code}" ${d.code === state.dayCode ? "selected" : ""}>${d.code} · ${d.title}</option>`
+      ).join("");
+
+      const logs = [...(state.data.logs || [])].reverse().slice(0, 15);
+      const histEl = document.getElementById("log-history");
+      if (!logs.length) {
+        histEl.innerHTML = `<p style="font-size:12.5px; color:var(--text-muted);">No hay registros todavía.</p>`;
+        return;
+      }
+
+      histEl.innerHTML = logs.map(l => `
+        <div style="border-bottom:1px solid var(--border); padding:10px 0; font-size:12.5px;">
+          <div style="display:flex; justify-content:space-between; font-weight:700;">
+            <span>${l.dayCode} · ${l.dayTitle} (Sem ${l.week})</span>
+            <span>RPE ${l.rpe}/10</span>
+          </div>
+          <div style="color:var(--text-muted); font-size:11.5px; margin-top:2px;">
+            ${l.date} · Dedos: <strong>${l.dedos}</strong> · Codos: <strong>${l.codos}</strong>
+          </div>
+          ${l.note ? `<div style="margin-top:4px; color:var(--text);">${l.note}</div>` : ""}
         </div>
-      </div>
-    `).join("");
-  }
+      `).join("");
+    }
 
-  function openExerciseModal(exId) {
-    const ex = state.encyclopedia.find(e => e.id === exId);
-    if (!ex) return;
-    document.getElementById("modal-ex-title").textContent = ex.name;
-    document.getElementById("modal-ex-badges").innerHTML = `
-      <span class="badge cat-badge">${ex.category}</span>
-      <span class="badge lvl-${ex.level}">Nivel ${ex.level} · ${ex.level === '1' ? 'Base' : ex.level === '2' ? 'Intermedio' : 'Avanzado'}</span>
-    `;
-    document.getElementById("modal-ex-goal").textContent = ex.goal;
-    document.getElementById("modal-ex-steps").innerHTML = ex.steps.map(s => `<li>${s}</li>`).join("");
-    document.getElementById("modal-ex-alt").textContent = ex.safeAlt;
-    document.getElementById("modal-ex-author").textContent = `Fuente: ${ex.author}`;
-    document.getElementById("ex-modal").classList.add("open");
-  }
+    function setTraffic(part, val, btn) {
+      state.traffic[part] = val;
+      const container = document.getElementById(`${part}-selector`);
+      container.querySelectorAll(".t-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
 
-  function openNewExerciseModal() { document.getElementById("new-ex-modal").classList.add("open"); }
-  function openNewBlockModal() { document.getElementById("new-block-modal").classList.add("open"); }
-  function closeModal(id, e) { if (e.target.id === id) document.getElementById(id).classList.remove("open"); }
+    async function submitLog() {
+      const url = localStorage.getItem(STORAGE_KEYS.API_URL);
+      const block = getActiveBlock();
+      const days = getBlockDays();
+      const dayCode = document.getElementById("log-day").value;
+      const dayObj = days.find(d => d.code === dayCode) || { title: dayCode };
 
-  async function saveNewExercise() {
-    const name = document.getElementById("new-ex-name").value.trim();
-    if (!name) return showToast("Escribe el nombre del ejercicio");
+      const entry = {
+        date: new Date().toISOString().slice(0, 10),
+        blockId: block.id,
+        meso: block.title,
+        week: state.week,
+        dayCode: dayCode,
+        dayTitle: dayObj.title,
+        rpe: Number(document.getElementById("log-rpe").value) || 7,
+        dedos: state.traffic.dedos,
+        codos: state.traffic.codos,
+        note: document.getElementById("log-note").value.trim()
+      };
 
-    const newEx = {
-      id: "ex-" + Date.now(),
-      name,
-      category: document.getElementById("new-ex-cat").value,
-      level: document.getElementById("new-ex-lvl").value,
-      goal: document.getElementById("new-ex-goal").value.trim() || "Ejercicio registrado por el usuario.",
-      steps: (document.getElementById("new-ex-steps").value.trim() || "Ejecutar con control postural.").split(";").map(s => s.trim()).filter(Boolean),
-      safeAlt: document.getElementById("new-ex-alt").value.trim() || "Reducir carga o tiempo bajo tensión.",
-      author: document.getElementById("new-ex-author").value.trim() || "Usuario SUNBLOCK"
-    };
+      // Actualizar optimistamente en memoria local
+      state.data.logs = [...(state.data.logs || []), entry];
+      localStorage.setItem(STORAGE_KEYS.CACHE, JSON.stringify(state.data));
+      renderAll();
 
-    state.encyclopedia.unshift(newEx);
-    renderEncyclopedia();
-    document.getElementById("new-ex-modal").classList.remove("open");
-    await postToCloud({ action: "ADD_EXERCISE", data: newEx });
-  }
+      if (!url) {
+        alert("Guardado localmente (configura la URL /exec en ⚙️ para enviar a Google Sheets).");
+        return;
+      }
 
-  async function createCloudBlock() {
-    const title = document.getElementById("nb-title").value.trim();
-    if (!title) return showToast("Escribe un nombre para el bloque");
-    const weeks = parseInt(document.getElementById("nb-weeks").value, 10);
+      const btn = document.getElementById("btn-save-log");
+      btn.disabled = true;
+      btn.textContent = "Guardando en Sheets...";
 
-    const newBlock = {
-      id: "block-" + Date.now(),
-      title,
-      weeks,
-      phases: [
-        { weeks: [1, 2], name: "Fase 1 · Base y Adaptación", desc: "Construcción progresiva." },
-        { weeks: [3, 4, 5, 6], name: "Fase 2 · Intensificación y Descarga", desc: "Transferencia al muro." }
-      ],
-      microcycle: state.mesocycles[0].microcycle
-    };
+      try {
+        await fetch(url, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "ADD_LOG", data: entry })
+        });
+        document.getElementById("log-note").value = "";
+        setTimeout(() => syncFromSheets(), 1200);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Guardar en Bitácora";
+      }
+    }
 
-    state.mesocycles.push(newBlock);
-    renderMesoSelect();
-    document.getElementById("new-block-modal").classList.remove("open");
-    await postToCloud({ action: "ADD_BLOCK", data: newBlock });
-  }
-
-  function selectSemaforo(group, val, el) {
-    if (group === "dedos") state.semDedos = val;
-    if (group === "codos") state.semCodos = val;
-    const container = document.getElementById(group === "dedos" ? "sem-dedos" : "sem-codos");
-    container.querySelectorAll(".sem-opt").forEach(opt => opt.classList.remove("selected"));
-    el.classList.add("selected");
-  }
-
-  async function saveSessionLog() {
-    if (!state.mesocycles.length) return;
-    const meso = state.mesocycles[state.mesoIndex];
-    const day = meso.microcycle[state.dayIndex];
-    const logData = {
-      date: document.getElementById("log-date").value,
-      blockId: meso.id,
-      meso: meso.title,
-      week: state.week,
-      dayCode: day.code,
-      dayTitle: day.title,
-      rpe: document.getElementById("log-rpe").value,
-      dedos: state.semDedos,
-      codos: state.semCodos,
-      note: document.getElementById("log-note").value.trim()
-    };
-
-    state.logs.unshift({
-      date: logData.date,
-      meso: logData.meso,
-      week: logData.week,
-      day: `${logData.dayCode} · ${logData.dayTitle}`,
-      rpe: logData.rpe,
-      dedos: logData.dedos,
-      codos: logData.codos,
-      note: logData.note
-    });
-    renderHistory();
-    await postToCloud({ action: "ADD_LOG", data: logData });
-  }
-
-  function renderHistory() {
-    const list = document.getElementById("history-list");
-    if (!state.logs.length) return;
-    list.innerHTML = state.logs.map(l => `
-      <div style="padding:10px; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; font-size:0.82rem;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <strong>${l.date} · Sem ${l.week} (${l.day.split('·')[0].trim()})</strong>
-          <span>RPE ${l.rpe}/10</span>
-        </div>
-        <div style="color:var(--text-muted);">Dedos: ${l.dedos.toUpperCase()} · Codos: ${l.codos.toUpperCase()}</div>
-        ${l.note ? `<div style="margin-top:4px; color:var(--text);">"${l.note}"</div>` : ''}
-      </div>
-    `).join("");
-  }
-
-  function copyDocsReport() {
-    if (!state.mesocycles.length) return;
-    const meso = state.mesocycles[state.mesoIndex];
-    const day = meso.microcycle[state.dayIndex];
-    const report = `REPORTE DE ENTRENAMIENTO · SUNBLOCK\n` +
-      `Fecha: ${document.getElementById("log-date").value}\n` +
-      `Mesociclo: ${meso.title}\n` +
-      `Semana ${state.week} | ${day.code} - ${day.title}\n` +
-      `RPE: ${document.getElementById("log-rpe").value}/10 | Dedos: ${state.semDedos.toUpperCase()} | Codos: ${state.semCodos.toUpperCase()}\n` +
-      `Notas: ${document.getElementById("log-note").value.trim() || "Sin novedades."}`;
-
-    navigator.clipboard.writeText(report).then(() => showToast("Reporte copiado para Google Docs"));
-  }
-
-  function switchView(viewName, btn) {
-    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
-    document.getElementById("view-" + viewName).classList.add("active");
-    document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-    if (btn) btn.classList.add("active");
-  }
-
-  function updateAccentColor(hex) {
-    if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) return;
-    document.documentElement.style.setProperty("--accent", hex);
-    document.getElementById("hex-picker").value = hex;
-    document.getElementById("hex-input").value = hex;
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.style.display = "block";
-    setTimeout(() => { t.style.display = "none"; }, 2200);
-  }
-
-  init();
-</script>
+    // NAVIGATION
+    function switchView(viewName, btn) {
+      ["dashboard", "train", "ency", "log"].forEach(v => {
+        document.getElementById(`view-${v}`).classList.toggle("hidden", v !== viewName);
+      });
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+    }
+  </script>
 </body>
 </html>
