@@ -196,59 +196,100 @@
     }
     .day-tab small { display: block; font-size: 10px; font-weight: 500; opacity: 0.85; }
 
-    /* LATTICE STRUCTURED INTERVAL TIMER */
-    .lattice-box {
-      background: var(--surface-2); border: 1px solid var(--border);
-      border-radius: 14px; padding: 14px; margin-bottom: 14px;
+    /* LATTICE INTERVAL TIMER CARD */
+    .lattice-card {
+      background: linear-gradient(180deg, #1b202b 0%, #161922 100%);
+      border: 1px solid #323949;
+      border-radius: 16px; padding: 16px; margin-bottom: 14px;
     }
-    .lattice-head {
-      display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+    .lattice-top {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px;
     }
-    .phase-chip {
-      font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
-      padding: 4px 10px; border-radius: 999px;
+    .lattice-brand {
+      font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-muted);
     }
-    .phase-prep { background: var(--blue-soft); color: var(--blue); }
-    .phase-work { background: var(--accent-soft); color: var(--accent); }
-    .phase-rest { background: var(--green-soft); color: var(--green); }
-    .phase-setrest { background: var(--yellow-soft); color: var(--yellow); }
-    .phase-done { background: var(--green-soft); color: var(--green); }
-    .lattice-clock {
-      font-size: 36px; font-weight: 800; font-variant-numeric: tabular-nums;
-      letter-spacing: 0.03em; line-height: 1.1; margin-top: 6px;
+    .phase-pill {
+      font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 4px 11px; border-radius: 999px;
     }
-    .lattice-counter {
-      font-size: 12px; font-weight: 700; color: var(--text-muted); margin-top: 2px;
+    .p-prep { background: var(--blue-soft); color: var(--blue); border: 1px solid rgba(59,130,246,0.35); }
+    .p-work { background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(249,115,22,0.45); }
+    .p-rest { background: var(--green-soft); color: var(--green); border: 1px solid rgba(16,185,129,0.35); }
+    .p-setrest { background: var(--yellow-soft); color: var(--yellow); border: 1px solid rgba(245,158,11,0.35); }
+    .p-done { background: var(--green-soft); color: var(--green); border: 1px solid rgba(16,185,129,0.4); }
+
+    .linked-ex-bar {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 11px;
+      padding: 9px 12px; margin-bottom: 10px;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
     }
-    .lattice-controls {
-      display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
+    .linked-ex-name { font-size: 13px; font-weight: 800; color: var(--text); }
+    .linked-ex-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .linked-done-btn {
+      background: var(--green-soft); border: 1px solid rgba(16,185,129,0.4); color: var(--green);
+      border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer;
     }
-    .t-action {
-      padding: 8px 13px; border-radius: 10px; border: 1px solid var(--border);
-      background: var(--surface); color: var(--text); font-size: 12px; font-weight: 700; cursor: pointer;
+
+    .lattice-stage {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap;
     }
-    .t-action.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .lattice-grid {
-      display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-top: 12px;
+    .lattice-digits {
+      font-size: 48px; font-weight: 800; font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em; line-height: 1;
+    }
+    .lattice-meta-right { text-align: right; }
+    .lattice-sr { font-size: 14px; font-weight: 800; color: var(--text); }
+    .lattice-total { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .phase-track {
+      width: 100%; height: 8px; background: var(--bg);
+      border-radius: 999px; overflow: hidden; margin: 12px 0;
+    }
+    .phase-fill {
+      height: 100%; width: 100%; background: var(--accent); transition: width 0.25s linear;
+    }
+
+    .lattice-actions {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px;
+    }
+    @media (max-width: 520px) {
+      .lattice-actions { grid-template-columns: 1fr 1fr; }
+    }
+    .l-btn {
+      padding: 10px 10px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface-2); color: var(--text); font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .l-btn.go { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .lattice-params {
+      display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px;
     }
     @media (max-width: 640px) {
-      .lattice-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .lattice-params { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
-    .l-field label {
-      display: block; font-size: 10px; font-weight: 700; text-transform: uppercase;
-      color: var(--text-muted); margin-bottom: 4px; letter-spacing: 0.04em;
+    .lp-box {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 9px; padding: 6px 8px;
     }
-    .l-field input {
-      padding: 7px 8px; font-size: 12px; font-weight: 700; text-align: center;
+    .lp-box label {
+      display: block; font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;
     }
-    .lattice-presets {
-      display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;
+    .lp-box input {
+      background: transparent; border: none; padding: 2px 0 0; font-size: 14px; font-weight: 800;
     }
-    .preset-chip {
-      padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border);
-      background: var(--surface); color: var(--text-muted); font-size: 11px; font-weight: 700; cursor: pointer;
+
+    .lattice-queue {
+      display: flex; gap: 6px; overflow-x: auto; padding-top: 10px; margin-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.06);
     }
-    .preset-chip:hover { color: var(--text); border-color: var(--accent); }
+    .q-chip {
+      flex: 0 0 auto; font-size: 11px; font-weight: 700; padding: 5px 10px;
+      border-radius: 8px; border: 1px solid var(--border); background: var(--surface);
+      color: var(--text-muted); cursor: pointer;
+    }
+    .q-chip.active {
+      border-color: var(--accent); background: var(--accent-soft); color: var(--text);
+    }
 
     /* WORKOUT SECTIONS */
     .focus-banner {
@@ -263,8 +304,9 @@
       display: flex; align-items: flex-start; gap: 10px;
       background: var(--surface-2); border: 1px solid var(--border);
       border-radius: 11px; padding: 11px 12px; margin-bottom: 8px;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, border-color 0.2s;
     }
+    .ex-item.active-linked { border-color: var(--accent); background: rgba(249, 115, 22, 0.06); }
     .ex-item.checked { opacity: 0.55; }
     .ex-check {
       width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); cursor: pointer;
@@ -278,7 +320,7 @@
     .ex-meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
     .ex-meta span { background: var(--surface); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border); }
     .ex-timer-btn {
-      background: var(--surface); border: 1px solid var(--border); color: var(--accent);
+      background: var(--accent-soft); border: 1px solid rgba(249,115,22,0.45); color: var(--accent);
       border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 700; cursor: pointer;
     }
 
@@ -453,54 +495,68 @@
         </div>
         <div id="day-focus" class="focus-banner"></div>
 
-        <!-- TEMPORIZADOR ESTRUCTURADO ESTILO LATTICE -->
-        <div class="lattice-box">
-          <div class="lattice-head">
+        <!-- TEMPORIZADOR CONECTADO A EJERCICIOS -->
+        <div class="lattice-card">
+          <div class="lattice-top">
+            <span class="lattice-brand">LATTICE INTERVAL TIMER</span>
+            <span id="lat-phase-pill" class="phase-pill p-prep">PREPARACIÓN</span>
+          </div>
+
+          <div class="linked-ex-bar">
             <div>
-              <span id="lat-phase-badge" class="phase-chip phase-prep">PREP</span>
-              <div id="lat-clock" class="lattice-clock">00:05</div>
-              <div id="lat-counter" class="lattice-counter">Serie 1/4 · Rep 1/1</div>
+              <div id="lat-ex-title" class="linked-ex-name">Sin ejercicio cargado</div>
+              <div id="lat-ex-sub" class="linked-ex-sub">Toca "⏱ Cargar" en cualquier ejercicio o usa la cola del día</div>
             </div>
-            <div class="lattice-controls">
-              <button type="button" class="t-action primary" id="lat-start-btn" onclick="toggleLattice()">Iniciar</button>
-              <button type="button" class="t-action" onclick="skipLatticePhase()">Saltar fase</button>
-              <button type="button" class="t-action" onclick="resetLattice()">Reiniciar</button>
+            <button type="button" id="lat-check-btn" class="linked-done-btn" onclick="completeLinkedExercise()">✓ Marcar hecho</button>
+          </div>
+
+          <div class="lattice-stage">
+            <div id="lat-digits" class="lattice-digits">00:05</div>
+            <div class="lattice-meta-right">
+              <div id="lat-sr" class="lattice-sr">Serie 1 / 4 · Rep 1 / 1</div>
+              <div id="lat-total-left" class="lattice-total">Siguiente: Trabajo</div>
             </div>
           </div>
 
-          <div class="lattice-grid">
-            <div class="l-field">
+          <div class="phase-track">
+            <div id="lat-phase-fill" class="phase-fill"></div>
+          </div>
+
+          <div class="lattice-actions">
+            <button type="button" class="l-btn go" id="lat-toggle-btn" onclick="toggleLattice()">▶ Iniciar</button>
+            <button type="button" class="l-btn" onclick="skipLatticePhase()">⏭ Fase</button>
+            <button type="button" class="l-btn" onclick="nextQueueExercise()">➡ Ej. Sig.</button>
+            <button type="button" class="l-btn" onclick="resetLattice()">↺ Reset</button>
+          </div>
+
+          <div id="lat-params-panel" class="lattice-params">
+            <div class="lp-box">
               <label>Prep (s)</label>
               <input id="lat-prep" type="number" min="0" max="60" value="5" onchange="applyLatticeInputs()" />
             </div>
-            <div class="l-field">
+            <div class="lp-box">
               <label>Work (s)</label>
               <input id="lat-work" type="number" min="1" max="600" value="10" onchange="applyLatticeInputs()" />
             </div>
-            <div class="l-field">
-              <label>Rest Rep (s)</label>
+            <div class="lp-box">
+              <label>Rest (s)</label>
               <input id="lat-rest" type="number" min="0" max="600" value="0" onchange="applyLatticeInputs()" />
             </div>
-            <div class="l-field">
+            <div class="lp-box">
               <label>Reps</label>
               <input id="lat-reps" type="number" min="1" max="50" value="1" onchange="applyLatticeInputs()" />
             </div>
-            <div class="l-field">
+            <div class="lp-box">
               <label>Sets</label>
               <input id="lat-sets" type="number" min="1" max="30" value="4" onchange="applyLatticeInputs()" />
             </div>
-            <div class="l-field">
-              <label>Rest Set (s)</label>
+            <div class="lp-box">
+              <label>Set Rest (s)</label>
               <input id="lat-setrest" type="number" min="0" max="900" value="180" onchange="applyLatticeInputs()" />
             </div>
           </div>
 
-          <div class="lattice-presets">
-            <button type="button" class="preset-chip" onclick="applyLatticePreset({prep:5,work:10,rest:0,reps:1,sets:4,setRest:180})">Regleta 10s x4 (3m)</button>
-            <button type="button" class="preset-chip" onclick="applyLatticePreset({prep:5,work:7,rest:3,reps:6,sets:3,setRest:180})">Repeaters 7:3 x6 (3m)</button>
-            <button type="button" class="preset-chip" onclick="applyLatticePreset({prep:5,work:5,rest:10,reps:4,sets:4,setRest:180})">Contacto 5s x4 (3m)</button>
-            <button type="button" class="preset-chip" onclick="applyLatticePreset({prep:5,work:45,rest:15,reps:3,sets:3,setRest:90})">Core / Cara B 45:15</button>
-          </div>
+          <div id="lat-queue" class="lattice-queue"></div>
         </div>
 
         <div id="day-sections"></div>
@@ -734,7 +790,7 @@
         { id: "ex-maxedge", name: "Regleta Mínima (10-12 mm)", category: "Fuerza de Dedos", level: "3", goal: "Maximizar la fuerza de contacto en micro-regletas manteniendo un ángulo articular seguro.", steps: ["Usa exclusivamente agarre semi-arqueado; queda prohibido el arqueo cerrado.", "Cuelga 6-8 seg sin lastre excesivo dejando 2 seg en reserva.", "Descansa 3-4 minutos entre series."], alt: "Mantenerse en regleta de 18-20 mm añadiendo lastre moderado.", source: "Eric Hörst · Entrenamiento para Escalada" },
         { id: "ex-lightrep", name: "Protocolo Tendinoso Ligero", category: "Fuerza de Dedos", level: "1", goal: "Estimular la síntesis de colágeno y la vascularización tendinosa en días de descarga o retorno.", steps: ["Mantén los pies apoyados en el suelo descargando el 60-70% de tu peso corporal.", "Sostén una regleta cómoda 10 seg y descansa 5 seg (6 repeticiones por serie).", "Realiza 2-3 series con 2 min de pausa."], alt: "Terapia con plastilina terapéutica o apertura de dedos con banda elástica.", source: "Eric Hörst · Entrenamiento para Escalada" },
         { id: "ex-lockoff", name: "Bloqueos Isométricos a 90° y 120°", category: "Tracción Superior", level: "2", goal: "Desarrollar fuerza estática para sostener posiciones mientras se alcanza una presa lejana.", steps: ["Sube en dominada y mantén la barbilla sobre la barra 4 segundos.", "Baja a un ángulo de 90° y sostén 4 seg; baja a 120° y sostén otros 4 seg.", "Descansa 3 minutos entre repeticiones."], alt: "Realizar un solo ángulo (90°) asistido con banda elástica.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-archer", name: "Dominadas Tipo Arquero", category: "Tracción Superior", level: "3", goal: "Desarrollar fuerza unilateral de tracción y control escapular asimétrico.", steps: ["Toma la barra con agarre ancho y sube hacia una mano extendiendo el brazo contrario.", "Desplázate horizontalmente hacia la otra mano sin perder altura.", "Baja controlado y descansa 3 minutos."], alt: "Dominadas con una mano agarrando la muñeca contraria.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id="ex-archer", name: "Dominadas Tipo Arquero", category: "Tracción Superior", level: "3", goal: "Desarrollar fuerza unilateral de tracción y control escapular asimétrico.", steps: ["Toma la barra con agarre ancho y sube hacia una mano extendiendo el brazo contrario.", "Desplázate horizontalmente hacia la otra mano sin perder altura.", "Baja controlado y descansa 3 minutos."], alt: "Dominadas con una mano agarrando la muñeca contraria.", source: "Eric Hörst · Entrenamiento para Escalada" },
         { id: "ex-frenchies", name: "Dominada con Paradas Isométricas", category: "Tracción Superior", level: "3", goal: "Combinar fuerza máxima de tracción y resistencia isométrica al bloqueo en una misma serie.", steps: ["Haz 1 dominada completa y bloquea arriba 4 seg; baja hasta extender los brazos.", "Sube y bloquea a 90° por 4 seg; baja y sube para bloquear a 120° por 4 seg.", "Descansa 3-4 minutos entre series."], alt: "Reducir las paradas isométricas a 2 segundos por ángulo.", source: "Eric Hörst · Entrenamiento para Escalada" },
         { id: "ex-invrow", name: "Remo Invertido en Anillas o Barra Baja", category: "Tracción Superior", level: "1", media_url: "assets/ex-invrow.webp", goal: "Fortalecer romboides, trapecio medio y deltoides posterior para dar estabilidad escapular en techos.", steps: ["Colócate bajo la barra o anillas con el cuerpo recto y talones apoyados.", "Tira del pecho hacia las manos juntando las escápulas al final del recorrido.", "Baja controlado en 2 segundos."], alt: "Aumentar el ángulo vertical del cuerpo (pies más cerca de la vertical).", source: "Eric Hörst · Entrenamiento para Escalada" },
         { id: "ex-hovering", name: "Pausa Suspendida de 3 Segundos", category: "Búlder y Técnica", level: "1", goal: "Eliminar el impulso descontrolado y obligar al cuerpo a encontrar el equilibrio sobre los pies.", steps: ["Escala un bloque fácil o moderado en silencio.", "Antes de agarrar cada presa de mano, mantén la mano suspendida a 5 cm durante 3 segundos.", "Fija el pie antes de mover la mano."], alt: "Aplicar pausa de 2 segundos en bloques de placa vertical.", source: "Eric Hörst · Entrenamiento para Escalada" },
@@ -802,14 +858,24 @@
       traffic: { dedos: "verde", codos: "verde" }
     };
 
-    // LATTICE STRUCTURED INTERVAL TIMER
+    // LATTICE INTERVAL TIMER + EXERCISE QUEUE
     let latCfg = { prep: 5, work: 10, rest: 0, reps: 1, sets: 4, setRest: 180 };
+    let latLinked = {
+      checkKey: null,
+      exId: null,
+      exName: "Suspensiones Máximas en Regleta (20 mm)",
+      rx: "4 series x 10 seg",
+      restText: "3 min",
+      queueIndex: 0,
+      autoAdvanceEx: true
+    };
     let latRuntime = {
       running: false,
       phase: "prep", // prep | work | rest | setrest | done
       rep: 1,
       set: 1,
       remaining: 5,
+      phaseTotal: 5,
       intervalId: null
     };
 
@@ -835,9 +901,155 @@
       return `${String(Math.floor(v / 60)).padStart(2, "0")}:${String(v % 60).padStart(2, "0")}`;
     }
 
-    function getFirstPhase() {
-      if (latCfg.prep > 0) return { phase: "prep", sec: latCfg.prep };
-      return { phase: "work", sec: Math.max(1, latCfg.work) };
+    function parseSecondsFromText(text, fallbackSec) {
+      if (!text) return fallbackSec;
+      const t = String(text).toLowerCase();
+      const m = t.match(/([\d.]+)\s*min/);
+      if (m) return Math.max(1, Math.round(parseFloat(m[1]) * 60));
+      const s = t.match(/(\d+)\s*seg/);
+      if (s) return Math.max(1, parseInt(s[1], 10));
+      return fallbackSec;
+    }
+
+    function parsePrescriptionToCfg(rxText, restText) {
+      const rx = String(rxText || "").toLowerCase();
+      let sets = 4;
+      let reps = 1;
+      let work = 10;
+      let rest = 0;
+
+      const setsMatch = rx.match(/(\d+)\s*(?:series|rondas)/);
+      if (setsMatch) sets = Math.max(1, parseInt(setsMatch[1], 10));
+
+      const xMatch = rx.match(/(\d+)\s*x\s*(\d+)(?:\s*-\s*\d+)?\s*(seg|s|reps|rep)/);
+      if (xMatch) {
+        const firstNum = parseInt(xMatch[1], 10);
+        const secondNum = parseInt(xMatch[2], 10);
+        const unit = xMatch[3];
+        if (!setsMatch) sets = Math.max(1, firstNum);
+        if (unit.startsWith("seg") || unit === "s") {
+          work = Math.max(1, secondNum);
+        } else {
+          reps = Math.max(1, secondNum);
+          work = 45;
+          rest = 15;
+        }
+      } else {
+        const segMatch = rx.match(/(\d+)(?:\s*-\s*\d+)?\s*seg/);
+        if (segMatch) work = Math.max(1, parseInt(segMatch[1], 10));
+        const minMatch = rx.match(/(\d+)\s*min/);
+        if (minMatch && !setsMatch) {
+          sets = 1;
+          reps = 1;
+          work = Math.max(10, parseInt(minMatch[1], 10) * 60);
+        }
+      }
+
+      const setRest = parseSecondsFromText(restText, 180);
+      return { prep: 5, work, rest, reps, sets, setRest };
+    }
+
+    function getDayExerciseQueue() {
+      const days = getBlockDays();
+      const day = days.find(d => d.code === state.dayCode) || days[0];
+      const queue = [];
+      if (!day || !day.sections) return queue;
+      const block = getActiveBlock();
+      const isDeload = state.week === block.weeks && block.weeks >= 4;
+      const isPhase2 = !isDeload && state.week >= 3;
+
+      day.sections.forEach((sec, sIdx) => {
+        sec.items.forEach((item, iIdx) => {
+          const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { name: item.exId };
+          const rxText = (isDeload && item.p3) ? item.p3 : ((isPhase2 && item.p2) ? item.p2 : item.rx);
+          queue.push({
+            checkKey: `${state.blockId}_w${state.week}_${day.code}_s${sIdx}_i${iIdx}`,
+            exId: item.exId,
+            exName: ex.name,
+            rx: rxText,
+            restText: item.rest || ""
+          });
+        });
+      });
+      return queue;
+    }
+
+    function syncQueueForCurrentDay(autoLoadFirst = false) {
+      const queue = getDayExerciseQueue();
+      if (!queue.length) {
+        latLinked.checkKey = null;
+        latLinked.exId = null;
+        latLinked.exName = "Día de descanso";
+        latLinked.rx = "Sin carga programada";
+        latLinked.restText = "";
+        latLinked.queueIndex = 0;
+        renderLattice();
+        return;
+      }
+
+      const idx = queue.findIndex(q => q.checkKey === latLinked.checkKey);
+      if (idx >= 0) {
+        latLinked.queueIndex = idx;
+        latLinked.exName = queue[idx].exName;
+        latLinked.rx = queue[idx].rx;
+        latLinked.restText = queue[idx].restText;
+      } else if (autoLoadFirst || !latLinked.checkKey) {
+        loadQueueExerciseAt(0, false);
+      }
+      renderLattice();
+    }
+
+    function loadQueueExerciseAt(index, shouldStart = false) {
+      const queue = getDayExerciseQueue();
+      if (!queue.length) return;
+      const safeIdx = ((index % queue.length) + queue.length) % queue.length;
+      const entry = queue[safeIdx];
+
+      latLinked = {
+        checkKey: entry.checkKey,
+        exId: entry.exId,
+        exName: entry.exName,
+        rx: entry.rx,
+        restText: entry.restText,
+        queueIndex: safeIdx,
+        autoAdvanceEx: true
+      };
+
+      const cfg = parsePrescriptionToCfg(entry.rx, entry.restText);
+      applyLatticePreset(cfg);
+      renderTrainView();
+
+      if (shouldStart && !latRuntime.running) {
+        toggleLattice();
+      }
+    }
+
+    function loadExerciseByKey(checkKey, shouldStart = false) {
+      const queue = getDayExerciseQueue();
+      const idx = queue.findIndex(q => q.checkKey === checkKey);
+      if (idx >= 0) {
+        loadQueueExerciseAt(idx, shouldStart);
+      }
+    }
+
+    function nextQueueExercise() {
+      const queue = getDayExerciseQueue();
+      if (!queue.length) return;
+      loadQueueExerciseAt(latLinked.queueIndex + 1, false);
+    }
+
+    function completeLinkedExercise() {
+      if (!latLinked.checkKey) return;
+      state.checks[latLinked.checkKey] = true;
+      localStorage.setItem(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
+      nextQueueExercise();
+    }
+
+    function enterLatticePhase(phase, sec) {
+      const safeSec = Math.max(1, Number(sec) || 1);
+      latRuntime.phase = phase;
+      latRuntime.remaining = safeSec;
+      latRuntime.phaseTotal = safeSec;
     }
 
     function resetLattice() {
@@ -846,9 +1058,11 @@
       latRuntime.running = false;
       latRuntime.rep = 1;
       latRuntime.set = 1;
-      const first = getFirstPhase();
-      latRuntime.phase = first.phase;
-      latRuntime.remaining = first.sec;
+      if (latCfg.prep > 0) {
+        enterLatticePhase("prep", latCfg.prep);
+      } else {
+        enterLatticePhase("work", latCfg.work);
+      }
       renderLattice();
     }
 
@@ -882,35 +1096,30 @@
 
     function advanceLatticePhase() {
       if (latRuntime.phase === "prep") {
-        latRuntime.phase = "work";
-        latRuntime.remaining = latCfg.work;
+        enterLatticePhase("work", latCfg.work);
         beepPhase("work");
         return;
       }
       if (latRuntime.phase === "work") {
         if (latRuntime.rep < latCfg.reps) {
           if (latCfg.rest > 0) {
-            latRuntime.phase = "rest";
-            latRuntime.remaining = latCfg.rest;
+            enterLatticePhase("rest", latCfg.rest);
             beepPhase("rest");
           } else {
             latRuntime.rep += 1;
-            latRuntime.remaining = latCfg.work;
+            enterLatticePhase("work", latCfg.work);
             beepPhase("work");
           }
           return;
         }
-        // Fin de repeticiones de la serie actual
         if (latRuntime.set < latCfg.sets) {
           if (latCfg.setRest > 0) {
-            latRuntime.phase = "setrest";
-            latRuntime.remaining = latCfg.setRest;
+            enterLatticePhase("setrest", latCfg.setRest);
             beepPhase("rest");
           } else {
             latRuntime.set += 1;
             latRuntime.rep = 1;
-            latRuntime.phase = "work";
-            latRuntime.remaining = latCfg.work;
+            enterLatticePhase("work", latCfg.work);
             beepPhase("work");
           }
           return;
@@ -921,20 +1130,27 @@
         clearInterval(latRuntime.intervalId);
         latRuntime.intervalId = null;
         beepPhase("done");
+
+        const queue = getDayExerciseQueue();
+        if (latLinked.autoAdvanceEx && queue.length > 1 && latLinked.queueIndex < queue.length - 1) {
+          if (latLinked.checkKey) {
+            state.checks[latLinked.checkKey] = true;
+            localStorage.setItem(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
+          }
+          loadQueueExerciseAt(latLinked.queueIndex + 1, false);
+        }
         return;
       }
       if (latRuntime.phase === "rest") {
         latRuntime.rep += 1;
-        latRuntime.phase = "work";
-        latRuntime.remaining = latCfg.work;
+        enterLatticePhase("work", latCfg.work);
         beepPhase("work");
         return;
       }
       if (latRuntime.phase === "setrest") {
         latRuntime.set += 1;
         latRuntime.rep = 1;
-        latRuntime.phase = "work";
-        latRuntime.remaining = latCfg.work;
+        enterLatticePhase("work", latCfg.work);
         beepPhase("work");
       }
     }
@@ -967,35 +1183,65 @@
     }
 
     function renderLattice() {
-      const badge = document.getElementById("lat-phase-badge");
-      const clock = document.getElementById("lat-clock");
-      const counter = document.getElementById("lat-counter");
-      const startBtn = document.getElementById("lat-start-btn");
-      if (!badge || !clock || !counter || !startBtn) return;
+      const pill = document.getElementById("lat-phase-pill");
+      const digits = document.getElementById("lat-digits");
+      const sr = document.getElementById("lat-sr");
+      const totalEl = document.getElementById("lat-total-left");
+      const fill = document.getElementById("lat-phase-fill");
+      const btn = document.getElementById("lat-toggle-btn");
+      const exTitle = document.getElementById("lat-ex-title");
+      const exSub = document.getElementById("lat-ex-sub");
+      const paramsPanel = document.getElementById("lat-params-panel");
+      const queueEl = document.getElementById("lat-queue");
+      if (!pill || !digits || !sr || !btn) return;
 
-      const phaseMap = {
-        prep: { text: "PREPARACIÓN", cls: "phase-prep" },
-        work: { text: "TRABAJO (WORK)", cls: "phase-work" },
-        rest: { text: "DESCANSO REP", cls: "phase-rest" },
-        setrest: { text: "DESCANSO SERIE", cls: "phase-setrest" },
-        done: { text: "COMPLETADO", cls: "phase-done" }
+      const meta = {
+        prep: { label: "PREPARACIÓN", cls: "p-prep", color: "#3b82f6" },
+        work: { label: "TRABAJO (WORK)", cls: "p-work", color: "#f97316" },
+        rest: { label: "DESCANSO REP", cls: "p-rest", color: "#10b981" },
+        setrest: { label: "DESCANSO SERIE", cls: "p-setrest", color: "#f59e0b" },
+        done: { label: "COMPLETADO", cls: "p-done", color: "#10b981" }
       };
-      const info = phaseMap[latRuntime.phase] || phaseMap.prep;
-      badge.textContent = info.text;
-      badge.className = `phase-chip ${info.cls}`;
-      clock.textContent = fmtSec(latRuntime.remaining);
-      counter.textContent = `Serie ${latRuntime.set}/${latCfg.sets} · Rep ${latRuntime.rep}/${latCfg.reps}`;
-      startBtn.textContent = latRuntime.running ? "Pausar" : "Iniciar";
-    }
+      const cur = meta[latRuntime.phase] || meta.prep;
 
-    function parseRestSeconds(restText) {
-      if (!restText) return 0;
-      const t = String(restText).toLowerCase();
-      const m = t.match(/([\d.]+)\s*min/);
-      if (m) return Math.round(parseFloat(m[1]) * 60);
-      const s = t.match(/(\d+)\s*seg/);
-      if (s) return parseInt(s[1], 10);
-      return 0;
+      pill.textContent = cur.label;
+      pill.className = `phase-pill ${cur.cls}`;
+      digits.textContent = fmtSec(latRuntime.remaining);
+      digits.style.color = cur.color;
+      sr.textContent = `Serie ${latRuntime.set} / ${latCfg.sets} · Rep ${latRuntime.rep} / ${latCfg.reps}`;
+
+      const queue = getDayExerciseQueue();
+      const nextEx = queue[latLinked.queueIndex + 1];
+      if (totalEl) {
+        totalEl.textContent = nextEx ? `Siguiente: ${nextEx.exName}` : "Último ejercicio del día";
+      }
+
+      if (exTitle) exTitle.textContent = latLinked.exName;
+      if (exSub) {
+        exSub.textContent = latLinked.rx
+          ? `Prescripción: ${latLinked.rx}${latLinked.restText ? ` · Pausa: ${latLinked.restText}` : ""}`
+          : "Listo para iniciar";
+      }
+
+      if (paramsPanel) {
+        paramsPanel.classList.toggle("hidden", latRuntime.running);
+      }
+
+      if (fill) {
+        const pct = latRuntime.phaseTotal > 0 ? Math.max(0, Math.min(100, (latRuntime.remaining / latRuntime.phaseTotal) * 100)) : 0;
+        fill.style.width = `${latRuntime.phase === "done" ? 100 : pct}%`;
+        fill.style.background = cur.color;
+      }
+
+      btn.textContent = latRuntime.running ? "⏸ Pausar" : "▶ Iniciar";
+
+      if (queueEl) {
+        queueEl.innerHTML = queue.map((q, idx) => `
+          <button type="button" class="q-chip ${idx === latLinked.queueIndex ? "active" : ""}" onclick="loadQueueExerciseAt(${idx}, false)">
+            ${idx + 1}. ${q.exName}
+          </button>
+        `).join("");
+      }
     }
 
     function getAssetSrc(ex) {
@@ -1097,10 +1343,10 @@
       renderBlockSelector();
       renderDashboard();
       renderTrainView();
+      syncQueueForCurrentDay(true);
       renderEncyclopediaFilters();
       renderEncyclopedia();
       renderLogView();
-      renderLattice();
     }
 
     function getActiveBlock() {
@@ -1131,6 +1377,7 @@
       state.blockId = document.getElementById("block-select").value;
       state.week = 1;
       state.dayCode = "D1";
+      latLinked.checkKey = null;
       localStorage.setItem(STORAGE_KEYS.BLOCK, state.blockId);
       localStorage.setItem(STORAGE_KEYS.WEEK, String(state.week));
       renderAll();
@@ -1142,6 +1389,7 @@
       if (next < 1) next = block.weeks;
       if (next > block.weeks) next = 1;
       state.week = next;
+      latLinked.checkKey = null;
       localStorage.setItem(STORAGE_KEYS.WEEK, String(state.week));
       renderAll();
     }
@@ -1165,6 +1413,7 @@
       };
       localStorage.setItem(STORAGE_KEYS.RESET_BASELINE, JSON.stringify(state.resetBaseline));
 
+      latLinked.checkKey = null;
       renderAll();
     }
 
@@ -1258,8 +1507,11 @@
 
     function openDayFromDashboard(code) {
       state.dayCode = code;
+      latLinked.checkKey = null;
       const btn = document.querySelector('.nav-btn[data-view="train"]');
       switchView("train", btn);
+      renderTrainView();
+      syncQueueForCurrentDay(true);
     }
 
     // ENTRENAR
@@ -1296,12 +1548,12 @@
           const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { name: item.exId };
           const checkKey = `${state.blockId}_w${state.week}_${day.code}_s${sIdx}_i${iIdx}`;
           const isChecked = !!state.checks[checkKey];
+          const isLinked = latLinked.checkKey === checkKey;
           const rxText = (isDeload && item.p3) ? item.p3 : ((isPhase2 && item.p2) ? item.p2 : item.rx);
-          const restSec = parseRestSeconds(item.rest);
           const imgSrc = getAssetSrc(ex);
 
           return `
-            <div class="ex-item ${isChecked ? "checked" : ""}">
+            <div class="ex-item ${isChecked ? "checked" : ""} ${isLinked ? "active-linked" : ""}">
               <input type="checkbox" class="ex-check" ${isChecked ? "checked" : ""} onchange="toggleCheck('${checkKey}')" />
               ${imgSrc ? `<img src="${imgSrc}" alt="${ex.name}" class="ex-thumb" loading="lazy" onclick="openExModal('${item.exId}')" onerror="this.style.display='none'" />` : ""}
               <div class="ex-body" onclick="openExModal('${item.exId}')">
@@ -1309,7 +1561,7 @@
                 <div class="ex-meta">
                   <span>📋 ${rxText}</span>
                   ${item.rest ? `<span>⏱ Descanso: ${item.rest}</span>` : ""}
-                  ${restSec > 0 ? `<button type="button" class="ex-timer-btn" onclick="event.stopPropagation(); applyLatticePreset({prep:5,work:10,rest:0,reps:1,sets:4,setRest:${restSec}})">⏱ Serie ${restSec}s</button>` : ""}
+                  <button type="button" class="ex-timer-btn" onclick="event.stopPropagation(); loadExerciseByKey('${checkKey}', false)">⏱ Cargar Rx</button>
                 </div>
               </div>
             </div>
@@ -1322,7 +1574,9 @@
 
     function selectDay(code) {
       state.dayCode = code;
+      latLinked.checkKey = null;
       renderTrainView();
+      syncQueueForCurrentDay(true);
     }
 
     function toggleCheck(key) {
