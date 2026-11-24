@@ -72,7 +72,7 @@
       border-radius: 12px; cursor: pointer; transition: opacity 0.15s;
     }
     .btn-primary:active { opacity: 0.85; }
-    .pin-err { color: var(--red); font-size: 12px; margin-top: 10px; min-height: 18px; }
+    .pin-err { color: var(--red); font-size: 12px; margin-top: 10px; min-height: 18px; word-break: break-word; }
 
     /* HEADER */
     header {
@@ -396,8 +396,8 @@
       <div class="brand-badge">SUNBLOCK · ELBLOQUE</div>
       <h1>Acceso al Sistema</h1>
       <p>Ingresa tu PIN de entrenamiento para cargar tus mesociclos y bitácora.</p>
-      <input id="pin-input" class="pin-input" type="password" inputmode="numeric" maxlength="6" placeholder="••••" />
-      <button type="button" class="btn-primary" onclick="unlockApp()">Entrar</button>
+      <input id="pin-input" class="pin-input" type="password" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off" />
+      <button type="button" id="pin-submit-btn" class="btn-primary">Entrar</button>
       <div id="pin-err" class="pin-err"></div>
     </div>
   </div>
@@ -707,6 +707,53 @@
 
   <script>
     const PIN_CODE = "2026";
+    const memoryStorage = {};
+
+    const safeStorage = {
+      get(key) {
+        if (Object.prototype.hasOwnProperty.call(memoryStorage, key)) {
+          return memoryStorage[key];
+        }
+        try {
+          if (window.sessionStorage && window.sessionStorage.getItem(key) !== null) {
+            return window.sessionStorage.getItem(key);
+          }
+        } catch (_) {}
+        try {
+          if (window.localStorage && window.localStorage.getItem(key) !== null) {
+            return window.localStorage.getItem(key);
+          }
+        } catch (_) {}
+        return null;
+      },
+      set(key, val) {
+        const str = String(val);
+        memoryStorage[key] = str;
+        try { window.sessionStorage && window.sessionStorage.setItem(key, str); } catch (_) {}
+        try { window.localStorage && window.localStorage.setItem(key, str); } catch (_) {}
+      },
+      remove(key) {
+        delete memoryStorage[key];
+        try { window.sessionStorage && window.sessionStorage.removeItem(key); } catch (_) {}
+        try { window.localStorage && window.localStorage.removeItem(key); } catch (_) {}
+      }
+    };
+
+    function forceHidePinGate() {
+      const gateEl = document.getElementById("pin-gate");
+      if (!gateEl) return;
+      gateEl.classList.add("hidden");
+      gateEl.style.setProperty("display", "none", "important");
+      try { gateEl.remove(); } catch (_) {}
+    }
+
+    window.addEventListener("error", function (ev) {
+      const errEl = document.getElementById("pin-err");
+      if (errEl && document.getElementById("pin-gate")) {
+        errEl.textContent = "Aviso script: " + (ev.message || "error de carga");
+      }
+    });
+
     const STORAGE_KEYS = {
       AUTH: "sunblock_auth_ok",
       API_URL: "sunblock_api_url",
@@ -790,7 +837,7 @@
         { id: "ex-maxedge", name: "Regleta Mínima (10-12 mm)", category: "Fuerza de Dedos", level: "3", goal: "Maximizar la fuerza de contacto en micro-regletas manteniendo un ángulo articular seguro.", steps: ["Usa exclusivamente agarre semi-arqueado; queda prohibido el arqueo cerrado.", "Cuelga 6-8 seg sin lastre excesivo dejando 2 seg en reserva.", "Descansa 3-4 minutos entre series."], alt: "Mantenerse en regleta de 18-20 mm añadiendo lastre moderado.", source: "Eric Hörst · Entrenamiento para Escalada" },
         { id: "ex-lightrep", name: "Protocolo Tendinoso Ligero", category: "Fuerza de Dedos", level: "1", goal: "Estimular la síntesis de colágeno y la vascularización tendinosa en días de descarga o retorno.", steps: ["Mantén los pies apoyados en el suelo descargando el 60-70% de tu peso corporal.", "Sostén una regleta cómoda 10 seg y descansa 5 seg (6 repeticiones por serie).", "Realiza 2-3 series con 2 min de pausa."], alt: "Terapia con plastilina terapéutica o apertura de dedos con banda elástica.", source: "Eric Hörst · Entrenamiento para Escalada" },
         { id: "ex-lockoff", name: "Bloqueos Isométricos a 90° y 120°", category: "Tracción Superior", level: "2", goal: "Desarrollar fuerza estática para sostener posiciones mientras se alcanza una presa lejana.", steps: ["Sube en dominada y mantén la barbilla sobre la barra 4 segundos.", "Baja a un ángulo de 90° y sostén 4 seg; baja a 120° y sostén otros 4 seg.", "Descansa 3 minutos entre repeticiones."], alt: "Realizar un solo ángulo (90°) asistido con banda elástica.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id="ex-archer", name: "Dominadas Tipo Arquero", category: "Tracción Superior", level: "3", goal: "Desarrollar fuerza unilateral de tracción y control escapular asimétrico.", steps: ["Toma la barra con agarre ancho y sube hacia una mano extendiendo el brazo contrario.", "Desplázate horizontalmente hacia la otra mano sin perder altura.", "Baja controlado y descansa 3 minutos."], alt: "Dominadas con una mano agarrando la muñeca contraria.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-archer", name: "Dominadas Tipo Arquero", category: "Tracción Superior", level: "3", goal: "Desarrollar fuerza unilateral de tracción y control escapular asimétrico.", steps: ["Toma la barra con agarre ancho y sube hacia una mano extendiendo el brazo contrario.", "Desplázate horizontalmente hacia la otra mano sin perder altura.", "Baja controlado y descansa 3 minutos."], alt: "Dominadas con una mano agarrando la muñeca contraria.", source: "Eric Hörst · Entrenamiento para Escalada" },
         { id: "ex-frenchies", name: "Dominada con Paradas Isométricas", category: "Tracción Superior", level: "3", goal: "Combinar fuerza máxima de tracción y resistencia isométrica al bloqueo en una misma serie.", steps: ["Haz 1 dominada completa y bloquea arriba 4 seg; baja hasta extender los brazos.", "Sube y bloquea a 90° por 4 seg; baja y sube para bloquear a 120° por 4 seg.", "Descansa 3-4 minutos entre series."], alt: "Reducir las paradas isométricas a 2 segundos por ángulo.", source: "Eric Hörst · Entrenamiento para Escalada" },
         { id: "ex-invrow", name: "Remo Invertido en Anillas o Barra Baja", category: "Tracción Superior", level: "1", media_url: "assets/ex-invrow.webp", goal: "Fortalecer romboides, trapecio medio y deltoides posterior para dar estabilidad escapular en techos.", steps: ["Colócate bajo la barra o anillas con el cuerpo recto y talones apoyados.", "Tira del pecho hacia las manos juntando las escápulas al final del recorrido.", "Baja controlado en 2 segundos."], alt: "Aumentar el ángulo vertical del cuerpo (pies más cerca de la vertical).", source: "Eric Hörst · Entrenamiento para Escalada" },
         { id: "ex-hovering", name: "Pausa Suspendida de 3 Segundos", category: "Búlder y Técnica", level: "1", goal: "Eliminar el impulso descontrolado y obligar al cuerpo a encontrar el equilibrio sobre los pies.", steps: ["Escala un bloque fácil o moderado en silencio.", "Antes de agarrar cada presa de mano, mantén la mano suspendida a 5 cm durante 3 segundos.", "Fija el pie antes de mover la mano."], alt: "Aplicar pausa de 2 segundos en bloques de placa vertical.", source: "Eric Hörst · Entrenamiento para Escalada" },
@@ -835,6 +882,7 @@
     };
 
     function safeJsonParse(raw, fallback) {
+      if (!raw) return fallback;
       try {
         const parsed = JSON.parse(raw);
         return parsed ?? fallback;
@@ -843,18 +891,18 @@
       }
     }
 
-    const cachedData = safeJsonParse(localStorage.getItem(STORAGE_KEYS.CACHE), null);
+    const cachedData = safeJsonParse(safeStorage.get(STORAGE_KEYS.CACHE), null);
     const initialData = (cachedData && Array.isArray(cachedData.blocks) && cachedData.blocks.length)
       ? cachedData
       : BACKUP_DATA;
 
     let state = {
       data: initialData,
-      blockId: localStorage.getItem(STORAGE_KEYS.BLOCK) || "horst-6w",
-      week: Number(localStorage.getItem(STORAGE_KEYS.WEEK)) || 1,
+      blockId: safeStorage.get(STORAGE_KEYS.BLOCK) || "horst-6w",
+      week: Number(safeStorage.get(STORAGE_KEYS.WEEK)) || 1,
       dayCode: "D1",
-      checks: safeJsonParse(localStorage.getItem(STORAGE_KEYS.CHECKS), {}),
-      resetBaseline: safeJsonParse(localStorage.getItem(STORAGE_KEYS.RESET_BASELINE), {}),
+      checks: safeJsonParse(safeStorage.get(STORAGE_KEYS.CHECKS), {}),
+      resetBaseline: safeJsonParse(safeStorage.get(STORAGE_KEYS.RESET_BASELINE), {}),
       traffic: { dedos: "verde", codos: "verde" }
     };
 
@@ -871,7 +919,7 @@
     };
     let latRuntime = {
       running: false,
-      phase: "prep", // prep | work | rest | setrest | done
+      phase: "prep",
       rep: 1,
       set: 1,
       remaining: 5,
@@ -1041,7 +1089,7 @@
     function completeLinkedExercise() {
       if (!latLinked.checkKey) return;
       state.checks[latLinked.checkKey] = true;
-      localStorage.setItem(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
+      safeStorage.set(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
       nextQueueExercise();
     }
 
@@ -1135,7 +1183,7 @@
         if (latLinked.autoAdvanceEx && queue.length > 1 && latLinked.queueIndex < queue.length - 1) {
           if (latLinked.checkKey) {
             state.checks[latLinked.checkKey] = true;
-            localStorage.setItem(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
+            safeStorage.set(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
           }
           loadQueueExerciseAt(latLinked.queueIndex + 1, false);
         }
@@ -1255,30 +1303,51 @@
     function unlockApp() {
       const inputEl = document.getElementById("pin-input");
       const errEl = document.getElementById("pin-err");
-      const gateEl = document.getElementById("pin-gate");
-      const val = (inputEl ? inputEl.value : "").trim();
+      const raw = inputEl ? String(inputEl.value || "") : "";
+      const val = raw.replace(/\D/g, "").trim();
 
-      if (val === PIN_CODE) {
-        try { localStorage.setItem(STORAGE_KEYS.AUTH, "1"); } catch (_) {}
+      if (val === PIN_CODE || raw.trim() === PIN_CODE) {
+        safeStorage.set(STORAGE_KEYS.AUTH, "1");
         if (errEl) errEl.textContent = "";
-        if (gateEl) gateEl.classList.add("hidden");
-        initApp();
+        forceHidePinGate();
+        try {
+          initApp();
+        } catch (err) {
+          console.error("Error al iniciar SUNBLOCK tras login:", err);
+        }
       } else if (errEl) {
-        errEl.textContent = "PIN incorrecto. Intenta nuevamente.";
+        errEl.textContent = `PIN incorrecto ("${val || "vacío"}"). Usa ${PIN_CODE}.`;
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    function bindPinEvents() {
       const pinInput = document.getElementById("pin-input");
-      if (pinInput) {
-        pinInput.addEventListener("keydown", e => {
-          if (e.key === "Enter") unlockApp();
+      const pinBtn = document.getElementById("pin-submit-btn");
+      if (pinInput && !pinInput.dataset.bound) {
+        pinInput.dataset.bound = "1";
+        pinInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.keyCode === 13) {
+            e.preventDefault();
+            unlockApp();
+          }
         });
       }
+      if (pinBtn && !pinBtn.dataset.bound) {
+        pinBtn.dataset.bound = "1";
+        pinBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          unlockApp();
+        });
+      }
+    }
+
+    bindPinEvents();
+
+    document.addEventListener("DOMContentLoaded", function () {
+      bindPinEvents();
       renderLattice();
-      if (localStorage.getItem(STORAGE_KEYS.AUTH) === "1") {
-        const gateEl = document.getElementById("pin-gate");
-        if (gateEl) gateEl.classList.add("hidden");
+      if (safeStorage.get(STORAGE_KEYS.AUTH) === "1") {
+        forceHidePinGate();
         initApp();
       }
     });
@@ -1290,7 +1359,7 @@
 
     // SYNC WITH GOOGLE SHEETS
     async function syncFromSheets() {
-      const url = localStorage.getItem(STORAGE_KEYS.API_URL);
+      const url = safeStorage.get(STORAGE_KEYS.API_URL);
       const dot = document.getElementById("sync-dot");
       const label = document.getElementById("sync-label");
 
@@ -1313,7 +1382,7 @@
             microcycles: json.microcycles && json.microcycles.length ? json.microcycles : BACKUP_DATA.microcycles,
             logs: Array.isArray(json.logs) ? json.logs : []
           };
-          localStorage.setItem(STORAGE_KEYS.CACHE, JSON.stringify(state.data));
+          safeStorage.set(STORAGE_KEYS.CACHE, JSON.stringify(state.data));
           if (dot) dot.className = "dot online";
           if (label) label.textContent = "Conectado a Sheets";
           renderAll();
@@ -1327,13 +1396,13 @@
     }
 
     function openConfigModal() {
-      document.getElementById("api-url-input").value = localStorage.getItem(STORAGE_KEYS.API_URL) || "";
+      document.getElementById("api-url-input").value = safeStorage.get(STORAGE_KEYS.API_URL) || "";
       document.getElementById("cfg-modal").classList.add("open");
     }
     function closeConfigModal() { document.getElementById("cfg-modal").classList.remove("open"); }
     function saveApiUrl() {
       const val = document.getElementById("api-url-input").value.trim();
-      if (val) localStorage.setItem(STORAGE_KEYS.API_URL, val);
+      if (val) safeStorage.set(STORAGE_KEYS.API_URL, val);
       closeConfigModal();
       syncFromSheets();
     }
@@ -1378,8 +1447,8 @@
       state.week = 1;
       state.dayCode = "D1";
       latLinked.checkKey = null;
-      localStorage.setItem(STORAGE_KEYS.BLOCK, state.blockId);
-      localStorage.setItem(STORAGE_KEYS.WEEK, String(state.week));
+      safeStorage.set(STORAGE_KEYS.BLOCK, state.blockId);
+      safeStorage.set(STORAGE_KEYS.WEEK, String(state.week));
       renderAll();
     }
 
@@ -1390,20 +1459,20 @@
       if (next > block.weeks) next = 1;
       state.week = next;
       latLinked.checkKey = null;
-      localStorage.setItem(STORAGE_KEYS.WEEK, String(state.week));
+      safeStorage.set(STORAGE_KEYS.WEEK, String(state.week));
       renderAll();
     }
 
     function resetCurrentBlock() {
       state.week = 1;
-      localStorage.setItem(STORAGE_KEYS.WEEK, "1");
+      safeStorage.set(STORAGE_KEYS.WEEK, "1");
 
       Object.keys(state.checks).forEach(k => {
         if (k.startsWith(state.blockId + "_")) {
           delete state.checks[k];
         }
       });
-      localStorage.setItem(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
+      safeStorage.set(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
 
       const allLogs = state.data.logs || [];
       const blockTotalLogs = allLogs.filter(l => l.blockId === state.blockId).length;
@@ -1411,7 +1480,7 @@
         week: 1,
         logCount: blockTotalLogs
       };
-      localStorage.setItem(STORAGE_KEYS.RESET_BASELINE, JSON.stringify(state.resetBaseline));
+      safeStorage.set(STORAGE_KEYS.RESET_BASELINE, JSON.stringify(state.resetBaseline));
 
       latLinked.checkKey = null;
       renderAll();
@@ -1581,7 +1650,7 @@
 
     function toggleCheck(key) {
       state.checks[key] = !state.checks[key];
-      localStorage.setItem(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
+      safeStorage.set(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
       renderTrainView();
     }
 
@@ -1702,7 +1771,7 @@
       };
 
       state.data.encyclopedia.push(newEx);
-      localStorage.setItem(STORAGE_KEYS.CACHE, JSON.stringify(state.data));
+      safeStorage.set(STORAGE_KEYS.CACHE, JSON.stringify(state.data));
       renderEncyclopediaFilters();
       renderEncyclopedia();
 
@@ -1711,7 +1780,7 @@
       });
       closeNewExModal();
 
-      const url = localStorage.getItem(STORAGE_KEYS.API_URL);
+      const url = safeStorage.get(STORAGE_KEYS.API_URL);
       if (url) {
         try {
           await fetch(url, {
@@ -1761,7 +1830,7 @@
     }
 
     async function submitLog() {
-      const url = localStorage.getItem(STORAGE_KEYS.API_URL);
+      const url = safeStorage.get(STORAGE_KEYS.API_URL);
       const block = getActiveBlock();
       const days = getBlockDays();
       const dayCode = document.getElementById("log-day").value;
@@ -1781,7 +1850,7 @@
       };
 
       state.data.logs = [...(state.data.logs || []), entry];
-      localStorage.setItem(STORAGE_KEYS.CACHE, JSON.stringify(state.data));
+      safeStorage.set(STORAGE_KEYS.CACHE, JSON.stringify(state.data));
       renderAll();
 
       if (!url) {
