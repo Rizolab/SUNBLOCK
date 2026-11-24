@@ -14,13 +14,11 @@
       --muted: #94a3b8;
       --accent: #e06d44;
       --accent-hover: #c95830;
-      --green: #22c55e;
       --red: #ef4444;
     }
     * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { margin: 0; background: var(--bg); color: var(--text); }
 
-    /* Pantalla PIN */
     #pinGate {
       position: fixed; inset: 0; background: var(--bg);
       display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px;
@@ -36,7 +34,6 @@
       background: var(--bg); color: var(--text); font-size: 1.2rem; text-align: center; letter-spacing: 6px; margin-bottom: 12px;
     }
 
-    /* Header */
     header {
       position: sticky; top: 0; z-index: 20; background: rgba(15, 17, 21, 0.92); backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border); padding: 14px 20px;
@@ -55,7 +52,6 @@
     button.primary:hover { background: var(--accent-hover); }
     button.danger { color: var(--red); border-color: rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.08); }
 
-    /* Layout */
     .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
     .toolbar { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; align-items: center; justify-content: space-between; }
     .search-box {
@@ -63,7 +59,6 @@
       border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 0.92rem;
     }
 
-    /* Chips de Focus */
     .focus-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 18px; }
     .focus-chip {
       white-space: nowrap; padding: 8px 13px; border-radius: 999px; font-size: 0.82rem;
@@ -71,12 +66,24 @@
     }
     .focus-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
 
-    /* Grid de tarjetas */
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px; }
     .card {
       background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
-      padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+      overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;
     }
+    .card-media {
+      position: relative; width: 100%; aspect-ratio: 16 / 9; background: #0b0d10;
+      border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+      cursor: pointer; overflow: hidden;
+    }
+    .card-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .card-media .empty-media { color: #475569; font-size: 0.78rem; text-align: center; padding: 12px; }
+    .play-pill {
+      position: absolute; bottom: 8px; right: 8px; background: rgba(15, 17, 21, 0.85);
+      border: 1px solid var(--border); color: #fff; font-size: 0.72rem; font-weight: 700;
+      padding: 4px 9px; border-radius: 999px;
+    }
+    .card-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; justify-content: space-between; }
     .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
     .focus-tag {
       font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
@@ -92,12 +99,10 @@
     }
     .metric span { display: block; font-size: 0.68rem; color: var(--muted); text-transform: uppercase; }
     .metric strong { font-size: 0.9rem; color: var(--text); }
-
     .card-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
-    /* Modal Editor */
     .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.72);
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.78);
       display: none; align-items: center; justify-content: center; z-index: 50; padding: 16px;
     }
     .modal-backdrop.open { display: flex; }
@@ -117,7 +122,13 @@
     }
     textarea { min-height: 82px; resize: vertical; }
 
-    /* Steppers para Settings */
+    .media-preview-box {
+      width: 100%; aspect-ratio: 16 / 9; background: var(--bg); border: 1px dashed var(--border);
+      border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 0.82rem; margin-top: 6px;
+    }
+    .media-preview-box img { width: 100%; height: 100%; object-fit: cover; }
+
     .settings-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
     .stepper-box {
       background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; text-align: center;
@@ -126,6 +137,13 @@
     .stepper-ctrl { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
     .stepper-ctrl button { padding: 4px 9px; font-size: 0.95rem; border-radius: 7px; }
     .stepper-ctrl input { padding: 4px; text-align: center; font-weight: 700; border: none; background: transparent; }
+
+    .lightbox-stage {
+      width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 12px; overflow: hidden;
+    }
+    .lightbox-stage iframe, .lightbox-stage video, .lightbox-stage img {
+      width: 100%; height: 100%; border: 0; object-fit: contain; display: block;
+    }
 
     .status-bar { font-size: 0.82rem; color: var(--muted); }
     .toast {
@@ -140,7 +158,6 @@
 </head>
 <body>
 
-  <!-- PIN Gate -->
   <div id="pinGate">
     <div class="pin-card">
       <h2>SUNBLOCK · Estudio</h2>
@@ -174,7 +191,6 @@
     <div class="grid" id="exerciseGrid"></div>
   </main>
 
-  <!-- Modal Crear / Editar -->
   <div class="modal-backdrop" id="editorModal">
     <div class="modal">
       <div class="modal-header">
@@ -199,6 +215,12 @@
             <label>Autor / Fuente</label>
             <input type="text" id="fAuthor" value="SUNBLOCK · Personalizado" />
           </div>
+        </div>
+
+        <div class="form-group full">
+          <label>Imagen o Video (ruta local ./assets/ex-id.webp o URL de YouTube)</label>
+          <input type="text" id="fMedia" placeholder="./assets/ex-hang20.webp" oninput="renderMediaPreview()" />
+          <div class="media-preview-box" id="mediaPreviewBox">Sin imagen asignada</div>
         </div>
 
         <label style="display:block; margin: 6px 0;">Settings por defecto (Duración estimada: <strong id="estPreview" style="color:var(--accent)">~5 min</strong>)</label>
@@ -260,11 +282,22 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="mediaModal" onclick="if(event.target===this) closeMediaModal()">
+    <div class="modal" style="max-width:760px;">
+      <div class="modal-header">
+        <h2 id="mediaModalTitle">Demostración técnica</h2>
+        <button type="button" onclick="closeMediaModal()">✕</button>
+      </div>
+      <div class="lightbox-stage" id="lightboxStage"></div>
+      <p id="mediaModalGoal" style="color:var(--muted); font-size:0.9rem; margin:12px 0 0;"></p>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script>
     const EXEC_URL = "https://script.google.com/macros/s/AKfycbyZNbEWVu5_YoxPGNeeEJppnAo3WOuPtAy0nHZdVuZOV9iY-d5G1OjTaB0MVwIlA9iV0g/exec";
-    const ADMIN_PIN = "2026"; // Cámbialo si usas otro PIN en tu index.html
+    const ADMIN_PIN = "2026";
 
     const FOCUS_LIST = [
       "Todos",
@@ -282,7 +315,6 @@
     let selectedFocus = "Todos";
     let isEditing = false;
 
-    // Inicializar selector de Focus en el modal
     const fFocusSelect = document.getElementById("fFocus");
     FOCUS_LIST.slice(1).forEach(f => {
       const opt = document.createElement("option");
@@ -316,6 +348,24 @@
       t.textContent = msg;
       t.style.display = "block";
       setTimeout(() => { t.style.display = "none"; }, 3200);
+    }
+
+    function parseMedia(url) {
+      const clean = (url || "").trim();
+      if (!clean) return { type: "none" };
+      const ytMatch = clean.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      if (ytMatch) {
+        return {
+          type: "youtube",
+          id: ytMatch[1],
+          thumb: `https://i.ytimg.com/vi/${ytMatch[1]}/hqdefault.jpg`,
+          embed: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?autoplay=1&rel=0&playsinline=1`
+        };
+      }
+      if (/\.(mp4|webm|mov)(\?.*)?$/i.test(clean)) {
+        return { type: "video", src: clean };
+      }
+      return { type: "image", src: clean };
     }
 
     function estimateMinutes(ex) {
@@ -377,32 +427,71 @@
 
       filtered.forEach(ex => {
         const mins = estimateMinutes(ex);
+        const media = parseMedia(ex.media_url);
+        let mediaHtml = `<div class="empty-media">Sin imagen · Toca Editar para vincular <code>./assets/${ex.id}.webp</code></div>`;
+        if (media.type === "image") {
+          mediaHtml = `<img src="${media.src}" alt="${ex.name}" loading="lazy" onerror="this.outerHTML='<div class=empty-media>Archivo no encontrado: ${media.src}</div>'" /><span class="play-pill">Ampliar</span>`;
+        } else if (media.type === "youtube") {
+          mediaHtml = `<img src="${media.thumb}" alt="${ex.name}" loading="lazy" /><span class="play-pill">▶ Video</span>`;
+        } else if (media.type === "video") {
+          mediaHtml = `<div class="empty-media">Clip MP4 vinculado</div><span class="play-pill">▶ Reproducir</span>`;
+        }
+
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
           <div>
-            <div class="card-top">
-              <span class="focus-tag">${ex.focus || "Sin Focus"}</span>
-              <span class="est-time">~${mins} min · ${ex.id}</span>
-            </div>
-            <h3>${ex.name}</h3>
-            <p class="goal">${ex.goal}</p>
-          </div>
-          <div>
-            <div class="metrics">
-              <div class="metric"><span>Hold</span><strong>${ex.hold_sec > 0 ? ex.hold_sec + "s" : "—"}</strong></div>
-              <div class="metric"><span>Reps</span><strong>${ex.reps || "—"}</strong></div>
-              <div class="metric"><span>Sets</span><strong>${ex.sets || 1}</strong></div>
-              <div class="metric"><span>Rest</span><strong>${ex.set_rest_sec}s</strong></div>
-            </div>
-            <div class="card-actions" style="margin-top:10px;">
-              <button type="button" class="danger" onclick="deleteExercise('${ex.id}', '${ex.name.replace(/'/g, "\\'")}')">Eliminar</button>
-              <button type="button" onclick='openEditor(${JSON.stringify(ex).replace(/'/g, "'")})'>Editar</button>
+            <div class="card-media" onclick='openMediaModal(${JSON.stringify(ex).replace(/'/g, "'")})'>${mediaHtml}</div>
+            <div class="card-body">
+              <div>
+                <div class="card-top">
+                  <span class="focus-tag">${ex.focus || "Sin Focus"}</span>
+                  <span class="est-time">~${mins} min · ${ex.id}</span>
+                </div>
+                <h3>${ex.name}</h3>
+                <p class="goal">${ex.goal}</p>
+              </div>
+              <div>
+                <div class="metrics">
+                  <div class="metric"><span>Hold</span><strong>${ex.hold_sec > 0 ? ex.hold_sec + "s" : "—"}</strong></div>
+                  <div class="metric"><span>Reps</span><strong>${ex.reps || "—"}</strong></div>
+                  <div class="metric"><span>Sets</span><strong>${ex.sets || 1}</strong></div>
+                  <div class="metric"><span>Rest</span><strong>${ex.set_rest_sec}s</strong></div>
+                </div>
+                <div class="card-actions" style="margin-top:10px;">
+                  <button type="button" class="danger" onclick="deleteExercise('${ex.id}', '${ex.name.replace(/'/g, "\\'")}')">Eliminar</button>
+                  <button type="button" onclick='openEditor(${JSON.stringify(ex).replace(/'/g, "'")})'>Editar</button>
+                </div>
+              </div>
             </div>
           </div>
         `;
         grid.appendChild(card);
       });
+    }
+
+    function openMediaModal(ex) {
+      const media = parseMedia(ex.media_url);
+      if (media.type === "none") {
+        openEditor(ex);
+        return;
+      }
+      document.getElementById("mediaModalTitle").textContent = ex.name;
+      document.getElementById("mediaModalGoal").textContent = ex.goal;
+      const stage = document.getElementById("lightboxStage");
+      if (media.type === "youtube") {
+        stage.innerHTML = `<iframe src="${media.embed}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+      } else if (media.type === "video") {
+        stage.innerHTML = `<video src="${media.src}" autoplay loop muted playsinline controls></video>`;
+      } else {
+        stage.innerHTML = `<img src="${media.src}" alt="${ex.name}" />`;
+      }
+      document.getElementById("mediaModal").classList.add("open");
+    }
+
+    function closeMediaModal() {
+      document.getElementById("mediaModal").classList.remove("open");
+      document.getElementById("lightboxStage").innerHTML = "";
     }
 
     function openEditor(ex = null) {
@@ -412,6 +501,7 @@
       document.getElementById("fId").value = ex ? ex.id : "";
       document.getElementById("fName").value = ex ? ex.name : "";
       document.getElementById("fFocus").value = ex && ex.focus ? ex.focus : (selectedFocus !== "Todos" ? selectedFocus : "Flexibilidad y Calentamiento");
+      document.getElementById("fMedia").value = ex ? (ex.media_url || "") : "";
       document.getElementById("fHold").value = ex ? ex.hold_sec : 0;
       document.getElementById("fReps").value = ex ? ex.reps : 8;
       document.getElementById("fSets").value = ex ? ex.sets : 3;
@@ -420,8 +510,24 @@
       document.getElementById("fSteps").value = ex ? (Array.isArray(ex.steps) ? ex.steps.join(" | ") : ex.steps) : "";
       document.getElementById("fAlt").value = ex ? (ex.safeAlt || ex.alt || "") : "";
       document.getElementById("fAuthor").value = ex ? (ex.author || "SUNBLOCK") : "SUNBLOCK · Personalizado";
+      renderMediaPreview();
       updatePreview();
       document.getElementById("editorModal").classList.add("open");
+    }
+
+    function renderMediaPreview() {
+      const url = document.getElementById("fMedia").value.trim();
+      const box = document.getElementById("mediaPreviewBox");
+      const media = parseMedia(url);
+      if (media.type === "none") {
+        box.innerHTML = "Sin imagen asignada";
+      } else if (media.type === "youtube") {
+        box.innerHTML = `<img src="${media.thumb}" alt="Miniatura YouTube" />`;
+      } else if (media.type === "image") {
+        box.innerHTML = `<img src="${media.src}" alt="Vista previa" onerror="this.parentElement.textContent='Se cargará cuando subas ${media.src} a GitHub'" />`;
+      } else {
+        box.textContent = "Video MP4 listo para pop-up";
+      }
     }
 
     function closeEditor() {
@@ -433,7 +539,12 @@
       const name = document.getElementById("fName").value.trim().toLowerCase()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-      document.getElementById("fId").value = name ? "ex-" + name.slice(0, 24) : "";
+      const slug = name ? "ex-" + name.slice(0, 24) : "";
+      document.getElementById("fId").value = slug;
+      if (slug && !document.getElementById("fMedia").value) {
+        document.getElementById("fMedia").value = `./assets/${slug}.webp`;
+        renderMediaPreview();
+      }
     }
 
     function stepVal(id, delta, min) {
@@ -465,6 +576,7 @@
           id: document.getElementById("fId").value.trim(),
           name: document.getElementById("fName").value.trim(),
           focus: document.getElementById("fFocus").value,
+          media_url: document.getElementById("fMedia").value.trim(),
           hold_sec: Number(document.getElementById("fHold").value) || 0,
           reps: Number(document.getElementById("fReps").value) || 0,
           sets: Number(document.getElementById("fSets").value) || 1,
