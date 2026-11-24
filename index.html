@@ -155,6 +155,16 @@
     }
     .week-stepper span { font-size: 12px; font-weight: 700; min-width: 58px; text-align: center; }
 
+    /* GROUP COLOR PILLS & DOTS */
+    .grp-dot {
+      width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+    }
+    .grp-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.03em;
+      padding: 3px 9px; border-radius: 999px;
+    }
+
     /* HOME: ENTRENAMIENTO DEL DÍA */
     .today-hero {
       background: var(--surface-2);
@@ -174,6 +184,7 @@
       display: flex; justify-content: space-between; align-items: center; gap: 8px;
       font-size: 12.5px; padding: 4px 0;
     }
+    .today-ex-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
     .today-ex-rx { font-size: 11.5px; color: var(--accent); font-weight: 600; white-space: nowrap; }
     .today-actions {
       display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;
@@ -368,7 +379,7 @@
       border: 1px solid var(--hairline); background: var(--surface-2); flex-shrink: 0; cursor: pointer;
     }
     .ex-body { flex: 1; cursor: pointer; }
-    .ex-name { font-size: 13.5px; font-weight: 700; color: var(--text); }
+    .ex-name { font-size: 13.5px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 7px; }
     .ex-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 3px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .ex-timer-btn {
       display: inline-flex; align-items: center; gap: 4px;
@@ -376,20 +387,124 @@
       padding: 1px 4px; font-size: 11px; font-weight: 700; cursor: pointer;
     }
 
-    /* ENCYCLOPEDIA */
-    .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+    /* ENCYCLOPEDIA: LUPA + 7 GRUPOS + VISTA DETALLE */
+    .search-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-wrap .search-icon {
+      position: absolute;
+      left: 12px;
+      color: var(--text-muted);
+      pointer-events: none;
+      display: flex;
+    }
+    .search-wrap input {
+      padding-left: 36px;
+      padding-right: 34px;
+    }
+    .search-clear {
+      position: absolute;
+      right: 8px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+    @media (min-width: 620px) {
+      .groups-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    .group-tile {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+      text-align: left;
+      background: var(--surface-2);
+      border: 1px solid var(--hairline);
+      border-radius: 12px;
+      padding: 11px 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.12s;
+    }
+    .group-tile:hover { transform: translateY(-1px); border-color: rgba(148, 163, 184, 0.35); }
+    .group-tile-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .group-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+    }
+    .group-count {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .group-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.25;
+    }
+
     .ency-card {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 12px; padding: 14px; margin-bottom: 10px; cursor: pointer;
       display: flex; gap: 12px; align-items: flex-start; transition: border-color 0.15s;
+      position: relative; overflow: hidden;
     }
     .ency-card:hover { border-color: rgba(45, 212, 191, 0.45); }
+    .ency-accent-bar {
+      width: 4px;
+      align-self: stretch;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
     .ency-img {
-      width: 80px; height: 54px; border-radius: 8px; object-fit: cover;
+      width: 78px; height: 54px; border-radius: 8px; object-fit: cover;
       border: 1px solid var(--hairline); background: var(--surface-2); flex-shrink: 0;
     }
     .ency-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 5px; flex-wrap: wrap; }
     .ency-title { font-size: 14px; font-weight: 700; }
+
+    /* VISTA DEDICADA DETALLE DE EJERCICIO */
+    .detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .detail-hero-img {
+      width: 100%;
+      max-height: 260px;
+      object-fit: contain;
+      background: var(--surface-2);
+      border: 1px solid var(--hairline);
+      border-radius: 13px;
+      margin: 12px 0;
+    }
+    .detail-steps {
+      padding-left: 20px;
+      margin: 10px 0 14px;
+      font-size: 13.5px;
+      color: var(--text);
+      display: grid;
+      gap: 8px;
+    }
 
     /* LOG FORM */
     .traffic-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
@@ -431,13 +546,6 @@
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 18px; padding: 20px;
     }
-    .modal-media {
-      width: 100%; max-height: 240px; object-fit: contain;
-      background: var(--bg); border: 1px solid var(--hairline);
-      border-radius: 12px; margin-top: 12px;
-    }
-    .modal-steps { padding-left: 18px; margin: 10px 0; font-size: 13px; color: var(--text); }
-    .modal-steps li { margin-bottom: 6px; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -448,7 +556,7 @@
     <div class="pin-card">
       <div class="brand-badge">SUNBLOCK · ELBLOQUE</div>
       <h1>Acceso al Sistema</h1>
-      <p>Ingresa tu PIN de entrenamiento para cargar tus mesociclos y bitácora.</p>
+      <p>Ingresa tu PIN de entrenamiento para cargar tus mesociclos y enciclopedia.</p>
       <input id="pin-input" class="pin-input" type="password" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off" />
       <button type="button" id="pin-submit-btn" class="btn-primary">Entrar</button>
       <div id="pin-err" class="pin-err"></div>
@@ -473,7 +581,7 @@
 
   <main>
     <!-- SELECTOR GLOBAL DE PLAN (5 BLOQUES) Y SEMANA -->
-    <div class="card">
+    <div id="global-plan-card" class="card">
       <div class="card-title">
         <span>Plan Elegido y Semana</span>
         <div style="display:flex; align-items:center; gap:6px;">
@@ -497,7 +605,6 @@
 
     <!-- VISTA 1: INICIO -->
     <section id="view-home">
-      <!-- 1. ENTRENAMIENTO DEL DÍA -->
       <div class="card">
         <div class="card-title">
           <span>Entrenamiento del Día · <span id="home-today-code">D1</span></span>
@@ -506,7 +613,6 @@
         <div id="home-today-hero" class="today-hero"></div>
       </div>
 
-      <!-- 2. PLANNER DE LA SEMANA -->
       <div class="card">
         <div class="card-title">
           <span>Planner de la Semana · Sem <span id="home-map-week">1</span></span>
@@ -516,7 +622,6 @@
         <div id="home-legend" style="display:flex; gap:14px; flex-wrap:wrap; margin-top:10px; font-size:11px; color:var(--text-muted);"></div>
       </div>
 
-      <!-- 3. PLAN OVERVIEW & WEEKLY BREAKDOWN -->
       <div class="card">
         <div class="card-title">
           <span>Plan Overview · Weekly Breakdown</span>
@@ -624,30 +729,36 @@
       </div>
     </section>
 
-    <!-- VISTA 3: ENCICLOPEDIA -->
+    <!-- VISTA 3: ENCICLOPEDIA (LUPA + 7 GRUPOS CON COLOR + VISTA DETALLE) -->
     <section id="view-ency" class="hidden">
-      <div class="card">
-        <div class="card-title">
-          <span>Directorio de Ejercicios</span>
-          <button type="button" class="sync-pill" style="border-color:rgba(45, 212, 191, 0.45); color:var(--accent);" onclick="openNewExModal()">
-            <span id="ency-plus-icon"></span>
-            <span>Nuevo Ejercicio</span>
-          </button>
+      <!-- SUBVISTA A: EXPLORADOR DE 7 GRUPOS -->
+      <div id="ency-browser">
+        <div class="card">
+          <div class="card-title">
+            <span>Enciclopedia · 7 Grupos</span>
+            <button type="button" class="sync-pill" style="border-color:rgba(45, 212, 191, 0.45); color:var(--accent);" onclick="openNewExModal()">
+              <span id="ency-plus-icon"></span>
+              <span>Nuevo</span>
+            </button>
+          </div>
+          <div class="search-wrap">
+            <span id="ency-search-icon" class="search-icon"></span>
+            <input id="ency-search" type="text" placeholder="Buscar ejercicio, agarre o grupo..." oninput="onEncySearchInput()" />
+            <button type="button" id="ency-search-clear" class="search-clear hidden" onclick="clearEncySearch()" aria-label="Limpiar búsqueda">✕</button>
+          </div>
+          <div id="ency-groups-grid" class="groups-grid"></div>
         </div>
-        <div class="filter-bar">
-          <input id="ency-search" type="text" placeholder="Buscar ejercicio, objetivo o agarre..." oninput="renderEncyclopedia()" style="flex:1; min-width:180px;" />
-          <select id="ency-cat" onchange="renderEncyclopedia()" style="width:auto;">
-            <option value="">Todas las categorías</option>
-          </select>
-          <select id="ency-lvl" onchange="renderEncyclopedia()" style="width:auto;">
-            <option value="">Todos los niveles</option>
-            <option value="1">Nivel 1 · Base</option>
-            <option value="2">Nivel 2 · Fuerza</option>
-            <option value="3">Nivel 3 · Máxima</option>
-          </select>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin:0 2px 10px;">
+          <span id="ency-active-heading" style="font-size:12px; font-weight:700; color:var(--text-muted);">Todos los ejercicios</span>
+          <button type="button" id="ency-show-all-btn" class="subtle-reset-btn hidden" onclick="selectEncyGroup('')">Ver todos</button>
         </div>
+
+        <div id="ency-list"></div>
       </div>
-      <div id="ency-list"></div>
+
+      <!-- SUBVISTA B: PESTAÑA DEDICADA AL DETALLE DEL EJERCICIO -->
+      <div id="ency-detail" class="hidden"></div>
     </section>
 
     <!-- VISTA 4: BITÁCORA -->
@@ -710,41 +821,17 @@
     </button>
   </nav>
 
-  <!-- MODAL DETALLE EJERCICIO -->
-  <div id="ex-modal" class="modal-backdrop" onclick="if(event.target===this) closeExModal()">
-    <div class="modal-box">
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-        <span id="m-cat" class="pill-stat pill-accent">Categoría</span>
-        <button type="button" onclick="closeExModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;" aria-label="Cerrar">✕</button>
-      </div>
-      <h3 id="m-title" style="font-size:18px; font-weight:800; margin-top:8px;">Nombre</h3>
-      <img id="m-media" class="modal-media hidden" alt="" />
-      <p id="m-goal" style="font-size:13px; color:var(--text-muted); margin-top:10px;"></p>
-      <div style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-top:14px; color:var(--accent);">Ejecución paso a paso</div>
-      <ol id="m-steps" class="modal-steps"></ol>
-      <div style="background:var(--green-soft); border:1px solid rgba(52,211,153,0.28); padding:10px 12px; border-radius:10px; font-size:12.5px; margin-top:10px;">
-        <strong style="color:var(--green);">Alternativa Segura:</strong> <span id="m-alt"></span>
-      </div>
-      <div id="m-source" style="font-size:11px; color:var(--text-muted); margin-top:10px;"></div>
-    </div>
-  </div>
-
   <!-- MODAL NUEVO EJERCICIO / CALENTAMIENTO -->
   <div id="new-ex-modal" class="modal-backdrop" onclick="if(event.target===this) closeNewExModal()">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3 style="font-size:16px; font-weight:800;">Nuevo Ejercicio / Calentamiento</h3>
+        <h3 style="font-size:16px; font-weight:800;">Nuevo Ejercicio</h3>
         <button type="button" onclick="closeNewExModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;" aria-label="Cerrar">✕</button>
       </div>
       <div style="display:grid; gap:10px; margin-top:12px;">
-        <input id="nex-name" type="text" placeholder="Nombre (ej. Calentamiento Dedos y Poleas)" />
-        <input id="nex-cat" type="text" placeholder="Categoría (ej. Calentamiento, Fuerza de Dedos, Core, Psoas y Lumbar)" />
-        <select id="nex-lvl">
-          <option value="1">Nivel 1 · Base</option>
-          <option value="2">Nivel 2 · Fuerza</option>
-          <option value="3">Nivel 3 · Máxima</option>
-        </select>
-        <input id="nex-goal" type="text" placeholder="Objetivo principal del ejercicio o calentamiento" />
+        <input id="nex-name" type="text" placeholder="Nombre del ejercicio" />
+        <select id="nex-group"></select>
+        <input id="nex-goal" type="text" placeholder="Objetivo principal del ejercicio" />
         <input id="nex-media" type="text" placeholder="Ruta imagen (ej. assets/ex-hang20.webp)" />
         <textarea id="nex-steps" rows="3" placeholder="Pasos separados por | (ej. Movilidad muñeca 3 min|Descarga 50% en canto|2 series suaves)"></textarea>
         <input id="nex-alt" type="text" placeholder="Alternativa segura (si hay molestia o falta equipo)" />
@@ -769,6 +856,31 @@
   </div>
 
   <script>
+    const EXERCISE_GROUPS = [
+      { id: "warmup", name: "Calentamiento y Movilidad", color: "#38bdf8", soft: "rgba(56, 189, 248, 0.13)" },
+      { id: "fingers", name: "Fuerza de Dedos", color: "#2dd4bf", soft: "rgba(45, 212, 191, 0.13)" },
+      { id: "pull", name: "Tracción Superior", color: "#818cf8", soft: "rgba(129, 140, 248, 0.14)" },
+      { id: "push", name: "Empuje y Prehab", color: "#fbbf24", soft: "rgba(251, 191, 36, 0.13)" },
+      { id: "legs", name: "Pierna Funcional", color: "#34d399", soft: "rgba(52, 211, 153, 0.13)" },
+      { id: "core", name: "Core, Psoas y Lumbar", color: "#fb7185", soft: "rgba(251, 113, 133, 0.13)" },
+      { id: "boulder", name: "Búlder y Técnica", color: "#c084fc", soft: "rgba(192, 132, 252, 0.13)" }
+    ];
+
+    function resolveExerciseGroup(ex) {
+      if (ex && ex.groupId) {
+        const byId = EXERCISE_GROUPS.find(g => g.id === ex.groupId);
+        if (byId) return byId;
+      }
+      const raw = `${(ex && ex.category) || ""} ${(ex && ex.name) || ""}`.toLowerCase();
+      if (/calentamiento|movilidad|escapular|ligero/.test(raw)) return EXERCISE_GROUPS[0];
+      if (/dedos|regleta|pinza|romo|bolsillo|repeater|contacto/.test(raw)) return EXERCISE_GROUPS[1];
+      if (/tracci|dominada|bloqueo|remo|arquero|frenchies/.test(raw)) return EXERCISE_GROUPS[2];
+      if (/empuje|prehab|flexion|rompecr|muñeca|pronaci|hombro|tirón facial/.test(raw)) return EXERCISE_GROUPS[3];
+      if (/pierna|sentadilla|cajón|glúteo|isquio|talon/.test(raw)) return EXERCISE_GROUPS[4];
+      if (/core|psoas|lumbar|plancha|limpiaparabrisas|deslizamiento|pies a la barra/.test(raw)) return EXERCISE_GROUPS[5];
+      return EXERCISE_GROUPS[6];
+    }
+
     const ICONS = {
       home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>`,
       train: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="m7 7 5-4 5 4"/><path d="M5 13h4"/><path d="M15 13h4"/><path d="m8 20 4-3 4 3"/></svg>`,
@@ -783,6 +895,8 @@
       pause: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>`,
       skip: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5v14l10-7-10-7Z"/><path d="M19 5v14"/></svg>`,
       next: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>`,
+      back: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 18-6-6 6-6"/></svg>`,
+      search: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>`,
       plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>`,
       dot: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="12" r="5"/></svg>`
     };
@@ -808,6 +922,7 @@
       setHtml("lat-next-icon", iconSvg("next", 14));
       setHtml("lat-reset-icon", iconSvg("reset", 14));
       setHtml("ency-plus-icon", iconSvg("plus", 13));
+      setHtml("ency-search-icon", iconSvg("search", 15));
       setHtml("home-legend", `
         <span style="display:inline-flex;align-items:center;gap:4px;"><span style="color:var(--green);display:inline-flex;">${iconSvg("check", 12)}</span> Completado</span>
         <span style="display:inline-flex;align-items:center;gap:4px;"><span style="display:inline-flex;">${iconSvg("clock", 12)}</span> Pendiente</span>
@@ -816,6 +931,11 @@
       document.querySelectorAll(".t-dot.verde").forEach(el => { el.style.color = "var(--green)"; el.innerHTML = iconSvg("dot", 11); });
       document.querySelectorAll(".t-dot.amarillo").forEach(el => { el.style.color = "var(--yellow)"; el.innerHTML = iconSvg("dot", 11); });
       document.querySelectorAll(".t-dot.rojo").forEach(el => { el.style.color = "var(--red)"; el.innerHTML = iconSvg("dot", 11); });
+
+      const nexGroupSel = document.getElementById("nex-group");
+      if (nexGroupSel) {
+        nexGroupSel.innerHTML = EXERCISE_GROUPS.map(g => `<option value="${g.id}">${g.name}</option>`).join("");
+      }
     }
 
     const PIN_CODE = "2026";
@@ -926,45 +1046,45 @@
         }
       ],
       encyclopedia: [
-        { id: "ex-mov", name: "Movilidad Articular + Activación Escapular", category: "Búlder y Técnica", level: "1", media_url: "assets/ex-warm-thoracic.webp", goal: "Lubricar cápsulas articulares y activar estabilizadores de hombro y flexores antes de cargar peso.", steps: ["Realiza círculos controlados de cuello, hombros, codos y muñecas durante 5 min.", "Haz 2 series de 6 retracciones escapulares colgado en barra con brazos rectos.", "Escala 3 bloques muy fáciles enfocando respiración y pies suaves."], alt: "Activación escapular con bandas elásticas de resistencia baja.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-hang20", name: "Suspensiones Máximas en Regleta (20 mm)", category: "Fuerza de Dedos", level: "2", media_url: "assets/ex-hang20.webp", goal: "Aumentar la fuerza máxima isométrica de flexores de dedos y rigidez tendinosa sin estrés extremo.", steps: ["Usa agarre semi-arqueado (half crimp) con el pulgar relajado al costado.", "Mantén hombros activos (lejos de las orejas) y cuelga 10 seg dejando 1-2 seg en reserva.", "Descansa 3 minutos completos entre cada serie."], alt: "Regleta de 25-30 mm o descargar peso apoyando un pie en cajón.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-limit", name: "Búlder Límite (4-6 Movimientos Máx.)", category: "Búlder y Técnica", level: "3", goal: "Reclutar unidades motoras de alto umbral y transferir fuerza máxima a movimientos complejos.", steps: ["Elige 2 o 3 bloques cerca de tu límite máximo (4 a 6 movimientos).", "Realiza intentos de máxima calidad descansando 3 a 4 minutos entre pegues.", "Corta la sesión apenas notes que pierdes potencia o precisión."], alt: "Aislar 2 movimientos duros de un bloque sin necesidad de encadenarlo.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-chestpull", name: "Dominadas al Pecho (Reemplazo Seguro Campus)", category: "Tracción Superior", level: "2", goal: "Desarrollar potencia de tracción explosiva y cierre escapular profundo protegiendo poleas.", steps: ["Desde colgado activo, tracciona explosivamente llevando el pecho hacia la barra.", "Controla la fase de bajada durante 2 a 3 segundos.", "Descansa 3 minutos entre series."], alt: "Dominadas estrictas al mentón o asistidas con banda elástica.", source: "Adaptación ELBLOQUE" },
-        { id: "ex-4x4", name: "Circuitos 4x4 en Muro", category: "Búlder y Técnica", level: "2", goal: "Desarrollar resistencia a la fuerza anaeróbica láctica y eficiencia técnica bajo fatiga.", steps: ["Selecciona 4 bloques unos 2 grados por debajo de tu máximo.", "Escala los 4 bloques seguidos sin descanso entre ellos (1 ronda).", "Descansa 3 minutos entre rondas hasta completar el volumen prescrito."], alt: "Reducir a 3 bloques por ronda o bajar un grado la dificultad.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-push", name: "Flexiones de Pecho (Push-Ups)", category: "Empuje y Base", level: "1", goal: "Equilibrar la cadena anterior (pectoral y serrato) para prevenir hombros adelantados.", steps: ["Mantén abdomen y glúteos contraídos formando una línea recta.", "Baja con los codos a 45° del torso hasta rozar el suelo y empuja firme."], alt: "Apoyo de rodillas o manos elevadas sobre un cajón.", source: "Sistema · Base" },
-        { id: "ex-skull", name: "Rompecráneos con Mancuernas", category: "Empuje y Base", level: "1", goal: "Fortalecer la cabeza larga del tríceps para estabilizar el codo y prevenir epicondilitis.", steps: ["Tumbado boca arriba con mancuernas, flexiona solo los codos bajando hacia los lados de la frente.", "Extiende de forma controlada manteniendo los brazos perpendiculares al suelo."], alt: "Extensión de tríceps con banda elástica.", source: "Sistema · Base" },
-        { id: "ex-stepup", name: "Subida al Cajón Unilateral (Step-Up)", category: "Pierna Funcional", level: "1", goal: "Desarrollar fuerza de empuje a una pierna para incorporaciones sobre pies altos en el muro.", steps: ["Apoya un pie completo sobre un cajón a altura de rodilla.", "Sube impulsando únicamente con esa pierna sin ayudarte con el pie de abajo.", "Desciende lentamente en 3 segundos."], alt: "Usar un cajón más bajo o asistirse levemente con una mano.", source: "Sistema · Base" },
-        { id: "ex-hamstring", name: "Puente de Glúteo / Isquios a una Pierna", category: "Pierna Funcional", level: "1", goal: "Activar la cadena posterior para potenciar los taloneos (heel hooks) y pegar la cadera al muro.", steps: ["Tumbado boca arriba, apoya un solo talón en el suelo o cajón.", "Eleva la cadera contrayendo glúteo e isquiotibial y sostén 2 seg arriba."], alt: "Ejecución bilateral con ambos talones apoyados.", source: "Sistema · Base" },
-        { id: "ex-psoas", name: "Elevación de Rodillas / Piernas Colgado (Psoas)", category: "Core, Psoas y Lumbar", level: "2", goal: "Fortalecer el psoas-ilíaco y abdomen inferior para mantener los pies pegados en desplomes.", steps: ["Cuélgate en barra con escápulas activas para evitar balanceo.", "Eleva rodillas al pecho o piernas rectas de forma controlada y baja en 3 seg."], alt: "Elevaciones tumbado boca arriba en colchoneta.", source: "Sistema · Base" },
-        { id: "ex-lumbar", name: "Extensión Lumbar en Suelo (Arch Hold)", category: "Core, Psoas y Lumbar", level: "1", goal: "Fortalecer erectores espinales y glúteos para evitar desconexión de pies en techos.", steps: ["Tumbado boca abajo, eleva simultáneamente pecho y piernas manteniendo el cuello neutro.", "Sostén la contracción isométrica durante 20 a 25 segundos."], alt: "Elevación alterna de brazo y pierna contraria (Bird-Dog).", source: "Sistema · Base" },
-        { id: "ex-silent", name: "Pies Silenciosos y Pirámide Técnica (V0-V2)", category: "Búlder y Técnica", level: "1", goal: "Desarrollar precisión de apoyos, colocación de cadera y economía de movimiento sin estrés en poleas.", steps: ["Sube 3 bloques fáciles pisando cada presa sin hacer ruido.", "Mantén la vista en el pie hasta que quede firme antes de mover las manos."], alt: "Escalar solo en placa vertical con cantos grandes.", source: "Sistema · Base Técnica" },
-        { id: "ex-scap-pull", name: "Dominadas Escapulares + Estrictas Controladas", category: "Tracción Superior", level: "1", goal: "Fortalecer depresores escapulares y dorsal ancho sin sobrecargar tendones de codos ni dedos.", steps: ["Cuélgate con brazos estirados y junta escápulas hacia abajo (5 reps).", "Continúa con 4-6 dominadas estrictas subiendo en 2 seg y bajando en 3 seg."], alt: "Usar banda elástica de asistencia o remo invertido.", source: "Sistema · Base Tracción" },
-        { id: "ex-contact5", name: "Potencia de Contacto en Canto Cómodo (5 seg)", category: "Fuerza de Dedos", level: "2", goal: "Mejorar la velocidad de reclutamiento neural al agarrar una presa sin dañar poleas.", steps: ["Usa una regleta cómoda (25-30 mm) o canto profundo.", "Toma el agarre y aplica tensión máxima explosiva durante 5 segundos exactos.", "Descansa 3 minutos completos entre series."], alt: "Suspensiones rápidas con pies apoyados.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-dyno", name: "Bloque Dinámico y Coordinaciones", category: "Búlder y Técnica", level: "3", goal: "Entrenar la transferencia de impulso de piernas y cadera hacia agarres dinámicos.", steps: ["Elige 2-3 bloques de 3 a 4 movimientos que exijan impulso o coordinación.", "Visualiza el punto exacto de recepción antes de saltar y descansa 3-4 min entre pegues."], alt: "Practicar lanzamientos cortos hacia agarres grandes.", source: "Adaptación ELBLOQUE" },
-        { id: "ex-plyo-push", name: "Flexiones Explosivas + Salto Controlado", category: "Empuje y Base", level: "2", goal: "Desarrollar potencia rápida en tren superior para movimientos dinámicos.", steps: ["Haz 5 flexiones empujando rápido para despegar ligeramente las manos del suelo.", "Descansa 90 segundos entre series."], alt: "Flexiones rápidas sobre banco elevado.", source: "Sistema · Base Potencia" },
-        { id: "ex-repeaters", name: "Intermitentes Repeaters 7:3 (Resistencia Local)", category: "Fuerza de Dedos", level: "2", goal: "Aumentar la capacidad oxidativa y tolerancia al ácido láctico en los flexores del antebrazo.", steps: ["Usa regleta cómoda de 22-25 mm en agarre semi-arqueado.", "Cuélgate 7 seg y descansa 3 seg; repite 6 veces para completar 1 serie.", "Descansa 3 minutos entre series."], alt: "Reducir a 4 repeticiones por serie o usar canto más grande.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-pinch", name: "Pinza en Bloque", category: "Fuerza de Dedos", level: "2", goal: "Fortalecer el aductor del pulgar y los flexores profundos para dominar volúmenes y presas de pinza.", steps: ["Sujeta un bloque de madera o disco con el pulgar opuesto a los 4 dedos.", "Despega el peso del suelo manteniendo la muñeca neutra y sostén 8-10 seg por mano.", "Descansa 2-3 minutos entre series."], alt: "Pinza estática en una presa ancha del muro con los pies apoyados.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-sloper", name: "Suspensiones en Romos", category: "Fuerza de Dedos", level: "2", goal: "Desarrollar fuerza de fricción, compresión de muñeca y tensión de hombros en agarres abiertos.", steps: ["Coloca las manos abiertas sobre los romos superiores de la multipresa.", "Cuelga con muñecas neutras, hombros activos y codos ligeramente flexionados por 8-10 seg.", "Descansa 3 minutos completos entre series."], alt: "Romos más profundos o descargar peso apoyando un pie en un cajón.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-pockets", name: "Bolsillos de 2 Dedos", category: "Fuerza de Dedos", level: "3", goal: "Acondicionar los tendones flexores profundos para monodedos y bidedos en roca o competencia.", steps: ["Usa la pareja de dedos medios (anular y corazón) en un bolsillo profundo sin arquear.", "Cuelga 7-8 seg manteniendo el resto de dedos relajados.", "Descansa 3 minutos completos entre series."], alt: "Usar 3 dedos (índice, medio y anular) o evitar en bloques de iniciación.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-maxedge", name: "Regleta Mínima (10-12 mm)", category: "Fuerza de Dedos", level: "3", goal: "Maximizar la fuerza de contacto en micro-regletas manteniendo un ángulo articular seguro.", steps: ["Usa exclusivamente agarre semi-arqueado; queda prohibido el arqueo cerrado.", "Cuelga 6-8 seg sin lastre excesivo dejando 2 seg en reserva.", "Descansa 3-4 minutos entre series."], alt: "Mantenerse en regleta de 18-20 mm añadiendo lastre moderado.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-lightrep", name: "Protocolo Tendinoso Ligero", category: "Fuerza de Dedos", level: "1", goal: "Estimular la síntesis de colágeno y la vascularización tendinosa en días de descarga o retorno.", steps: ["Mantén los pies apoyados en el suelo descargando el 60-70% de tu peso corporal.", "Sostén una regleta cómoda 10 seg y descansa 5 seg (6 repeticiones por serie).", "Realiza 2-3 series con 2 min de pausa."], alt: "Terapia con plastilina terapéutica o apertura de dedos con banda elástica.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-lockoff", name: "Bloqueos Isométricos a 90° y 120°", category: "Tracción Superior", level: "2", goal: "Desarrollar fuerza estática para sostener posiciones mientras se alcanza una presa lejana.", steps: ["Sube en dominada y mantén la barbilla sobre la barra 4 segundos.", "Baja a un ángulo de 90° y sostén 4 seg; baja a 120° y sostén otros 4 seg.", "Descansa 3 minutos entre repeticiones."], alt: "Realizar un solo ángulo (90°) asistido con banda elástica.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-archer", name: "Dominadas Tipo Arquero", category: "Tracción Superior", level: "3", goal: "Desarrollar fuerza unilateral de tracción y control escapular asimétrico.", steps: ["Toma la barra con agarre ancho y sube hacia una mano extendiendo el brazo contrario.", "Desplázate horizontalmente hacia la otra mano sin perder altura.", "Baja controlado y descansa 3 minutos."], alt: "Dominadas con una mano agarrando la muñeca contraria.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-frenchies", name: "Dominada con Paradas Isométricas", category: "Tracción Superior", level: "3", goal: "Combinar fuerza máxima de tracción y resistencia isométrica al bloqueo en una misma serie.", steps: ["Haz 1 dominada completa y bloquea arriba 4 seg; baja hasta extender los brazos.", "Sube y bloquea a 90° por 4 seg; baja y sube para bloquear a 120° por 4 seg.", "Descansa 3-4 minutos entre series."], alt: "Reducir las paradas isométricas a 2 segundos por ángulo.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-invrow", name: "Remo Invertido en Anillas o Barra Baja", category: "Tracción Superior", level: "1", media_url: "assets/ex-invrow.webp", goal: "Fortalecer romboides, trapecio medio y deltoides posterior para dar estabilidad escapular en techos.", steps: ["Colócate bajo la barra o anillas con el cuerpo recto y talones apoyados.", "Tira del pecho hacia las manos juntando las escápulas al final del recorrido.", "Baja controlado en 2 segundos."], alt: "Aumentar el ángulo vertical del cuerpo (pies más cerca de la vertical).", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-hovering", name: "Pausa Suspendida de 3 Segundos", category: "Búlder y Técnica", level: "1", goal: "Eliminar el impulso descontrolado y obligar al cuerpo a encontrar el equilibrio sobre los pies.", steps: ["Escala un bloque fácil o moderado en silencio.", "Antes de agarrar cada presa de mano, mantén la mano suspendida a 5 cm durante 3 segundos.", "Fija el pie antes de mover la mano."], alt: "Aplicar pausa de 2 segundos en bloques de placa vertical.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-updown", name: "Subir, Destrepar y Volver a Subir", category: "Búlder y Técnica", level: "2", goal: "Mejorar la precisión de pies en destrepe y aumentar el tiempo bajo tensión sin sobrecargar dedos.", steps: ["Escala un bloque de dificultad media hasta el final con control.", "Destrepa el mismo bloque hasta el inicio sin bajar a la colchoneta.", "Vuelve a subirlo de inmediato y descansa 3 minutos."], alt: "Subir y destrepar una sola vez por serie.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-pyramid", name: "Pirámide de Resistencia (V1-V2-V3-V2-V1)", category: "Búlder y Técnica", level: "2", goal: "Entrenar la recuperación activa y el ritmo respiratorio a través de intensidades crecientes.", steps: ["Escala 5 bloques seguidos subiendo hasta tu grado medio y bajando nuevamente.", "Descansa exactamente 1 minuto entre bloque y bloque.", "Mantén la respiración fluida en cada secuencia."], alt: "Pirámide corta de 3 bloques (V1-V2-V1).", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-traverse", name: "Travesía Continua (15-20 Movimientos)", category: "Búlder y Técnica", level: "1", goal: "Desarrollar capacidad aeróbica local en antebrazos y fluidez en transiciones largas.", steps: ["Desplázate lateralmente en el muro realizando 15 a 20 movimientos seguidos.", "Mantén un ritmo constante sin detenerte a sacudir demasiado.", "Descansa 3-4 minutos entre rondas."], alt: "Dividir en dos tramos de 10 movimientos con 1 minuto de reposo.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-toesbar", name: "Elevaciones de Pies a la Barra", category: "Core, Psoas y Lumbar", level: "2", goal: "Maximizar la compresión abdominal y la conexión entre manos y pies en techos horizontales.", steps: ["Cuélgate en la barra con escápulas activas y piernas extendidas.", "Eleva las piernas rectas hasta tocar la barra con los empeines sin balanceo lumbar.", "Baja controlado en 3 segundos."], alt: "Elevar rodillas al pecho con pausa de 2 seg arriba.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-rkcplank", name: "Plancha Abdominal de Máxima Tensión", category: "Core, Psoas y Lumbar", level: "1", goal: "Generar máxima tensión de cuerpo completo para evitar que los pies resbalen en desplomes.", steps: ["Apoya antebrazos y puntas de pies en el suelo con la pelvis en retroversión.", "Contrae glúteos, cuádriceps y abdomen al 100% tirando codos hacia pies por 15-20 seg.", "Descansa 60 seg entre series."], alt: "Plancha estándar con apoyo de rodillas manteniendo el abdomen firme.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-bodysaw", name: "Deslizamiento Abdominal en Plancha", category: "Core, Psoas y Lumbar", level: "2", goal: "Fortalecer la estabilidad anti-extensión lumbar cuando el cuerpo se estira hacia presas lejanas.", steps: ["Desde plancha sobre antebrazos (o rueda abdominal), desliza el cuerpo hacia atrás.", "Extiende los hombros sin dejar que la zona lumbar se arquee.", "Regresa a la posición inicial apretando el abdomen."], alt: "Recorrido corto con apoyo de rodillas en colchoneta.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-wipers", name: "Limpiaparabrisas Colgado en Barra", category: "Core, Psoas y Lumbar", level: "3", goal: "Desarrollar fuerza rotacional extrema de oblicuos y dorsal para evitar el efecto bandera.", steps: ["Cuélgate en barra y eleva las piernas rectas hasta formar 90° con el torso.", "Rota las piernas lentamente de lado a lado manteniendo el control escapular.", "Realiza 4-6 repeticiones por lado."], alt: "Giros rusos sentado o limpiaparabrisas tumbado en el suelo.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-bulgarian", name: "Sentadilla Búlgara Unilateral", category: "Pierna Funcional", level: "2", goal: "Construir fuerza unilateral profunda de cuádriceps y glúteo para incorporaciones sobre pies altos.", steps: ["Apoya el empeine trasero sobre un banco o cajón a altura de rodilla.", "Baja verticalmente hasta 90° y empuja fuerte con el talón delantero.", "Realiza 6-8 reps por pierna."], alt: "Zancada estática en el suelo sin elevación trasera.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-calfraise", name: "Elevación de Talones Excéntrica", category: "Pierna Funcional", level: "1", goal: "Fortalecer el tendón de Aquiles y la pantorrilla para sostener apoyos en micro-regletas de pie.", steps: ["Párate sobre el borde de un escalón o cajón con ambos pies.", "Sube con los dos pies y baja lentamente en 4 segundos apoyando un solo pie.", "Realiza 10-12 reps por pierna."], alt: "Subir y bajar con ambos pies en suelo plano.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-wristcurl", name: "Curl Excéntrico de Muñeca (Prevención Codo)", category: "Empuje y Base", level: "1", goal: "Prevenir y rehabilitar la tendinopatía medial y lateral de codo mediante carga excéntrica lenta.", steps: ["Apoya el antebrazo sobre el muslo sosteniendo una mancuerna ligera.", "Sube la muñeca con ayuda de la otra mano y bájala lentamente en 4 segundos.", "Haz 12-15 reps por brazo (palma arriba y palma abajo)."], alt: "Usar una banda elástica suave o botella de agua.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-pronation", name: "Pronación y Supinación de Antebrazo", category: "Empuje y Base", level: "1", goal: "Equilibrar los músculos rotadores del antebrazo sometidos a torsión en agarres laterales.", steps: ["Mantén el codo pegado al costado a 90° sujetando una mancuerna por un extremo.", "Gira lentamente la muñeca llevando la palma hacia arriba y hacia abajo.", "Realiza 12-15 giros controlados por brazo."], alt: "Reducir palanca agarrando la mancuerna por el centro.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-facepull", name: "Tirón Facial y Rotación Externa de Hombro", category: "Empuje y Base", level: "1", goal: "Fortalecer el manguito rotador para blindar el hombro en bloqueos altos y movimientos dinámicos.", steps: ["Ancla una banda elástica a altura del rostro y tira hacia las orejas.", "Separa las manos rotando los pulgares hacia atrás al final del movimiento.", "Sostén 2 seg y regresa controlado (12-15 reps)."], alt: "Rotación externa tumbado de lado con mancuerna ligera.", source: "Eric Hörst · Entrenamiento para Escalada" }
+        { id: "ex-mov", groupId: "warmup", name: "Movilidad Articular + Activación Escapular", category: "Calentamiento y Movilidad", media_url: "assets/ex-warm-thoracic.webp", goal: "Lubricar cápsulas articulares y activar estabilizadores de hombro y flexores antes de cargar peso.", steps: ["Realiza círculos controlados de cuello, hombros, codos y muñecas durante 5 min.", "Haz 2 series de 6 retracciones escapulares colgado en barra con brazos rectos.", "Escala 3 bloques muy fáciles enfocando respiración y pies suaves."], alt: "Activación escapular con bandas elásticas de resistencia baja.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-lightrep", groupId: "warmup", name: "Protocolo Tendinoso Ligero", category: "Calentamiento y Movilidad", goal: "Estimular la síntesis de colágeno y la vascularización tendinosa en días de descarga o calentamiento progresivo.", steps: ["Mantén los pies apoyados en el suelo descargando el 60-70% de tu peso corporal.", "Sostén una regleta cómoda 10 seg y descansa 5 seg (6 repeticiones por serie).", "Realiza 2-3 series con 2 min de pausa."], alt: "Terapia con plastilina terapéutica o apertura de dedos con banda elástica.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-hang20", groupId: "fingers", name: "Suspensiones Máximas en Regleta (20 mm)", category: "Fuerza de Dedos", media_url: "assets/ex-hang20.webp", goal: "Aumentar la fuerza máxima isométrica de flexores de dedos y rigidez tendinosa sin estrés extremo.", steps: ["Usa agarre semi-arqueado (half crimp) con el pulgar relajado al costado.", "Mantén hombros activos (lejos de las orejas) y cuelga 10 seg dejando 1-2 seg en reserva.", "Descansa 3 minutos completos entre cada serie."], alt: "Regleta de 25-30 mm o descargar peso apoyando un pie en cajón.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-contact5", groupId: "fingers", name: "Potencia de Contacto en Canto Cómodo (5 seg)", category: "Fuerza de Dedos", goal: "Mejorar la velocidad de reclutamiento neural al agarrar una presa sin dañar poleas.", steps: ["Usa una regleta cómoda (25-30 mm) o canto profundo.", "Toma el agarre y aplica tensión máxima explosiva durante 5 segundos exactos.", "Descansa 3 minutos completos entre series."], alt: "Suspensiones rápidas con pies apoyados.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-repeaters", groupId: "fingers", name: "Intermitentes Repeaters 7:3 (Resistencia Local)", category: "Fuerza de Dedos", goal: "Aumentar la capacidad oxidativa y tolerancia al ácido láctico en los flexores del antebrazo.", steps: ["Usa regleta cómoda de 22-25 mm en agarre semi-arqueado.", "Cuélgate 7 seg y descansa 3 seg; repite 6 veces para completar 1 serie.", "Descansa 3 minutos entre series."], alt: "Reducir a 4 repeticiones por serie o usar canto más grande.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-pinch", groupId: "fingers", name: "Pinza en Bloque", category: "Fuerza de Dedos", goal: "Fortalecer el aductor del pulgar y los flexores profundos para dominar volúmenes y presas de pinza.", steps: ["Sujeta un bloque de madera o disco con el pulgar opuesto a los 4 dedos.", "Despega el peso del suelo manteniendo la muñeca neutra y sostén 8-10 seg por mano.", "Descansa 2-3 minutos entre series."], alt: "Pinza estática en una presa ancha del muro con los pies apoyados.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-sloper", groupId: "fingers", name: "Suspensiones en Romos", category: "Fuerza de Dedos", goal: "Desarrollar fuerza de fricción, compresión de muñeca y tensión de hombros en agarres abiertos.", steps: ["Coloca las manos abiertas sobre los romos superiores de la multipresa.", "Cuelga con muñecas neutras, hombros activos y codos ligeramente flexionados por 8-10 seg.", "Descansa 3 minutos completos entre series."], alt: "Romos más profundos o descargar peso apoyando un pie en un cajón.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-pockets", groupId: "fingers", name: "Bolsillos de 2 Dedos", category: "Fuerza de Dedos", goal: "Acondicionar los tendones flexores profundos para monodedos y bidedos en roca o competencia.", steps: ["Usa la pareja de dedos medios (anular y corazón) en un bolsillo profundo sin arquear.", "Cuelga 7-8 seg manteniendo el resto de dedos relajados.", "Descansa 3 minutos completos entre series."], alt: "Usar 3 dedos (índice, medio y anular) o evitar en bloques de iniciación.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-maxedge", groupId: "fingers", name: "Regleta Mínima (10-12 mm)", category: "Fuerza de Dedos", goal: "Maximizar la fuerza de contacto en micro-regletas manteniendo un ángulo articular seguro.", steps: ["Usa exclusivamente agarre semi-arqueado; queda prohibido el arqueo cerrado.", "Cuelga 6-8 seg sin lastre excesivo dejando 2 seg en reserva.", "Descansa 3-4 minutos entre series."], alt: "Mantenerse en regleta de 18-20 mm añadiendo lastre moderado.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-chestpull", groupId: "pull", name: "Dominadas al Pecho (Reemplazo Seguro Campus)", category: "Tracción Superior", goal: "Desarrollar potencia de tracción explosiva y cierre escapular profundo protegiendo poleas.", steps: ["Desde colgado activo, tracciona explosivamente llevando el pecho hacia la barra.", "Controla la fase de bajada durante 2 a 3 segundos.", "Descansa 3 minutos entre series."], alt: "Dominadas estrictas al mentón o asistidas con banda elástica.", source: "Adaptación ELBLOQUE" },
+        { id: "ex-scap-pull", groupId: "pull", name: "Dominadas Escapulares + Estrictas Controladas", category: "Tracción Superior", goal: "Fortalecer depresores escapulares y dorsal ancho sin sobrecargar tendones de codos ni dedos.", steps: ["Cuélgate con brazos estirados y junta escápulas hacia abajo (5 reps).", "Continúa con 4-6 dominadas estrictas subiendo en 2 seg y bajando en 3 seg."], alt: "Usar banda elástica de asistencia o remo invertido.", source: "Sistema · Base Tracción" },
+        { id: "ex-lockoff", groupId: "pull", name: "Bloqueos Isométricos a 90° y 120°", category: "Tracción Superior", goal: "Desarrollar fuerza estática para sostener posiciones mientras se alcanza una presa lejana.", steps: ["Sube en dominada y mantén la barbilla sobre la barra 4 segundos.", "Baja a un ángulo de 90° y sostén 4 seg; baja a 120° y sostén otros 4 seg.", "Descansa 3 minutos entre repeticiones."], alt: "Realizar un solo ángulo (90°) asistido con banda elástica.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-archer", groupId: "pull", name: "Dominadas Tipo Arquero", category: "Tracción Superior", goal: "Desarrollar fuerza unilateral de tracción y control escapular asimétrico.", steps: ["Toma la barra con agarre ancho y sube hacia una mano extendiendo el brazo contrario.", "Desplázate horizontalmente hacia la otra mano sin perder altura.", "Baja controlado y descansa 3 minutos."], alt: "Dominadas con una mano agarrando la muñeca contraria.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-frenchies", groupId: "pull", name: "Dominada con Paradas Isométricas", category: "Tracción Superior", goal: "Combinar fuerza máxima de tracción y resistencia isométrica al bloqueo en una misma serie.", steps: ["Haz 1 dominada completa y bloquea arriba 4 seg; baja hasta extender los brazos.", "Sube y bloquea a 90° por 4 seg; baja y sube para bloquear a 120° por 4 seg.", "Descansa 3-4 minutos entre series."], alt: "Reducir las paradas isométricas a 2 segundos por ángulo.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-invrow", groupId: "pull", name: "Remo Invertido en Anillas o Barra Baja", category: "Tracción Superior", media_url: "assets/ex-invrow.webp", goal: "Fortalecer romboides, trapecio medio y deltoides posterior para dar estabilidad escapular en techos.", steps: ["Colócate bajo la barra o anillas con el cuerpo recto y talones apoyados.", "Tira del pecho hacia las manos juntando las escápulas al final del recorrido.", "Baja controlado en 2 segundos."], alt: "Aumentar el ángulo vertical del cuerpo (pies más cerca de la vertical).", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-push", groupId: "push", name: "Flexiones de Pecho (Push-Ups)", category: "Empuje y Prehab", goal: "Equilibrar la cadena anterior (pectoral y serrato) para prevenir hombros adelantados.", steps: ["Mantén abdomen y glúteos contraídos formando una línea recta.", "Baja con los codos a 45° del torso hasta rozar el suelo y empuja firme."], alt: "Apoyo de rodillas o manos elevadas sobre un cajón.", source: "Sistema · Base" },
+        { id: "ex-plyo-push", groupId: "push", name: "Flexiones Explosivas + Salto Controlado", category: "Empuje y Prehab", goal: "Desarrollar potencia rápida en tren superior para movimientos dinámicos.", steps: ["Haz 5 flexiones empujando rápido para despegar ligeramente las manos del suelo.", "Descansa 90 segundos entre series."], alt: "Flexiones rápidas sobre banco elevado.", source: "Sistema · Base Potencia" },
+        { id: "ex-skull", groupId: "push", name: "Rompecráneos con Mancuernas", category: "Empuje y Prehab", goal: "Fortalecer la cabeza larga del tríceps para estabilizar el codo y prevenir epicondilitis.", steps: ["Tumbado boca arriba con mancuernas, flexiona solo los codos bajando hacia los lados de la frente.", "Extiende de forma controlada manteniendo los brazos perpendiculares al suelo."], alt: "Extensión de tríceps con banda elástica.", source: "Sistema · Base" },
+        { id: "ex-wristcurl", groupId: "push", name: "Curl Excéntrico de Muñeca (Prevención Codo)", category: "Empuje y Prehab", goal: "Prevenir y rehabilitar la tendinopatía medial y lateral de codo mediante carga excéntrica lenta.", steps: ["Apoya el antebrazo sobre el muslo sosteniendo una mancuerna ligera.", "Sube la muñeca con ayuda de la otra mano y bájala lentamente en 4 segundos.", "Haz 12-15 reps por brazo (palma arriba y palma abajo)."], alt: "Usar una banda elástica suave o botella de agua.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-pronation", groupId: "push", name: "Pronación y Supinación de Antebrazo", category: "Empuje y Prehab", goal: "Equilibrar los músculos rotadores del antebrazo sometidos a torsión en agarres laterales.", steps: ["Mantén el codo pegado al costado a 90° sujetando una mancuerna por un extremo.", "Gira lentamente la muñeca llevando la palma hacia arriba y hacia abajo.", "Realiza 12-15 giros controlados por brazo."], alt: "Reducir palanca agarrando la mancuerna por el centro.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-facepull", groupId: "push", name: "Tirón Facial y Rotación Externa de Hombro", category: "Empuje y Prehab", goal: "Fortalecer el manguito rotador para blindar el hombro en bloqueos altos y movimientos dinámicos.", steps: ["Ancla una banda elástica a altura del rostro y tira hacia las orejas.", "Separa las manos rotando los pulgares hacia atrás al final del movimiento.", "Sostén 2 seg y regresa controlado (12-15 reps)."], alt: "Rotación externa tumbado de lado con mancuerna ligera.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-stepup", groupId: "legs", name: "Subida al Cajón Unilateral (Step-Up)", category: "Pierna Funcional", goal: "Desarrollar fuerza de empuje a una pierna para incorporaciones sobre pies altos en el muro.", steps: ["Apoya un pie completo sobre un cajón a altura de rodilla.", "Sube impulsando únicamente con esa pierna sin ayudarte con el pie de abajo.", "Desciende lentamente en 3 segundos."], alt: "Usar un cajón más bajo o asistirse levemente con una mano.", source: "Sistema · Base" },
+        { id: "ex-bulgarian", groupId: "legs", name: "Sentadilla Búlgara Unilateral", category: "Pierna Funcional", goal: "Construir fuerza unilateral profunda de cuádriceps y glúteo para incorporaciones sobre pies altos.", steps: ["Apoya el empeine trasero sobre un banco o cajón a altura de rodilla.", "Baja verticalmente hasta 90° y empuja fuerte con el talón delantero.", "Realiza 6-8 reps por pierna."], alt: "Zancada estática en el suelo sin elevación trasera.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-hamstring", groupId: "legs", name: "Puente de Glúteo / Isquios a una Pierna", category: "Pierna Funcional", goal: "Activar la cadena posterior para potenciar los taloneos (heel hooks) y pegar la cadera al muro.", steps: ["Tumbado boca arriba, apoya un solo talón en el suelo o cajón.", "Eleva la cadera contrayendo glúteo e isquiotibial y sostén 2 seg arriba."], alt: "Ejecución bilateral con ambos talones apoyados.", source: "Sistema · Base" },
+        { id: "ex-calfraise", groupId: "legs", name: "Elevación de Talones Excéntrica", category: "Pierna Funcional", goal: "Fortalecer el tendón de Aquiles y la pantorrilla para sostener apoyos en micro-regletas de pie.", steps: ["Párate sobre el borde de un escalón o cajón con ambos pies.", "Sube con los dos pies y baja lentamente en 4 segundos apoyando un solo pie.", "Realiza 10-12 reps por pierna."], alt: "Subir y bajar con ambos pies en suelo plano.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-psoas", groupId: "core", name: "Elevación de Rodillas / Piernas Colgado (Psoas)", category: "Core, Psoas y Lumbar", goal: "Fortalecer el psoas-ilíaco y abdomen inferior para mantener los pies pegados en desplomes.", steps: ["Cuélgate en barra con escápulas activas para evitar balanceo.", "Eleva rodillas al pecho o piernas rectas de forma controlada y baja en 3 seg."], alt: "Elevaciones tumbado boca arriba en colchoneta.", source: "Sistema · Base" },
+        { id: "ex-lumbar", groupId: "core", name: "Extensión Lumbar en Suelo (Arch Hold)", category: "Core, Psoas y Lumbar", goal: "Fortalecer erectores espinales y glúteos para evitar desconexión de pies en techos.", steps: ["Tumbado boca abajo, eleva simultáneamente pecho y piernas manteniendo el cuello neutro.", "Sostén la contracción isométrica durante 20 a 25 segundos."], alt: "Elevación alterna de brazo y pierna contraria (Bird-Dog).", source: "Sistema · Base" },
+        { id: "ex-toesbar", groupId: "core", name: "Elevaciones de Pies a la Barra", category: "Core, Psoas y Lumbar", goal: "Maximizar la compresión abdominal y la conexión entre manos y pies en techos horizontales.", steps: ["Cuélgate en la barra con escápulas activas y piernas extendidas.", "Eleva las piernas rectas hasta tocar la barra con los empeines sin balanceo lumbar.", "Baja controlado en 3 segundos."], alt: "Elevar rodillas al pecho con pausa de 2 seg arriba.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-rkcplank", groupId: "core", name: "Plancha Abdominal de Máxima Tensión", category: "Core, Psoas y Lumbar", goal: "Generar máxima tensión de cuerpo completo para evitar que los pies resbalen en desplomes.", steps: ["Apoya antebrazos y puntas de pies en el suelo con la pelvis en retroversión.", "Contrae glúteos, cuádriceps y abdomen al 100% tirando codos hacia pies por 15-20 seg.", "Descansa 60 seg entre series."], alt: "Plancha estándar con apoyo de rodillas manteniendo el abdomen firme.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-bodysaw", groupId: "core", name: "Deslizamiento Abdominal en Plancha", category: "Core, Psoas y Lumbar", goal: "Fortalecer la estabilidad anti-extensión lumbar cuando el cuerpo se estira hacia presas lejanas.", steps: ["Desde plancha sobre antebrazos (o rueda abdominal), desliza el cuerpo hacia atrás.", "Extiende los hombros sin dejar que la zona lumbar se arquee.", "Regresa a la posición inicial apretando el abdomen."], alt: "Recorrido corto con apoyo de rodillas en colchoneta.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-wipers", groupId: "core", name: "Limpiaparabrisas Colgado en Barra", category: "Core, Psoas y Lumbar", goal: "Desarrollar fuerza rotacional extrema de oblicuos y dorsal para evitar el efecto bandera.", steps: ["Cuélgate en barra y eleva las piernas rectas hasta formar 90° con el torso.", "Rota las piernas lentamente de lado a lado manteniendo el control escapular.", "Realiza 4-6 repeticiones por lado."], alt: "Giros rusos sentado o limpiaparabrisas tumbado en el suelo.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-limit", groupId: "boulder", name: "Búlder Límite (4-6 Movimientos Máx.)", category: "Búlder y Técnica", goal: "Reclutar unidades motoras de alto umbral y transferir fuerza máxima a movimientos complejos.", steps: ["Elige 2 o 3 bloques cerca de tu límite máximo (4 a 6 movimientos).", "Realiza intentos de máxima calidad descansando 3 a 4 minutos entre pegues.", "Corta la sesión apenas notes que pierdes potencia o precisión."], alt: "Aislar 2 movimientos duros de un bloque sin necesidad de encadenarlo.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-4x4", groupId: "boulder", name: "Circuitos 4x4 en Muro", category: "Búlder y Técnica", goal: "Desarrollar resistencia a la fuerza anaeróbica láctica y eficiencia técnica bajo fatiga.", steps: ["Selecciona 4 bloques unos 2 grados por debajo de tu máximo.", "Escala los 4 bloques seguidos sin descanso entre ellos (1 ronda).", "Descansa 3 minutos entre rondas hasta completar el volumen prescrito."], alt: "Reducir a 3 bloques por ronda o bajar un grado la dificultad.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-silent", groupId: "boulder", name: "Pies Silenciosos y Pirámide Técnica (V0-V2)", category: "Búlder y Técnica", goal: "Desarrollar precisión de apoyos, colocación de cadera y economía de movimiento sin estrés en poleas.", steps: ["Sube 3 bloques fáciles pisando cada presa sin hacer ruido.", "Mantén la vista en el pie hasta que quede firme antes de mover las manos."], alt: "Escalar solo en placa vertical con cantos grandes.", source: "Sistema · Base Técnica" },
+        { id: "ex-dyno", groupId: "boulder", name: "Bloque Dinámico y Coordinaciones", category: "Búlder y Técnica", goal: "Entrenar la transferencia de impulso de piernas y cadera hacia agarres dinámicos.", steps: ["Elige 2-3 bloques de 3 a 4 movimientos que exijan impulso o coordinación.", "Visualiza el punto exacto de recepción antes de saltar y descansa 3-4 min entre pegues."], alt: "Practicar lanzamientos cortos hacia agarres grandes.", source: "Adaptación ELBLOQUE" },
+        { id: "ex-hovering", groupId: "boulder", name: "Pausa Suspendida de 3 Segundos", category: "Búlder y Técnica", goal: "Eliminar el impulso descontrolado y obligar al cuerpo a encontrar el equilibrio sobre los pies.", steps: ["Escala un bloque fácil o moderado en silencio.", "Antes de agarrar cada presa de mano, mantén la mano suspendida a 5 cm durante 3 segundos.", "Fija el pie antes de mover la mano."], alt: "Aplicar pausa de 2 segundos en bloques de placa vertical.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-updown", groupId: "boulder", name: "Subir, Destrepar y Volver a Subir", category: "Búlder y Técnica", goal: "Mejorar la precisión de pies en destrepe y aumentar el tiempo bajo tensión sin sobrecargar dedos.", steps: ["Escala un bloque de dificultad media hasta el final con control.", "Destrepa el mismo bloque hasta el inicio sin bajar a la colchoneta.", "Vuelve a subirlo de inmediato y descansa 3 minutos."], alt: "Subir y destrepar una sola vez por serie.", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-pyramid", groupId: "boulder", name: "Pirámide de Resistencia (V1-V2-V3-V2-V1)", category: "Búlder y Técnica", goal: "Entrenar la recuperación activa y el ritmo respiratorio a través de intensidades crecientes.", steps: ["Escala 5 bloques seguidos subiendo hasta tu grado medio y bajando nuevamente.", "Descansa exactamente 1 minuto entre bloque y bloque.", "Mantén la respiración fluida en cada secuencia."], alt: "Pirámide corta de 3 bloques (V1-V2-V1).", source: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-traverse", groupId: "boulder", name: "Travesía Continua (15-20 Movimientos)", category: "Búlder y Técnica", goal: "Desarrollar capacidad aeróbica local en antebrazos y fluidez en transiciones largas.", steps: ["Desplázate lateralmente en el muro realizando 15 a 20 movimientos seguidos.", "Mantén un ritmo constante sin detenerte a sacudir demasiado.", "Descansa 3-4 minutos entre rondas."], alt: "Dividir en dos tramos de 10 movimientos con 1 minuto de reposo.", source: "Eric Hörst · Entrenamiento para Escalada" }
       ],
       microcycles: [
         { blockId: "horst-6w", code: "D1", shortTitle: "Dedos + Límite", title: "Fuerza Máxima de Dedos, Pinza y Búlder Límite", tag: "FUERZA MÁXIMA", duration: "90 min", focus: "Regla de oro: Deja 1-2 seg en reserva. Nunca arqueo cerrado (full crimp).", sections: [
@@ -1015,7 +1135,10 @@
       dayCode: "D1",
       checks: safeJsonParse(safeStorage.get(STORAGE_KEYS.CHECKS), {}),
       resetBaseline: safeJsonParse(safeStorage.get(STORAGE_KEYS.RESET_BASELINE), {}),
-      traffic: { dedos: "verde", codos: "verde" }
+      traffic: { dedos: "verde", codos: "verde" },
+      encyGroup: "",
+      encySearch: "",
+      encyDetailId: null
     };
 
     // LATTICE INTERVAL TIMER + EXERCISE QUEUE
@@ -1190,6 +1313,32 @@
       if (idx >= 0) {
         loadQueueExerciseAt(idx, shouldStart);
       }
+    }
+
+    function sendExerciseToTimer(exId) {
+      const ex = state.data.encyclopedia.find(e => e.id === exId);
+      if (!ex) return;
+      const queue = getDayExerciseQueue();
+      const inDayIdx = queue.findIndex(q => q.exId === exId);
+      const navBtn = document.querySelector('.nav-btn[data-view="train"]');
+      switchView("train", navBtn);
+
+      if (inDayIdx >= 0) {
+        loadQueueExerciseAt(inDayIdx, false);
+        return;
+      }
+
+      latLinked = {
+        checkKey: null,
+        exId: ex.id,
+        exName: ex.name,
+        rx: "3 series x 10 seg",
+        restText: "2 min",
+        queueIndex: 0,
+        autoAdvanceEx: false
+      };
+      applyLatticePreset({ prep: 5, work: 10, rest: 0, reps: 1, sets: 3, setRest: 120 });
+      renderTrainView();
     }
 
     function nextQueueExercise() {
@@ -1530,7 +1679,6 @@
       renderHome();
       renderTrainView();
       syncQueueForCurrentDay(true);
-      renderEncyclopediaFilters();
       renderEncyclopedia();
       renderLogView();
     }
@@ -1650,16 +1798,20 @@
       const flatItems = [];
       (day.sections || []).forEach(sec => {
         (sec.items || []).forEach(item => {
-          const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { name: item.exId };
+          const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { id: item.exId, name: item.exId };
+          const grp = resolveExerciseGroup(ex);
           const rxText = (isDeload && item.p3) ? item.p3 : ((isPhase2 && item.p2) ? item.p2 : item.rx);
-          flatItems.push({ name: ex.name, rx: rxText });
+          flatItems.push({ id: ex.id, name: ex.name, rx: rxText, color: grp.color });
         });
       });
 
       const previewHtml = flatItems.length
         ? `<div class="today-ex-list">${flatItems.slice(0, 4).map(it => `
-            <div class="today-ex-row">
-              <span>${it.name}</span>
+            <div class="today-ex-row" style="cursor:pointer;" onclick="openExerciseDetail('${it.id}')">
+              <div class="today-ex-left">
+                <span class="grp-dot" style="background:${it.color};"></span>
+                <span>${it.name}</span>
+              </div>
               <span class="today-ex-rx">${it.rx}</span>
             </div>
           `).join("")}${flatItems.length > 4 ? `<div style="font-size:11px;color:var(--text-muted);">+${flatItems.length - 4} bloques más en la sesión completa</div>` : ""}</div>`
@@ -1681,7 +1833,6 @@
         </div>
       `;
 
-      // Planner semanal
       document.getElementById("home-map-week").textContent = state.week;
       const mapEl = document.getElementById("home-week-map");
       mapEl.innerHTML = days.map(d => {
@@ -1702,7 +1853,6 @@
         `;
       }).join("");
 
-      // Plan Overview & Weekly Breakdown
       document.getElementById("home-overview-count").textContent = `${block.weeks} semanas`;
       document.getElementById("home-overview-summary").textContent =
         `${block.title} · ${activeDays.length} días activos por microciclo.`;
@@ -1789,7 +1939,8 @@
 
       secEl.innerHTML = day.sections.map((sec, sIdx) => {
         const itemsHtml = sec.items.map((item, iIdx) => {
-          const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { name: item.exId };
+          const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { id: item.exId, name: item.exId };
+          const grp = resolveExerciseGroup(ex);
           const checkKey = `${state.blockId}_w${state.week}_${day.code}_s${sIdx}_i${iIdx}`;
           const isChecked = !!state.checks[checkKey];
           const isLinked = latLinked.checkKey === checkKey;
@@ -1799,9 +1950,9 @@
           return `
             <div class="ex-item ${isChecked ? "checked" : ""} ${isLinked ? "active-linked" : ""}">
               <input type="checkbox" class="ex-check" ${isChecked ? "checked" : ""} onchange="toggleCheck('${checkKey}')" />
-              ${imgSrc ? `<img src="${imgSrc}" alt="${ex.name}" class="ex-thumb" loading="lazy" onclick="openExModal('${item.exId}')" onerror="this.style.display='none'" />` : ""}
-              <div class="ex-body" onclick="openExModal('${item.exId}')">
-                <div class="ex-name">${ex.name}</div>
+              ${imgSrc ? `<img src="${imgSrc}" alt="${ex.name}" class="ex-thumb" loading="lazy" onclick="openExerciseDetail('${item.exId}')" onerror="this.style.display='none'" />` : ""}
+              <div class="ex-body" onclick="openExerciseDetail('${item.exId}')">
+                <div class="ex-name"><span class="grp-dot" style="background:${grp.color};"></span><span>${ex.name}</span></div>
                 <div class="ex-meta">
                   <span>${rxText}</span>
                   ${item.rest ? `<span>· Pausa: ${item.rest}</span>` : ""}
@@ -1838,43 +1989,169 @@
       document.getElementById("log-day").value = state.dayCode;
     }
 
-    // ENCICLOPEDIA
-    function renderEncyclopediaFilters() {
-      const catSel = document.getElementById("ency-cat");
-      const current = catSel.value;
-      const cats = [...new Set(state.data.encyclopedia.map(e => e.category).filter(Boolean))];
-      catSel.innerHTML = `<option value="">Todas las categorías</option>` +
-        cats.map(c => `<option value="${c}" ${c === current ? "selected" : ""}>${c}</option>`).join("");
+    // ENCICLOPEDIA: LUPA + 7 GRUPOS CON COLOR + VISTA DEDICADA
+    function onEncySearchInput() {
+      const input = document.getElementById("ency-search");
+      state.encySearch = input ? input.value : "";
+      const clearBtn = document.getElementById("ency-search-clear");
+      if (clearBtn) clearBtn.classList.toggle("hidden", !state.encySearch.trim());
+      renderEncyclopedia();
+    }
+
+    function clearEncySearch() {
+      state.encySearch = "";
+      const input = document.getElementById("ency-search");
+      if (input) input.value = "";
+      const clearBtn = document.getElementById("ency-search-clear");
+      if (clearBtn) clearBtn.classList.add("hidden");
+      renderEncyclopedia();
+    }
+
+    function selectEncyGroup(groupId) {
+      state.encyGroup = (state.encyGroup === groupId) ? "" : groupId;
+      state.encyDetailId = null;
+      renderEncyclopedia();
+    }
+
+    function openExerciseDetail(exId) {
+      const ex = state.data.encyclopedia.find(e => e.id === exId);
+      if (!ex) return;
+      state.encyDetailId = exId;
+      const navBtn = document.querySelector('.nav-btn[data-view="ency"]');
+      switchView("ency", navBtn);
+      renderEncyclopedia();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function closeExerciseDetail() {
+      state.encyDetailId = null;
+      renderEncyclopedia();
     }
 
     function renderEncyclopedia() {
-      const q = document.getElementById("ency-search").value.toLowerCase().trim();
-      const cat = document.getElementById("ency-cat").value;
-      const lvl = document.getElementById("ency-lvl").value;
+      const browserEl = document.getElementById("ency-browser");
+      const detailEl = document.getElementById("ency-detail");
+      if (!browserEl || !detailEl) return;
 
-      const list = state.data.encyclopedia.filter(e => {
-        const matchQ = !q || e.name.toLowerCase().includes(q) || (e.goal || "").toLowerCase().includes(q);
-        const matchCat = !cat || e.category === cat;
-        const matchLvl = !lvl || String(e.level) === lvl;
-        return matchQ && matchCat && matchLvl;
+      if (state.encyDetailId) {
+        const ex = state.data.encyclopedia.find(e => e.id === state.encyDetailId);
+        if (ex) {
+          const grp = resolveExerciseGroup(ex);
+          const imgSrc = getAssetSrc(ex);
+          const stepsArr = Array.isArray(ex.steps)
+            ? ex.steps
+            : String(ex.steps || "").split("|").map(s => s.trim()).filter(Boolean);
+
+          browserEl.classList.add("hidden");
+          detailEl.classList.remove("hidden");
+          detailEl.innerHTML = `
+            <div class="card" style="border-top: 3px solid ${grp.color};">
+              <div class="detail-header">
+                <button type="button" class="btn-secondary" onclick="closeExerciseDetail()">
+                  ${iconSvg("back", 14)}<span>Volver a Enciclopedia</span>
+                </button>
+                <span class="grp-pill" style="background:${grp.soft}; color:${grp.color};">
+                  <span class="grp-dot" style="background:${grp.color};"></span>
+                  <span>${grp.name}</span>
+                </span>
+              </div>
+
+              <h2 style="font-size:20px; font-weight:800; line-height:1.25;">${ex.name}</h2>
+              ${imgSrc ? `<img src="${imgSrc}" alt="${ex.name}" class="detail-hero-img" onerror="this.style.display='none'" />` : ""}
+
+              <div style="margin-top:12px;">
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:${grp.color};">Objetivo del ejercicio</div>
+                <p style="font-size:13.5px; color:var(--text); margin-top:4px;">${ex.goal}</p>
+              </div>
+
+              <div style="margin-top:16px;">
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:${grp.color};">Ejecución paso a paso</div>
+                <ol class="detail-steps">${stepsArr.map(s => `<li>${s}</li>`).join("")}</ol>
+              </div>
+
+              <div style="background:var(--surface-2); border:1px solid var(--hairline); border-left:3px solid ${grp.color}; padding:11px 13px; border-radius:10px; font-size:12.5px;">
+                <strong style="color:${grp.color};">Alternativa Segura:</strong>
+                <span style="color:var(--text-muted);">${ex.alt || "Ajustar volumen o descargar peso según sensaciones."}</span>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-top:16px; padding-top:12px; border-top:1px solid var(--hairline);">
+                <span style="font-size:11px; color:var(--text-muted);">Fuente: ${ex.source || "Eric Hörst"}</span>
+                <button type="button" class="btn-primary" style="width:auto; padding:9px 14px;" onclick="sendExerciseToTimer('${ex.id}')">Cargar en Timer de Entrenar</button>
+              </div>
+            </div>
+          `;
+          return;
+        }
+        state.encyDetailId = null;
+      }
+
+      detailEl.classList.add("hidden");
+      browserEl.classList.remove("hidden");
+
+      const allItems = state.data.encyclopedia || [];
+      const groupsGrid = document.getElementById("ency-groups-grid");
+      if (groupsGrid) {
+        groupsGrid.innerHTML = EXERCISE_GROUPS.map(g => {
+          const count = allItems.filter(e => resolveExerciseGroup(e).id === g.id).length;
+          const isSelected = state.encyGroup === g.id;
+          return `
+            <button type="button" class="group-tile"
+              style="${isSelected ? `border-color:${g.color}; background:${g.soft};` : ""}"
+              onclick="selectEncyGroup('${g.id}')">
+              <div class="group-tile-top">
+                <span class="group-swatch" style="background:${g.color};"></span>
+                <span class="group-count">${count}</span>
+              </div>
+              <div class="group-name">${g.name}</div>
+            </button>
+          `;
+        }).join("");
+      }
+
+      const q = (state.encySearch || "").toLowerCase().trim();
+      const activeGrpObj = EXERCISE_GROUPS.find(g => g.id === state.encyGroup);
+
+      const headingEl = document.getElementById("ency-active-heading");
+      const showAllBtn = document.getElementById("ency-show-all-btn");
+      if (headingEl) {
+        if (activeGrpObj && q) headingEl.textContent = `${activeGrpObj.name} · Filtro: "${state.encySearch.trim()}"`;
+        else if (activeGrpObj) headingEl.textContent = activeGrpObj.name;
+        else if (q) headingEl.textContent = `Resultados para "${state.encySearch.trim()}"`;
+        else headingEl.textContent = `Todos los ejercicios (${allItems.length})`;
+      }
+      if (showAllBtn) {
+        showAllBtn.classList.toggle("hidden", !state.encyGroup && !q);
+      }
+
+      const list = allItems.filter(e => {
+        const grp = resolveExerciseGroup(e);
+        const matchGroup = !state.encyGroup || grp.id === state.encyGroup;
+        const matchQ = !q ||
+          e.name.toLowerCase().includes(q) ||
+          (e.goal || "").toLowerCase().includes(q) ||
+          grp.name.toLowerCase().includes(q);
+        return matchGroup && matchQ;
       });
 
-      const lvlConfig = {
-        "1": { text: "Nivel 1 · Base", cls: "pill-green" },
-        "2": { text: "Nivel 2 · Fuerza", cls: "pill-accent" },
-        "3": { text: "Nivel 3 · Máxima", cls: "pill-red" }
-      };
+      const listEl = document.getElementById("ency-list");
+      if (!list.length) {
+        listEl.innerHTML = `<div class="card"><p style="font-size:13px; color:var(--text-muted);">No hay ejercicios que coincidan con tu búsqueda.</p></div>`;
+        return;
+      }
 
-      document.getElementById("ency-list").innerHTML = list.map(e => {
-        const cfg = lvlConfig[String(e.level)] || { text: `Nivel ${e.level}`, cls: "pill-blue" };
+      listEl.innerHTML = list.map(e => {
+        const grp = resolveExerciseGroup(e);
         const imgSrc = getAssetSrc(e);
         return `
-          <div class="ency-card" onclick="openExModal('${e.id}')">
+          <div class="ency-card" onclick="openExerciseDetail('${e.id}')">
+            <span class="ency-accent-bar" style="background:${grp.color};"></span>
             ${imgSrc ? `<img src="${imgSrc}" alt="${e.name}" class="ency-img" loading="lazy" onerror="this.style.display='none'" />` : ""}
             <div style="flex:1; min-width:0;">
               <div class="ency-top">
-                <span class="pill-stat pill-blue">${e.category}</span>
-                <span class="pill-stat ${cfg.cls}">${cfg.text}</span>
+                <span class="grp-pill" style="background:${grp.soft}; color:${grp.color};">
+                  <span class="grp-dot" style="background:${grp.color};"></span>
+                  <span>${grp.name}</span>
+                </span>
               </div>
               <div class="ency-title">${e.name}</div>
               <p style="font-size:12.5px; color:var(--text-muted); margin-top:4px;">${e.goal}</p>
@@ -1884,37 +2161,10 @@
       }).join("");
     }
 
-    // MODAL DETALLE EJERCICIO
-    function openExModal(exId) {
-      const ex = state.data.encyclopedia.find(e => e.id === exId);
-      if (!ex) return;
-      document.getElementById("m-cat").textContent = `${ex.category} · Nivel ${ex.level}`;
-      document.getElementById("m-title").textContent = ex.name;
-
-      const mediaEl = document.getElementById("m-media");
-      const imgSrc = getAssetSrc(ex);
-      if (imgSrc) {
-        mediaEl.src = imgSrc;
-        mediaEl.alt = ex.name;
-        mediaEl.classList.remove("hidden");
-        mediaEl.onerror = () => mediaEl.classList.add("hidden");
-      } else {
-        mediaEl.classList.add("hidden");
-      }
-
-      document.getElementById("m-goal").textContent = ex.goal;
-      const stepsArr = Array.isArray(ex.steps)
-        ? ex.steps
-        : String(ex.steps || "").split("|").map(s => s.trim()).filter(Boolean);
-      document.getElementById("m-steps").innerHTML = stepsArr.map(s => `<li>${s}</li>`).join("");
-      document.getElementById("m-alt").textContent = ex.alt || "Ajustar volumen o descargar peso.";
-      document.getElementById("m-source").textContent = `Fuente: ${ex.source || "Eric Hörst"}`;
-      document.getElementById("ex-modal").classList.add("open");
-    }
-    function closeExModal() { document.getElementById("ex-modal").classList.remove("open"); }
-
-    // MODAL NUEVO EJERCICIO / CALENTAMIENTO
+    // MODAL NUEVO EJERCICIO
     function openNewExModal() {
+      const sel = document.getElementById("nex-group");
+      if (sel && state.encyGroup) sel.value = state.encyGroup;
       document.getElementById("new-ex-modal").classList.add("open");
     }
     function closeNewExModal() {
@@ -1923,24 +2173,24 @@
 
     async function saveNewExercise() {
       const name = document.getElementById("nex-name").value.trim();
-      const category = document.getElementById("nex-cat").value.trim() || "Calentamiento";
-      const level = document.getElementById("nex-lvl").value;
-      const goal = document.getElementById("nex-goal").value.trim() || "Preparación específica para sesión de escalada.";
+      const groupId = document.getElementById("nex-group").value || "warmup";
+      const grp = EXERCISE_GROUPS.find(g => g.id === groupId) || EXERCISE_GROUPS[0];
+      const goal = document.getElementById("nex-goal").value.trim() || "Preparación y acondicionamiento específico para escalada.";
       const media_url = document.getElementById("nex-media").value.trim();
       const rawSteps = document.getElementById("nex-steps").value.trim();
       const steps = rawSteps ? rawSteps.split("|").map(s => s.trim()).filter(Boolean) : ["Ejecutar con control técnico y descanso adecuado."];
       const alt = document.getElementById("nex-alt").value.trim() || "Reducir carga o volumen según sensaciones.";
 
       if (!name) {
-        alert("Escribe al menos el nombre del ejercicio o calentamiento.");
+        alert("Escribe al menos el nombre del ejercicio.");
         return;
       }
 
       const newEx = {
         id: "ex-" + Date.now(),
+        groupId: grp.id,
         name,
-        category,
-        level,
+        category: grp.name,
         media_url,
         goal,
         steps,
@@ -1950,10 +2200,9 @@
 
       state.data.encyclopedia.push(newEx);
       safeStorage.set(STORAGE_KEYS.CACHE, JSON.stringify(state.data));
-      renderEncyclopediaFilters();
       renderEncyclopedia();
 
-      ["nex-name", "nex-cat", "nex-goal", "nex-media", "nex-steps", "nex-alt"].forEach(id => {
+      ["nex-name", "nex-goal", "nex-media", "nex-steps", "nex-alt"].forEach(id => {
         document.getElementById(id).value = "";
       });
       closeNewExModal();
@@ -2061,6 +2310,10 @@
       ["home", "train", "ency", "log"].forEach(v => {
         document.getElementById(`view-${v}`).classList.toggle("hidden", v !== viewName);
       });
+      const planCard = document.getElementById("global-plan-card");
+      if (planCard) {
+        planCard.classList.toggle("hidden", viewName === "ency");
+      }
       document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
       if (btn) btn.classList.add("active");
     }
