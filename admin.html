@@ -381,7 +381,7 @@
       const status = document.getElementById("syncStatus");
       status.textContent = "Sincronizando...";
       try {
-        const res = await fetch(EXEC_URL);
+        const res = await fetch(EXEC_URL + "?t=" + Date.now(), { cache: "no-store" });
         const data = await res.json();
         if (data && Array.isArray(data.encyclopedia)) {
           exercises = data.encyclopedia;
@@ -591,10 +591,13 @@
       try {
         await fetch(EXEC_URL, {
           method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify(payload)
         });
         closeEditor();
-        showToast("Ejercicio guardado en Google Sheets");
+        showToast("Guardando en Google Sheets...");
+        await new Promise(r => setTimeout(r, 1200));
         await loadData();
       } catch (err) {
         showToast("Error al guardar. Verifica tu conexión.");
@@ -609,9 +612,12 @@
       try {
         await fetch(EXEC_URL, {
           method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({ action: "DELETE_EXERCISE", data: { id } })
         });
-        showToast("Ejercicio eliminado");
+        showToast("Eliminando ejercicio...");
+        await new Promise(r => setTimeout(r, 1200));
         await loadData();
       } catch (err) {
         showToast("No se pudo eliminar.");
