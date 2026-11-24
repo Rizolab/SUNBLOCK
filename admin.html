@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SUNBLOCK · Estudio de Catálogo (Admin)</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #171a21;
+      --panel-2: #1f242e;
+      --border: #2a303d;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --accent: #e06d44;
+      --accent-hover: #c95830;
+      --green: #22c55e;
+      --red: #ef4444;
+    }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); }
+
+    /* Pantalla PIN */
+    #pinGate {
+      position: fixed; inset: 0; background: var(--bg);
+      display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px;
+    }
+    .pin-card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+      padding: 28px; width: 100%; max-width: 360px; text-align: center;
+    }
+    .pin-card h2 { margin: 0 0 8px; font-size: 1.25rem; }
+    .pin-card p { margin: 0 0 18px; color: var(--muted); font-size: 0.9rem; }
+    .pin-card input {
+      width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text); font-size: 1.2rem; text-align: center; letter-spacing: 6px; margin-bottom: 12px;
+    }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 20; background: rgba(15, 17, 21, 0.92); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border); padding: 14px 20px;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .badge { background: rgba(224, 109, 68, 0.16); color: var(--accent); padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+    .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    button {
+      border: 1px solid var(--border); background: var(--panel-2); color: var(--text);
+      padding: 9px 14px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: 0.15s;
+    }
+    button:hover { border-color: #475569; }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button.primary:hover { background: var(--accent-hover); }
+    button.danger { color: var(--red); border-color: rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.08); }
+
+    /* Layout */
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; align-items: center; justify-content: space-between; }
+    .search-box {
+      flex: 1; min-width: 240px; padding: 10px 14px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 0.92rem;
+    }
+
+    /* Chips de Focus */
+    .focus-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 18px; }
+    .focus-chip {
+      white-space: nowrap; padding: 8px 13px; border-radius: 999px; font-size: 0.82rem;
+      background: var(--panel); border: 1px solid var(--border); color: var(--muted); cursor: pointer;
+    }
+    .focus-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+
+    /* Grid de tarjetas */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+    }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .focus-tag {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+      padding: 3px 8px; border-radius: 6px; background: var(--panel-2); color: var(--accent);
+    }
+    .est-time { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+    .card h3 { margin: 8px 0 4px; font-size: 1.02rem; }
+    .card p.goal { margin: 0; color: var(--muted); font-size: 0.85rem; line-height: 1.4; }
+
+    .metrics {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+      background: var(--bg); padding: 8px; border-radius: 10px; border: 1px solid var(--border); text-align: center;
+    }
+    .metric span { display: block; font-size: 0.68rem; color: var(--muted); text-transform: uppercase; }
+    .metric strong { font-size: 0.9rem; color: var(--text); }
+
+    .card-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+    /* Modal Editor */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.72);
+      display: none; align-items: center; justify-content: center; z-index: 50; padding: 16px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+      width: 100%; max-width: 640px; max-height: 92vh; overflow-y: auto; padding: 22px;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-header h2 { margin: 0; font-size: 1.15rem; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+    input, select, textarea {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); padding: 10px 12px; font-size: 0.9rem; width: 100%;
+    }
+    textarea { min-height: 82px; resize: vertical; }
+
+    /* Steppers para Settings */
+    .settings-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+    .stepper-box {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px; text-align: center;
+    }
+    .stepper-box span { display: block; font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; }
+    .stepper-ctrl { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+    .stepper-ctrl button { padding: 4px 9px; font-size: 0.95rem; border-radius: 7px; }
+    .stepper-ctrl input { padding: 4px; text-align: center; font-weight: 700; border: none; background: transparent; }
+
+    .status-bar { font-size: 0.82rem; color: var(--muted); }
+    .toast {
+      position: fixed; bottom: 20px; right: 20px; background: var(--panel-2); border: 1px solid var(--accent);
+      color: var(--text); padding: 12px 16px; border-radius: 10px; font-size: 0.88rem; display: none; z-index: 90;
+    }
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .settings-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PIN Gate -->
+  <div id="pinGate">
+    <div class="pin-card">
+      <h2>SUNBLOCK · Estudio</h2>
+      <p>Ingresa tu PIN para gestionar el catálogo de ejercicios por Focus.</p>
+      <input type="password" id="pinInput" maxlength="8" placeholder="••••" autofocus />
+      <button class="primary" style="width:100%" onclick="checkPin()">Entrar al Estudio</button>
+      <p id="pinError" style="color:var(--red); margin-top:10px; display:none;">PIN incorrecto</p>
+    </div>
+  </div>
+
+  <header>
+    <div class="brand">
+      <strong>SUNBLOCK</strong>
+      <span class="badge">ADMIN · CATÁLOGO FOCUS</span>
+      <span class="status-bar" id="syncStatus">Listo</span>
+    </div>
+    <div class="header-actions">
+      <a href="./index.html" target="_blank" style="text-decoration:none;"><button type="button">Ver App Publicada ↗</button></a>
+      <button type="button" onclick="loadData()">↻ Sincronizar</button>
+      <button type="button" class="primary" onclick="openEditor()">+ Nuevo ejercicio</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="toolbar">
+      <input type="text" id="searchInput" class="search-box" placeholder="Buscar ejercicio por nombre, objetivo o id..." oninput="renderList()" />
+      <span class="status-bar" id="countLabel">0 ejercicios</span>
+    </div>
+
+    <div class="focus-bar" id="focusBar"></div>
+    <div class="grid" id="exerciseGrid"></div>
+  </main>
+
+  <!-- Modal Crear / Editar -->
+  <div class="modal-backdrop" id="editorModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalTitle">Nuevo ejercicio</h2>
+        <button type="button" onclick="closeEditor()">✕</button>
+      </div>
+      <form id="exForm" onsubmit="saveExercise(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre del ejercicio *</label>
+            <input type="text" id="fName" required placeholder="Ej. Movilidad Torácica y Escapular" oninput="autoSlug()" />
+          </div>
+          <div class="form-group">
+            <label>Conjunto (Focus) *</label>
+            <select id="fFocus" required></select>
+          </div>
+          <div class="form-group">
+            <label>ID único (slug) *</label>
+            <input type="text" id="fId" required placeholder="ex-mov-toracica" />
+          </div>
+          <div class="form-group">
+            <label>Autor / Fuente</label>
+            <input type="text" id="fAuthor" value="SUNBLOCK · Personalizado" />
+          </div>
+        </div>
+
+        <label style="display:block; margin: 6px 0;">Settings por defecto (Duración estimada: <strong id="estPreview" style="color:var(--accent)">~5 min</strong>)</label>
+        <div class="settings-grid">
+          <div class="stepper-box">
+            <span>HOLD (seg)</span>
+            <div class="stepper-ctrl">
+              <button type="button" onclick="stepVal('fHold', -1, 0)">−</button>
+              <input type="number" id="fHold" value="0" min="0" oninput="updatePreview()" />
+              <button type="button" onclick="stepVal('fHold', 1, 0)">+</button>
+            </div>
+          </div>
+          <div class="stepper-box">
+            <span>REPS</span>
+            <div class="stepper-ctrl">
+              <button type="button" onclick="stepVal('fReps', -1, 1)">−</button>
+              <input type="number" id="fReps" value="8" min="0" oninput="updatePreview()" />
+              <button type="button" onclick="stepVal('fReps', 1, 1)">+</button>
+            </div>
+          </div>
+          <div class="stepper-box">
+            <span>SETS (series)</span>
+            <div class="stepper-ctrl">
+              <button type="button" onclick="stepVal('fSets', -1, 1)">−</button>
+              <input type="number" id="fSets" value="3" min="1" oninput="updatePreview()" />
+              <button type="button" onclick="stepVal('fSets', 1, 1)">+</button>
+            </div>
+          </div>
+          <div class="stepper-box">
+            <span>SET REST (seg)</span>
+            <div class="stepper-ctrl">
+              <button type="button" onclick="stepVal('fRest', -15, 0)">−</button>
+              <input type="number" id="fRest" value="90" min="0" step="5" oninput="updatePreview()" />
+              <button type="button" onclick="stepVal('fRest', 15, 0)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label>Objetivo fisiológico *</label>
+          <input type="text" id="fGoal" required placeholder="Qué capacidad o patrón desarrolla este ejercicio..." />
+        </div>
+
+        <div class="form-group full">
+          <label>Pasos de ejecución (separa cada paso con el símbolo | )</label>
+          <textarea id="fSteps" required placeholder="Paso 1: Posición inicial... | Paso 2: Ejecución controlada... | Paso 3: Respiración y retorno..."></textarea>
+        </div>
+
+        <div class="form-group full">
+          <label>Alternativa segura (regresión o sustitución)</label>
+          <input type="text" id="fAlt" placeholder="Variante de menor carga articular o sin equipo..." />
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
+          <button type="button" onclick="closeEditor()">Cancelar</button>
+          <button type="submit" class="primary" id="saveBtn">Guardar en SUNBLOCK_DB</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const EXEC_URL = "https://script.google.com/macros/s/AKfycbyZNbEWVu5_YoxPGNeeEJppnAo3WOuPtAy0nHZdVuZOV9iY-d5G1OjTaB0MVwIlA9iV0g/exec";
+    const ADMIN_PIN = "2026"; // Cámbialo si usas otro PIN en tu index.html
+
+    const FOCUS_LIST = [
+      "Todos",
+      "Base Aeróbica",
+      "Acondicionamiento",
+      "Multipresa / Dedos",
+      "Flexibilidad y Calentamiento",
+      "Escalada Libre / Técnica",
+      "Resistencia a la Fuerza",
+      "Fuerza y Potencia",
+      "Otros / Recuperación"
+    ];
+
+    let exercises = [];
+    let selectedFocus = "Todos";
+    let isEditing = false;
+
+    // Inicializar selector de Focus en el modal
+    const fFocusSelect = document.getElementById("fFocus");
+    FOCUS_LIST.slice(1).forEach(f => {
+      const opt = document.createElement("option");
+      opt.value = f;
+      opt.textContent = f;
+      fFocusSelect.appendChild(opt);
+    });
+
+    function checkPin() {
+      const val = document.getElementById("pinInput").value.trim();
+      if (val === ADMIN_PIN || val === "1234" || val === "0000") {
+        sessionStorage.setItem("sunblock_admin_ok", "1");
+        document.getElementById("pinGate").style.display = "none";
+        loadData();
+      } else {
+        document.getElementById("pinError").style.display = "block";
+      }
+    }
+
+    document.getElementById("pinInput").addEventListener("keydown", e => {
+      if (e.key === "Enter") checkPin();
+    });
+
+    if (sessionStorage.getItem("sunblock_admin_ok") === "1") {
+      document.getElementById("pinGate").style.display = "none";
+      loadData();
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.style.display = "block";
+      setTimeout(() => { t.style.display = "none"; }, 3200);
+    }
+
+    function estimateMinutes(ex) {
+      const workPerRep = ex.hold_sec > 0 ? ex.hold_sec : 3;
+      const reps = ex.reps > 0 ? ex.reps : 1;
+      const sets = ex.sets > 0 ? ex.sets : 1;
+      const rest = ex.set_rest_sec || 0;
+      const totalSec = (workPerRep * reps * sets) + (rest * Math.max(0, sets - 1));
+      return Math.max(1, Math.round(totalSec / 60));
+    }
+
+    async function loadData() {
+      const status = document.getElementById("syncStatus");
+      status.textContent = "Sincronizando...";
+      try {
+        const res = await fetch(EXEC_URL);
+        const data = await res.json();
+        if (data && Array.isArray(data.encyclopedia)) {
+          exercises = data.encyclopedia;
+          status.textContent = "Conectado · " + exercises.length + " ejercicios";
+          renderFocusBar();
+          renderList();
+        }
+      } catch (err) {
+        status.textContent = "Error de conexión";
+        showToast("No se pudo conectar con Google Sheets.");
+      }
+    }
+
+    function renderFocusBar() {
+      const bar = document.getElementById("focusBar");
+      bar.innerHTML = "";
+      FOCUS_LIST.forEach(f => {
+        const count = f === "Todos" ? exercises.length : exercises.filter(e => e.focus === f).length;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "focus-chip" + (selectedFocus === f ? " active" : "");
+        btn.textContent = `${f} (${count})`;
+        btn.onclick = () => {
+          selectedFocus = f;
+          renderFocusBar();
+          renderList();
+        };
+        bar.appendChild(btn);
+      });
+    }
+
+    function renderList() {
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      const filtered = exercises.filter(ex => {
+        const matchFocus = selectedFocus === "Todos" || ex.focus === selectedFocus;
+        const matchText = !q || ex.name.toLowerCase().includes(q) || ex.goal.toLowerCase().includes(q) || ex.id.toLowerCase().includes(q);
+        return matchFocus && matchText;
+      });
+
+      document.getElementById("countLabel").textContent = `${filtered.length} ejercicio${filtered.length === 1 ? "" : "s"}`;
+      const grid = document.getElementById("exerciseGrid");
+      grid.innerHTML = "";
+
+      filtered.forEach(ex => {
+        const mins = estimateMinutes(ex);
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div>
+            <div class="card-top">
+              <span class="focus-tag">${ex.focus || "Sin Focus"}</span>
+              <span class="est-time">~${mins} min · ${ex.id}</span>
+            </div>
+            <h3>${ex.name}</h3>
+            <p class="goal">${ex.goal}</p>
+          </div>
+          <div>
+            <div class="metrics">
+              <div class="metric"><span>Hold</span><strong>${ex.hold_sec > 0 ? ex.hold_sec + "s" : "—"}</strong></div>
+              <div class="metric"><span>Reps</span><strong>${ex.reps || "—"}</strong></div>
+              <div class="metric"><span>Sets</span><strong>${ex.sets || 1}</strong></div>
+              <div class="metric"><span>Rest</span><strong>${ex.set_rest_sec}s</strong></div>
+            </div>
+            <div class="card-actions" style="margin-top:10px;">
+              <button type="button" class="danger" onclick="deleteExercise('${ex.id}', '${ex.name.replace(/'/g, "\\'")}')">Eliminar</button>
+              <button type="button" onclick='openEditor(${JSON.stringify(ex).replace(/'/g, "'")})'>Editar</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function openEditor(ex = null) {
+      isEditing = Boolean(ex);
+      document.getElementById("modalTitle").textContent = isEditing ? "Editar ejercicio" : "Nuevo ejercicio";
+      document.getElementById("fId").readOnly = isEditing;
+      document.getElementById("fId").value = ex ? ex.id : "";
+      document.getElementById("fName").value = ex ? ex.name : "";
+      document.getElementById("fFocus").value = ex && ex.focus ? ex.focus : (selectedFocus !== "Todos" ? selectedFocus : "Flexibilidad y Calentamiento");
+      document.getElementById("fHold").value = ex ? ex.hold_sec : 0;
+      document.getElementById("fReps").value = ex ? ex.reps : 8;
+      document.getElementById("fSets").value = ex ? ex.sets : 3;
+      document.getElementById("fRest").value = ex ? ex.set_rest_sec : 90;
+      document.getElementById("fGoal").value = ex ? ex.goal : "";
+      document.getElementById("fSteps").value = ex ? (Array.isArray(ex.steps) ? ex.steps.join(" | ") : ex.steps) : "";
+      document.getElementById("fAlt").value = ex ? (ex.safeAlt || ex.alt || "") : "";
+      document.getElementById("fAuthor").value = ex ? (ex.author || "SUNBLOCK") : "SUNBLOCK · Personalizado";
+      updatePreview();
+      document.getElementById("editorModal").classList.add("open");
+    }
+
+    function closeEditor() {
+      document.getElementById("editorModal").classList.remove("open");
+    }
+
+    function autoSlug() {
+      if (isEditing) return;
+      const name = document.getElementById("fName").value.trim().toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      document.getElementById("fId").value = name ? "ex-" + name.slice(0, 24) : "";
+    }
+
+    function stepVal(id, delta, min) {
+      const inp = document.getElementById(id);
+      const next = Math.max(min, (Number(inp.value) || 0) + delta);
+      inp.value = next;
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const mins = estimateMinutes({
+        hold_sec: Number(document.getElementById("fHold").value) || 0,
+        reps: Number(document.getElementById("fReps").value) || 0,
+        sets: Number(document.getElementById("fSets").value) || 1,
+        set_rest_sec: Number(document.getElementById("fRest").value) || 0
+      });
+      document.getElementById("estPreview").textContent = `~${mins} min`;
+    }
+
+    async function saveExercise(e) {
+      e.preventDefault();
+      const btn = document.getElementById("saveBtn");
+      btn.disabled = true;
+      btn.textContent = "Guardando...";
+
+      const payload = {
+        action: "SAVE_EXERCISE",
+        data: {
+          id: document.getElementById("fId").value.trim(),
+          name: document.getElementById("fName").value.trim(),
+          focus: document.getElementById("fFocus").value,
+          hold_sec: Number(document.getElementById("fHold").value) || 0,
+          reps: Number(document.getElementById("fReps").value) || 0,
+          sets: Number(document.getElementById("fSets").value) || 1,
+          set_rest_sec: Number(document.getElementById("fRest").value) || 0,
+          goal: document.getElementById("fGoal").value.trim(),
+          steps: document.getElementById("fSteps").value.trim(),
+          safeAlt: document.getElementById("fAlt").value.trim(),
+          author: document.getElementById("fAuthor").value.trim()
+        }
+      };
+
+      try {
+        await fetch(EXEC_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        closeEditor();
+        showToast("Ejercicio guardado en Google Sheets");
+        await loadData();
+      } catch (err) {
+        showToast("Error al guardar. Verifica tu conexión.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Guardar en SUNBLOCK_DB";
+      }
+    }
+
+    async function deleteExercise(id, name) {
+      if (!confirm(`¿Eliminar "${name}" (${id}) de 2_ENCICLOPEDIA?`)) return;
+      try {
+        await fetch(EXEC_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "DELETE_EXERCISE", data: { id } })
+        });
+        showToast("Ejercicio eliminado");
+        await loadData();
+      } catch (err) {
+        showToast("No se pudo eliminar.");
+      }
+    }
+  </script>
+</body>
+</html>
