@@ -196,29 +196,56 @@
     }
     .day-tab small { display: block; font-size: 10px; font-weight: 500; opacity: 0.85; }
 
-    /* LATTICE TIMER */
-    .timer-box {
+    /* LATTICE STRUCTURED INTERVAL TIMER */
+    .lattice-box {
       background: var(--surface-2); border: 1px solid var(--border);
-      border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;
-      display: flex; flex-direction: column; gap: 10px;
+      border-radius: 14px; padding: 14px; margin-bottom: 14px;
     }
-    .timer-top {
-      display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;
+    .lattice-head {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
     }
-    .timer-clock {
-      font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums;
-      letter-spacing: 0.04em; color: var(--text);
+    .phase-chip {
+      font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 999px;
     }
-    .timer-clock.running { color: var(--accent); }
-    .timer-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+    .phase-prep { background: var(--blue-soft); color: var(--blue); }
+    .phase-work { background: var(--accent-soft); color: var(--accent); }
+    .phase-rest { background: var(--green-soft); color: var(--green); }
+    .phase-setrest { background: var(--yellow-soft); color: var(--yellow); }
+    .phase-done { background: var(--green-soft); color: var(--green); }
+    .lattice-clock {
+      font-size: 36px; font-weight: 800; font-variant-numeric: tabular-nums;
+      letter-spacing: 0.03em; line-height: 1.1; margin-top: 6px;
+    }
+    .lattice-counter {
+      font-size: 12px; font-weight: 700; color: var(--text-muted); margin-top: 2px;
+    }
+    .lattice-controls {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;
+    }
     .t-action {
-      padding: 7px 11px; border-radius: 9px; border: 1px solid var(--border);
+      padding: 8px 13px; border-radius: 10px; border: 1px solid var(--border);
       background: var(--surface); color: var(--text); font-size: 12px; font-weight: 700; cursor: pointer;
     }
     .t-action.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .timer-presets { display: flex; gap: 6px; flex-wrap: wrap; }
+    .lattice-grid {
+      display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-top: 12px;
+    }
+    @media (max-width: 640px) {
+      .lattice-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    .l-field label {
+      display: block; font-size: 10px; font-weight: 700; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 4px; letter-spacing: 0.04em;
+    }
+    .l-field input {
+      padding: 7px 8px; font-size: 12px; font-weight: 700; text-align: center;
+    }
+    .lattice-presets {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;
+    }
     .preset-chip {
-      padding: 4px 9px; border-radius: 8px; border: 1px solid var(--border);
+      padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border);
       background: var(--surface); color: var(--text-muted); font-size: 11px; font-weight: 700; cursor: pointer;
     }
     .preset-chip:hover { color: var(--text); border-color: var(--accent); }
@@ -426,26 +453,53 @@
         </div>
         <div id="day-focus" class="focus-banner"></div>
 
-        <!-- TEMPORIZADOR LATTICE -->
-        <div class="timer-box">
-          <div class="timer-top">
+        <!-- TEMPORIZADOR ESTRUCTURADO ESTILO LATTICE -->
+        <div class="lattice-box">
+          <div class="lattice-head">
             <div>
-              <div id="timer-mode-label" style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Cronómetro · Trabajo / Descanso</div>
-              <div id="timer-clock" class="timer-clock">01:30</div>
+              <span id="lat-phase-badge" class="phase-chip phase-prep">PREP</span>
+              <div id="lat-clock" class="lattice-clock">00:05</div>
+              <div id="lat-counter" class="lattice-counter">Serie 1/4 · Rep 1/1</div>
             </div>
-            <div class="timer-btns">
-              <button type="button" class="t-action primary" id="timer-toggle-btn" onclick="toggleLatticeTimer()">Iniciar</button>
-              <button type="button" class="t-action" onclick="resetLatticeTimer()">Reiniciar</button>
-              <button type="button" class="t-action" onclick="loadDayRestTimer()">Descanso día</button>
+            <div class="lattice-controls">
+              <button type="button" class="t-action primary" id="lat-start-btn" onclick="toggleLattice()">Iniciar</button>
+              <button type="button" class="t-action" onclick="skipLatticePhase()">Saltar fase</button>
+              <button type="button" class="t-action" onclick="resetLattice()">Reiniciar</button>
             </div>
           </div>
-          <div class="timer-presets">
-            <button type="button" class="preset-chip" onclick="setLatticeTimer(10, 'Hold 10s')">10s</button>
-            <button type="button" class="preset-chip" onclick="setLatticeTimer(20, 'Hold 20s')">20s</button>
-            <button type="button" class="preset-chip" onclick="setLatticeTimer(60, 'Descanso 60s')">60s</button>
-            <button type="button" class="preset-chip" onclick="setLatticeTimer(90, 'Descanso 90s')">90s</button>
-            <button type="button" class="preset-chip" onclick="setLatticeTimer(150, 'Descanso 2.5m')">2.5m</button>
-            <button type="button" class="preset-chip" onclick="setLatticeTimer(180, 'Descanso 3m')">3m</button>
+
+          <div class="lattice-grid">
+            <div class="l-field">
+              <label>Prep (s)</label>
+              <input id="lat-prep" type="number" min="0" max="60" value="5" onchange="applyLatticeInputs()" />
+            </div>
+            <div class="l-field">
+              <label>Work (s)</label>
+              <input id="lat-work" type="number" min="1" max="600" value="10" onchange="applyLatticeInputs()" />
+            </div>
+            <div class="l-field">
+              <label>Rest Rep (s)</label>
+              <input id="lat-rest" type="number" min="0" max="600" value="0" onchange="applyLatticeInputs()" />
+            </div>
+            <div class="l-field">
+              <label>Reps</label>
+              <input id="lat-reps" type="number" min="1" max="50" value="1" onchange="applyLatticeInputs()" />
+            </div>
+            <div class="l-field">
+              <label>Sets</label>
+              <input id="lat-sets" type="number" min="1" max="30" value="4" onchange="applyLatticeInputs()" />
+            </div>
+            <div class="l-field">
+              <label>Rest Set (s)</label>
+              <input id="lat-setrest" type="number" min="0" max="900" value="180" onchange="applyLatticeInputs()" />
+            </div>
+          </div>
+
+          <div class="lattice-presets">
+            <button type="button" class="preset-chip" onclick="applyLatticePreset({prep:5,work:10,rest:0,reps:1,sets:4,setRest:180})">Regleta 10s x4 (3m)</button>
+            <button type="button" class="preset-chip" onclick="applyLatticePreset({prep:5,work:7,rest:3,reps:6,sets:3,setRest:180})">Repeaters 7:3 x6 (3m)</button>
+            <button type="button" class="preset-chip" onclick="applyLatticePreset({prep:5,work:5,rest:10,reps:4,sets:4,setRest:180})">Contacto 5s x4 (3m)</button>
+            <button type="button" class="preset-chip" onclick="applyLatticePreset({prep:5,work:45,rest:15,reps:3,sets:3,setRest:90})">Core / Cara B 45:15</button>
           </div>
         </div>
 
@@ -748,65 +802,190 @@
       traffic: { dedos: "verde", codos: "verde" }
     };
 
-    // LATTICE TIMER STATE
-    let timerSeconds = 90;
-    let timerId = null;
-    let timerRunning = false;
+    // LATTICE STRUCTURED INTERVAL TIMER
+    let latCfg = { prep: 5, work: 10, rest: 0, reps: 1, sets: 4, setRest: 180 };
+    let latRuntime = {
+      running: false,
+      phase: "prep", // prep | work | rest | setrest | done
+      rep: 1,
+      set: 1,
+      remaining: 5,
+      intervalId: null
+    };
 
-    function formatClock(sec) {
-      const s = Math.max(0, Math.floor(sec));
-      const mm = String(Math.floor(s / 60)).padStart(2, "0");
-      const ss = String(s % 60).padStart(2, "0");
-      return `${mm}:${ss}`;
+    function beepPhase(type) {
+      try {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+        const ctx = new Ctx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = type === "work" ? 880 : (type === "done" ? 523 : 660);
+        gain.gain.value = 0.08;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        setTimeout(() => { osc.stop(); ctx.close(); }, 180);
+      } catch (_) {}
     }
 
-    function renderLatticeTimer() {
-      const clockEl = document.getElementById("timer-clock");
-      const btnEl = document.getElementById("timer-toggle-btn");
-      if (!clockEl || !btnEl) return;
-      clockEl.textContent = formatClock(timerSeconds);
-      clockEl.classList.toggle("running", timerRunning);
-      btnEl.textContent = timerRunning ? "Pausar" : "Iniciar";
+    function fmtSec(n) {
+      const v = Math.max(0, Math.floor(n));
+      return `${String(Math.floor(v / 60)).padStart(2, "0")}:${String(v % 60).padStart(2, "0")}`;
     }
 
-    function setLatticeTimer(sec, label = "Cronómetro · Manual") {
-      clearInterval(timerId);
-      timerId = null;
-      timerRunning = false;
-      timerSeconds = Math.max(1, Number(sec) || 60);
-      const lbl = document.getElementById("timer-mode-label");
-      if (lbl) lbl.textContent = label;
-      renderLatticeTimer();
+    function getFirstPhase() {
+      if (latCfg.prep > 0) return { phase: "prep", sec: latCfg.prep };
+      return { phase: "work", sec: Math.max(1, latCfg.work) };
     }
 
-    function toggleLatticeTimer() {
-      if (timerRunning) {
-        clearInterval(timerId);
-        timerId = null;
-        timerRunning = false;
-        renderLatticeTimer();
+    function resetLattice() {
+      clearInterval(latRuntime.intervalId);
+      latRuntime.intervalId = null;
+      latRuntime.running = false;
+      latRuntime.rep = 1;
+      latRuntime.set = 1;
+      const first = getFirstPhase();
+      latRuntime.phase = first.phase;
+      latRuntime.remaining = first.sec;
+      renderLattice();
+    }
+
+    function applyLatticeInputs() {
+      latCfg.prep = Math.max(0, Number(document.getElementById("lat-prep")?.value) || 0);
+      latCfg.work = Math.max(1, Number(document.getElementById("lat-work")?.value) || 10);
+      latCfg.rest = Math.max(0, Number(document.getElementById("lat-rest")?.value) || 0);
+      latCfg.reps = Math.max(1, Number(document.getElementById("lat-reps")?.value) || 1);
+      latCfg.sets = Math.max(1, Number(document.getElementById("lat-sets")?.value) || 1);
+      latCfg.setRest = Math.max(0, Number(document.getElementById("lat-setrest")?.value) || 0);
+      resetLattice();
+    }
+
+    function applyLatticePreset(p) {
+      latCfg = {
+        prep: p.prep ?? 5,
+        work: p.work ?? 10,
+        rest: p.rest ?? 0,
+        reps: p.reps ?? 1,
+        sets: p.sets ?? 4,
+        setRest: p.setRest ?? 180
+      };
+      if (document.getElementById("lat-prep")) document.getElementById("lat-prep").value = latCfg.prep;
+      if (document.getElementById("lat-work")) document.getElementById("lat-work").value = latCfg.work;
+      if (document.getElementById("lat-rest")) document.getElementById("lat-rest").value = latCfg.rest;
+      if (document.getElementById("lat-reps")) document.getElementById("lat-reps").value = latCfg.reps;
+      if (document.getElementById("lat-sets")) document.getElementById("lat-sets").value = latCfg.sets;
+      if (document.getElementById("lat-setrest")) document.getElementById("lat-setrest").value = latCfg.setRest;
+      resetLattice();
+    }
+
+    function advanceLatticePhase() {
+      if (latRuntime.phase === "prep") {
+        latRuntime.phase = "work";
+        latRuntime.remaining = latCfg.work;
+        beepPhase("work");
         return;
       }
-      if (timerSeconds <= 0) timerSeconds = 60;
-      timerRunning = true;
-      renderLatticeTimer();
-      timerId = setInterval(() => {
-        timerSeconds -= 1;
-        if (timerSeconds <= 0) {
-          timerSeconds = 0;
-          clearInterval(timerId);
-          timerId = null;
-          timerRunning = false;
+      if (latRuntime.phase === "work") {
+        if (latRuntime.rep < latCfg.reps) {
+          if (latCfg.rest > 0) {
+            latRuntime.phase = "rest";
+            latRuntime.remaining = latCfg.rest;
+            beepPhase("rest");
+          } else {
+            latRuntime.rep += 1;
+            latRuntime.remaining = latCfg.work;
+            beepPhase("work");
+          }
+          return;
         }
-        renderLatticeTimer();
+        // Fin de repeticiones de la serie actual
+        if (latRuntime.set < latCfg.sets) {
+          if (latCfg.setRest > 0) {
+            latRuntime.phase = "setrest";
+            latRuntime.remaining = latCfg.setRest;
+            beepPhase("rest");
+          } else {
+            latRuntime.set += 1;
+            latRuntime.rep = 1;
+            latRuntime.phase = "work";
+            latRuntime.remaining = latCfg.work;
+            beepPhase("work");
+          }
+          return;
+        }
+        latRuntime.phase = "done";
+        latRuntime.remaining = 0;
+        latRuntime.running = false;
+        clearInterval(latRuntime.intervalId);
+        latRuntime.intervalId = null;
+        beepPhase("done");
+        return;
+      }
+      if (latRuntime.phase === "rest") {
+        latRuntime.rep += 1;
+        latRuntime.phase = "work";
+        latRuntime.remaining = latCfg.work;
+        beepPhase("work");
+        return;
+      }
+      if (latRuntime.phase === "setrest") {
+        latRuntime.set += 1;
+        latRuntime.rep = 1;
+        latRuntime.phase = "work";
+        latRuntime.remaining = latCfg.work;
+        beepPhase("work");
+      }
+    }
+
+    function skipLatticePhase() {
+      if (latRuntime.phase === "done") return;
+      advanceLatticePhase();
+      renderLattice();
+    }
+
+    function toggleLattice() {
+      if (latRuntime.running) {
+        clearInterval(latRuntime.intervalId);
+        latRuntime.intervalId = null;
+        latRuntime.running = false;
+        renderLattice();
+        return;
+      }
+      if (latRuntime.phase === "done") resetLattice();
+      latRuntime.running = true;
+      renderLattice();
+      latRuntime.intervalId = setInterval(() => {
+        if (latRuntime.remaining > 1) {
+          latRuntime.remaining -= 1;
+        } else {
+          advanceLatticePhase();
+        }
+        renderLattice();
       }, 1000);
     }
 
-    function resetLatticeTimer() {
-      clearInterval(timerId);
-      timerId = null;
-      timerRunning = false;
-      renderLatticeTimer();
+    function renderLattice() {
+      const badge = document.getElementById("lat-phase-badge");
+      const clock = document.getElementById("lat-clock");
+      const counter = document.getElementById("lat-counter");
+      const startBtn = document.getElementById("lat-start-btn");
+      if (!badge || !clock || !counter || !startBtn) return;
+
+      const phaseMap = {
+        prep: { text: "PREPARACIÓN", cls: "phase-prep" },
+        work: { text: "TRABAJO (WORK)", cls: "phase-work" },
+        rest: { text: "DESCANSO REP", cls: "phase-rest" },
+        setrest: { text: "DESCANSO SERIE", cls: "phase-setrest" },
+        done: { text: "COMPLETADO", cls: "phase-done" }
+      };
+      const info = phaseMap[latRuntime.phase] || phaseMap.prep;
+      badge.textContent = info.text;
+      badge.className = `phase-chip ${info.cls}`;
+      clock.textContent = fmtSec(latRuntime.remaining);
+      counter.textContent = `Serie ${latRuntime.set}/${latCfg.sets} · Rep ${latRuntime.rep}/${latCfg.reps}`;
+      startBtn.textContent = latRuntime.running ? "Pausar" : "Iniciar";
     }
 
     function parseRestSeconds(restText) {
@@ -817,18 +996,6 @@
       const s = t.match(/(\d+)\s*seg/);
       if (s) return parseInt(s[1], 10);
       return 0;
-    }
-
-    function loadDayRestTimer() {
-      const days = getBlockDays();
-      const day = days.find(d => d.code === state.dayCode) || days[0];
-      const allItems = (day?.sections || []).flatMap(sec => sec.items || []);
-      const found = allItems.map(it => parseRestSeconds(it.rest)).find(v => v > 0);
-      if (found) {
-        setLatticeTimer(found, `Descanso · ${day.code} (${found}s)`);
-      } else {
-        setLatticeTimer(90, `Descanso · ${day.code} (90s)`);
-      }
     }
 
     function getAssetSrc(ex) {
@@ -862,7 +1029,7 @@
           if (e.key === "Enter") unlockApp();
         });
       }
-      renderLatticeTimer();
+      renderLattice();
       if (localStorage.getItem(STORAGE_KEYS.AUTH) === "1") {
         const gateEl = document.getElementById("pin-gate");
         if (gateEl) gateEl.classList.add("hidden");
@@ -933,7 +1100,7 @@
       renderEncyclopediaFilters();
       renderEncyclopedia();
       renderLogView();
-      renderLatticeTimer();
+      renderLattice();
     }
 
     function getActiveBlock() {
@@ -1142,7 +1309,7 @@
                 <div class="ex-meta">
                   <span>📋 ${rxText}</span>
                   ${item.rest ? `<span>⏱ Descanso: ${item.rest}</span>` : ""}
-                  ${restSec > 0 ? `<button type="button" class="ex-timer-btn" onclick="event.stopPropagation(); setLatticeTimer(${restSec}, 'Descanso · ${ex.name.slice(0, 18)}')">⏱ ${item.rest}</button>` : ""}
+                  ${restSec > 0 ? `<button type="button" class="ex-timer-btn" onclick="event.stopPropagation(); applyLatticePreset({prep:5,work:10,rest:0,reps:1,sets:4,setRest:${restSec}})">⏱ Serie ${restSec}s</button>` : ""}
                 </div>
               </div>
             </div>
