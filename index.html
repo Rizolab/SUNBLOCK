@@ -100,9 +100,7 @@
       font-size: 11px; font-weight: 600; padding: 4px 6px; border-radius: 8px;
       cursor: pointer; transition: color 0.15s, background 0.15s;
     }
-    .subtle-reset-btn:hover {
-      color: var(--text); background: var(--surface-2);
-    }
+    .subtle-reset-btn:hover { color: var(--text); background: var(--surface-2); }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); }
     .dot.online { background: var(--green); }
     .dot.offline { background: var(--red); }
@@ -330,7 +328,7 @@
       <h1>Acceso al Sistema</h1>
       <p>Ingresa tu PIN de entrenamiento para cargar tus mesociclos y bitácora.</p>
       <input id="pin-input" class="pin-input" type="password" inputmode="numeric" maxlength="6" placeholder="••••" />
-      <button class="btn-primary" onclick="unlockApp()">Entrar</button>
+      <button type="button" class="btn-primary" onclick="unlockApp()">Entrar</button>
       <div id="pin-err" class="pin-err"></div>
     </div>
   </div>
@@ -340,10 +338,10 @@
     <div class="header-top">
       <div class="logo">SUN<span>BLOCK</span></div>
       <div style="display:flex; gap:8px; align-items:center;">
-        <button class="sync-pill" onclick="openConfigModal()" title="Configurar URL de Apps Script">⚙️</button>
-        <button class="sync-pill" onclick="syncFromSheets()">
+        <button type="button" class="sync-pill" onclick="openConfigModal()" title="Configurar URL de Apps Script">⚙️</button>
+        <button type="button" class="sync-pill" onclick="syncFromSheets()">
           <span id="sync-dot" class="dot"></span>
-          <span id="sync-label">Sincronizando...</span>
+          <span id="sync-label">Respaldo Local</span>
         </button>
       </div>
     </div>
@@ -362,9 +360,9 @@
       <div class="control-grid">
         <select id="block-select" onchange="onBlockChange()"></select>
         <div class="week-stepper">
-          <button onclick="changeWeek(-1)">−</button>
+          <button type="button" onclick="changeWeek(-1)">−</button>
           <span id="week-label">Sem 1 / 6</span>
-          <button onclick="changeWeek(1)">+</button>
+          <button type="button" onclick="changeWeek(1)">+</button>
         </div>
       </div>
       <p id="phase-desc" style="font-size:12px; color:var(--text-muted); margin-top:8px;"></p>
@@ -452,7 +450,7 @@
         </div>
 
         <div id="day-sections"></div>
-        <button class="btn-primary" style="margin-top:12px;" onclick="goToLogCurrentDay()">Registrar esta sesión en Bitácora</button>
+        <button type="button" class="btn-primary" style="margin-top:12px;" onclick="goToLogCurrentDay()">Registrar esta sesión en Bitácora</button>
       </div>
     </section>
 
@@ -461,7 +459,7 @@
       <div class="card">
         <div class="card-title">
           <span>Directorio de Ejercicios</span>
-          <button class="sync-pill" style="border-color:var(--accent); color:var(--accent);" onclick="openNewExModal()">+ Nuevo Ejercicio</button>
+          <button type="button" class="sync-pill" style="border-color:var(--accent); color:var(--accent);" onclick="openNewExModal()">+ Nuevo Ejercicio</button>
         </div>
         <div class="filter-bar">
           <input id="ency-search" type="text" placeholder="Buscar ejercicio, objetivo o agarre..." oninput="renderEncyclopedia()" style="flex:1; min-width:180px;" />
@@ -512,7 +510,7 @@
             <label style="font-size:12px; color:var(--text-muted);">Notas de sesión o desvíos</label>
             <textarea id="log-note" rows="2" placeholder="Ej. Regleta 20mm sólida, cambié jueves por viernes..."></textarea>
           </div>
-          <button id="btn-save-log" class="btn-primary" onclick="submitLog()">Guardar en Bitácora</button>
+          <button type="button" id="btn-save-log" class="btn-primary" onclick="submitLog()">Guardar en Bitácora</button>
         </div>
       </div>
 
@@ -525,16 +523,16 @@
 
   <!-- NAVEGACIÓN INFERIOR -->
   <nav class="bottom-nav">
-    <button class="nav-btn active" data-view="dashboard" onclick="switchView('dashboard', this)">
+    <button type="button" class="nav-btn active" data-view="dashboard" onclick="switchView('dashboard', this)">
       <span class="nav-icon">📊</span><span>Dashboard</span>
     </button>
-    <button class="nav-btn" data-view="train" onclick="switchView('train', this)">
+    <button type="button" class="nav-btn" data-view="train" onclick="switchView('train', this)">
       <span class="nav-icon">🧗</span><span>Entrenar</span>
     </button>
-    <button class="nav-btn" data-view="ency" onclick="switchView('ency', this)">
+    <button type="button" class="nav-btn" data-view="ency" onclick="switchView('ency', this)">
       <span class="nav-icon">📘</span><span>Enciclopedia</span>
     </button>
-    <button class="nav-btn" data-view="log" onclick="switchView('log', this)">
+    <button type="button" class="nav-btn" data-view="log" onclick="switchView('log', this)">
       <span class="nav-icon">📝</span><span>Bitácora</span>
     </button>
   </nav>
@@ -544,7 +542,7 @@
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
         <span id="m-cat" class="pill-stat pill-accent">Categoría</span>
-        <button onclick="closeExModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
+        <button type="button" onclick="closeExModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
       </div>
       <h3 id="m-title" style="font-size:18px; font-weight:800; margin-top:8px;">Nombre</h3>
       <img id="m-media" class="modal-media hidden" alt="" />
@@ -563,7 +561,7 @@
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <h3 style="font-size:16px; font-weight:800;">Nuevo Ejercicio / Calentamiento</h3>
-        <button onclick="closeNewExModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
+        <button type="button" onclick="closeNewExModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
       </div>
       <div style="display:grid; gap:10px; margin-top:12px;">
         <input id="nex-name" type="text" placeholder="Nombre (ej. Calentamiento Dedos y Poleas)" />
@@ -577,7 +575,7 @@
         <input id="nex-media" type="text" placeholder="Ruta imagen (ej. assets/ex-hang20.webp)" />
         <textarea id="nex-steps" rows="3" placeholder="Pasos separados por | (ej. Movilidad muñeca 3 min|Descarga 50% en canto|2 series suaves)"></textarea>
         <input id="nex-alt" type="text" placeholder="Alternativa segura (si hay molestia o falta equipo)" />
-        <button id="btn-save-ex" class="btn-primary" onclick="saveNewExercise()">Guardar en Enciclopedia</button>
+        <button type="button" id="btn-save-ex" class="btn-primary" onclick="saveNewExercise()">Guardar en Enciclopedia</button>
       </div>
     </div>
   </div>
@@ -587,13 +585,13 @@
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <h3 style="font-size:16px; font-weight:800;">Conexión Google Sheets (/exec)</h3>
-        <button onclick="closeConfigModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
+        <button type="button" onclick="closeConfigModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
       </div>
       <p style="font-size:12px; color:var(--text-muted); margin:8px 0 12px;">
         Pega la URL de implementación web de tu proyecto Apps Script para sincronizar bloques, enciclopedia y bitácora.
       </p>
       <input id="api-url-input" type="text" placeholder="https://script.google.com/macros/s/.../exec" />
-      <button class="btn-primary" style="margin-top:12px;" onclick="saveApiUrl()">Guardar y Sincronizar</button>
+      <button type="button" class="btn-primary" style="margin-top:12px;" onclick="saveApiUrl()">Guardar y Sincronizar</button>
     </div>
   </div>
 
@@ -609,7 +607,6 @@
       RESET_BASELINE: "sunblock_reset_baseline_v1"
     };
 
-    // RESPALDO OFFLINE COMPLETO (5 BLOQUES + 39 EJERCICIOS EN ESPAÑOL)
     const BACKUP_DATA = {
       blocks: [
         {
@@ -698,7 +695,7 @@
         { id: "ex-calfraise", name: "Elevación de Talones Excéntrica", category: "Pierna Funcional", level: "1", goal: "Fortalecer el tendón de Aquiles y la pantorrilla para sostener apoyos en micro-regletas de pie.", steps: ["Párate sobre el borde de un escalón o cajón con ambos pies.", "Sube con los dos pies y baja lentamente en 4 segundos apoyando un solo pie.", "Realiza 10-12 reps por pierna."], alt: "Subir y bajar con ambos pies en suelo plano.", source: "Eric Hörst · Entrenamiento para Escalada" },
         { id: "ex-wristcurl", name: "Curl Excéntrico de Muñeca (Prevención Codo)", category: "Empuje y Cara B", level: "1", goal: "Prevenir y rehabilitar la tendinopatía medial y lateral de codo mediante carga excéntrica lenta.", steps: ["Apoya el antebrazo sobre el muslo sosteniendo una mancuerna ligera.", "Sube la muñeca con ayuda de la otra mano y bájala lentamente en 4 segundos.", "Haz 12-15 reps por brazo (palma arriba y palma abajo)."], alt: "Usar una banda elástica suave o botella de agua.", source: "Eric Hörst · Entrenamiento para Escalada" },
         { id: "ex-pronation", name: "Pronación y Supinación de Antebrazo", category: "Empuje y Cara B", level: "1", goal: "Equilibrar los músculos rotadores del antebrazo sometidos a torsión en agarres laterales.", steps: ["Mantén el codo pegado al costado a 90° sujetando una mancuerna por un extremo.", "Gira lentamente la muñeca llevando la palma hacia arriba y hacia abajo.", "Realiza 12-15 giros controlados por brazo."], alt: "Reducir palanca agarrando la mancuerna por el centro.", source: "Eric Hörst · Entrenamiento para Escalada" },
-        { id="ex-facepull", name: "Tirón Facial y Rotación Externa de Hombro", category: "Empuje y Cara B", level: "1", goal: "Fortalecer el manguito rotador para blindar el hombro en bloqueos altos y movimientos dinámicos.", steps: ["Ancla una banda elástica a altura del rostro y tira hacia las orejas.", "Separa las manos rotando los pulgares hacia atrás al final del movimiento.", "Sostén 2 seg y regresa controlado (12-15 reps)."], alt: "Rotación externa tumbado de lado con mancuerna ligera.", source: "Eric Hörst · Entrenamiento para Escalada" }
+        { id: "ex-facepull", name: "Tirón Facial y Rotación Externa de Hombro", category: "Empuje y Cara B", level: "1", goal: "Fortalecer el manguito rotador para blindar el hombro en bloqueos altos y movimientos dinámicos.", steps: ["Ancla una banda elástica a altura del rostro y tira hacia las orejas.", "Separa las manos rotando los pulgares hacia atrás al final del movimiento.", "Sostén 2 seg y regresa controlado (12-15 reps)."], alt: "Rotación externa tumbado de lado con mancuerna ligera.", source: "Eric Hörst · Entrenamiento para Escalada" }
       ],
       microcycles: [
         { blockId: "horst-6w", code: "D1", shortTitle: "Dedos + Límite", title: "Fuerza Máxima de Dedos, Pinza y Búlder Límite", tag: "FUERZA MÁXIMA", duration: "90 min", focus: "Regla de oro: Deja 1-2 seg en reserva. Nunca arqueo cerrado (full crimp).", sections: [
@@ -727,13 +724,27 @@
       logs: []
     };
 
+    function safeJsonParse(raw, fallback) {
+      try {
+        const parsed = JSON.parse(raw);
+        return parsed ?? fallback;
+      } catch (_) {
+        return fallback;
+      }
+    }
+
+    const cachedData = safeJsonParse(localStorage.getItem(STORAGE_KEYS.CACHE), null);
+    const initialData = (cachedData && Array.isArray(cachedData.blocks) && cachedData.blocks.length)
+      ? cachedData
+      : BACKUP_DATA;
+
     let state = {
-      data: JSON.parse(localStorage.getItem(STORAGE_KEYS.CACHE) || "null") || BACKUP_DATA,
+      data: initialData,
       blockId: localStorage.getItem(STORAGE_KEYS.BLOCK) || "horst-6w",
       week: Number(localStorage.getItem(STORAGE_KEYS.WEEK)) || 1,
       dayCode: "D1",
-      checks: JSON.parse(localStorage.getItem(STORAGE_KEYS.CHECKS) || "{}"),
-      resetBaseline: JSON.parse(localStorage.getItem(STORAGE_KEYS.RESET_BASELINE) || "{}"),
+      checks: safeJsonParse(localStorage.getItem(STORAGE_KEYS.CHECKS), {}),
+      resetBaseline: safeJsonParse(localStorage.getItem(STORAGE_KEYS.RESET_BASELINE), {}),
       traffic: { dedos: "verde", codos: "verde" }
     };
 
@@ -829,24 +840,32 @@
 
     // AUTH
     function unlockApp() {
-      const val = document.getElementById("pin-input").value.trim();
+      const inputEl = document.getElementById("pin-input");
+      const errEl = document.getElementById("pin-err");
+      const gateEl = document.getElementById("pin-gate");
+      const val = (inputEl ? inputEl.value : "").trim();
+
       if (val === PIN_CODE) {
-        localStorage.setItem(STORAGE_KEYS.AUTH, "1");
-        document.getElementById("pin-gate").classList.add("hidden");
+        try { localStorage.setItem(STORAGE_KEYS.AUTH, "1"); } catch (_) {}
+        if (errEl) errEl.textContent = "";
+        if (gateEl) gateEl.classList.add("hidden");
         initApp();
-      } else {
-        document.getElementById("pin-err").textContent = "PIN incorrecto. Intenta nuevamente.";
+      } else if (errEl) {
+        errEl.textContent = "PIN incorrecto. Intenta nuevamente.";
       }
     }
-    document.getElementById("pin-input").addEventListener("keydown", e => {
-      if (e.key === "Enter") unlockApp();
-    });
 
-    // INIT
-    window.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
+      const pinInput = document.getElementById("pin-input");
+      if (pinInput) {
+        pinInput.addEventListener("keydown", e => {
+          if (e.key === "Enter") unlockApp();
+        });
+      }
       renderLatticeTimer();
       if (localStorage.getItem(STORAGE_KEYS.AUTH) === "1") {
-        document.getElementById("pin-gate").classList.add("hidden");
+        const gateEl = document.getElementById("pin-gate");
+        if (gateEl) gateEl.classList.add("hidden");
         initApp();
       }
     });
@@ -863,13 +882,13 @@
       const label = document.getElementById("sync-label");
 
       if (!url) {
-        dot.className = "dot offline";
-        label.textContent = "Modo Offline (Configurar URL)";
+        if (dot) dot.className = "dot offline";
+        if (label) label.textContent = "Modo Offline (Configurar URL)";
         return;
       }
 
-      dot.className = "dot";
-      label.textContent = "Sincronizando...";
+      if (dot) dot.className = "dot";
+      if (label) label.textContent = "Sincronizando...";
 
       try {
         const res = await fetch(url);
@@ -882,15 +901,15 @@
             logs: Array.isArray(json.logs) ? json.logs : []
           };
           localStorage.setItem(STORAGE_KEYS.CACHE, JSON.stringify(state.data));
-          dot.className = "dot online";
-          label.textContent = "Conectado a Sheets";
+          if (dot) dot.className = "dot online";
+          if (label) label.textContent = "Conectado a Sheets";
           renderAll();
         } else {
           throw new Error("Respuesta inválida");
         }
-      } catch (err) {
-        dot.className = "dot offline";
-        label.textContent = "Respaldo Local";
+      } catch (_) {
+        if (dot) dot.className = "dot offline";
+        if (label) label.textContent = "Respaldo Local";
       }
     }
 
@@ -914,6 +933,7 @@
       renderEncyclopediaFilters();
       renderEncyclopedia();
       renderLogView();
+      renderLatticeTimer();
     }
 
     function getActiveBlock() {
@@ -959,7 +979,6 @@
       renderAll();
     }
 
-    // REINICIO SUTIL DE PROGRESO (SEMANA A 1, CASILLAS LIMPIAS Y PROGRESO EN 0%)
     function resetCurrentBlock() {
       state.week = 1;
       localStorage.setItem(STORAGE_KEYS.WEEK, "1");
@@ -1083,7 +1102,7 @@
 
       const tabsEl = document.getElementById("day-tabs");
       tabsEl.innerHTML = days.map(d => `
-        <button class="day-tab ${d.code === state.dayCode ? "active" : ""}" onclick="selectDay('${d.code}')">
+        <button type="button" class="day-tab ${d.code === state.dayCode ? "active" : ""}" onclick="selectDay('${d.code}')">
           ${d.code} · ${d.shortTitle}
           <small>${d.duration}</small>
         </button>
@@ -1280,9 +1299,7 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "ADD_EXERCISE", data: newEx })
           });
-        } catch (err) {
-          console.error(err);
-        }
+        } catch (_) {}
       }
     }
 
@@ -1364,8 +1381,7 @@
         });
         document.getElementById("log-note").value = "";
         setTimeout(() => syncFromSheets(), 1200);
-      } catch (err) {
-        console.error(err);
+      } catch (_) {
       } finally {
         btn.disabled = false;
         btn.textContent = "Guardar en Bitácora";
