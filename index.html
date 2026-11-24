@@ -40,6 +40,12 @@
       padding-bottom: 84px;
     }
 
+    .ui-icon {
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
     /* PIN GATE */
     #pin-gate {
       position: fixed; inset: 0; z-index: 9999;
@@ -171,13 +177,18 @@
       font-size: 9.5px; color: var(--text-muted); display: block;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;
     }
-    .day-node .d-status { font-size: 12px; margin-top: 4px; display: block; }
+    .day-node .d-status {
+      margin-top: 5px; display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted);
+    }
     .day-node.done { background: var(--green-soft); border-color: rgba(52, 211, 153, 0.35); }
+    .day-node.done .d-status { color: var(--green); }
     .day-node.rest { opacity: 0.72; }
     .day-node.pending { border-style: dashed; }
 
     .traffic-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
     .pill-stat {
+      display: inline-flex; align-items: center; gap: 5px;
       font-size: 10.5px; font-weight: 700; letter-spacing: 0.03em;
       padding: 3px 9px; border-radius: 999px;
     }
@@ -232,6 +243,7 @@
     .linked-ex-name { font-size: 13px; font-weight: 700; color: var(--text); }
     .linked-ex-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
     .linked-done-btn {
+      display: inline-flex; align-items: center; gap: 5px;
       background: transparent; border: 1px solid rgba(52, 211, 153, 0.35); color: var(--green);
       border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer;
     }
@@ -262,6 +274,7 @@
       .lattice-actions { grid-template-columns: 1fr 1fr; }
     }
     .l-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 5px;
       padding: 9px 10px; border-radius: 10px; border: 1px solid var(--border);
       background: var(--surface); color: var(--text); font-size: 12px; font-weight: 700; cursor: pointer;
     }
@@ -326,8 +339,9 @@
     .ex-name { font-size: 13.5px; font-weight: 700; color: var(--text); }
     .ex-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 3px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .ex-timer-btn {
+      display: inline-flex; align-items: center; gap: 4px;
       background: transparent; border: none; color: var(--accent);
-      padding: 1px 4px; font-size: 11px; font-weight: 700; cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+      padding: 1px 4px; font-size: 11px; font-weight: 700; cursor: pointer;
     }
 
     /* ENCYCLOPEDIA */
@@ -348,6 +362,7 @@
     /* LOG FORM */
     .traffic-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 6px; }
     .t-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
       padding: 9px; border-radius: 10px; border: 1px solid var(--hairline);
       background: var(--surface-2); color: var(--text-muted); font-size: 12px; font-weight: 700; cursor: pointer;
     }
@@ -369,7 +384,7 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
     }
     .nav-btn.active { color: var(--accent); }
-    .nav-icon { font-size: 17px; }
+    .nav-icon { display: flex; align-items: center; justify-content: center; height: 20px; }
 
     /* MODAL */
     .modal-backdrop {
@@ -413,7 +428,9 @@
     <div class="header-top">
       <div class="logo">SUN<span>BLOCK</span></div>
       <div style="display:flex; gap:8px; align-items:center;">
-        <button type="button" class="sync-pill" onclick="openConfigModal()" title="Configurar URL de Apps Script">⚙️</button>
+        <button type="button" class="sync-pill" onclick="openConfigModal()" title="Configurar URL de Apps Script" aria-label="Configurar URL de Apps Script">
+          <span id="hdr-gear-icon"></span>
+        </button>
         <button type="button" class="sync-pill" onclick="syncFromSheets()">
           <span id="sync-dot" class="dot"></span>
           <span id="sync-label">Respaldo Local</span>
@@ -428,16 +445,19 @@
       <div class="card-title">
         <span>Mesociclo Activo</span>
         <div style="display:flex; align-items:center; gap:6px;">
-          <button type="button" class="subtle-reset-btn" onclick="resetCurrentBlock()" title="Reiniciar progreso de la semana y casillas">↺ Reiniciar</button>
+          <button type="button" class="subtle-reset-btn" onclick="resetCurrentBlock()" title="Reiniciar progreso de la semana y casillas">
+            <span id="reset-block-icon"></span>
+            <span>Reiniciar</span>
+          </button>
           <span id="phase-badge" class="pill-stat pill-accent">Fase 1</span>
         </div>
       </div>
       <div class="control-grid">
         <select id="block-select" onchange="onBlockChange()"></select>
         <div class="week-stepper">
-          <button type="button" onclick="changeWeek(-1)">−</button>
+          <button type="button" onclick="changeWeek(-1)" aria-label="Semana anterior">−</button>
           <span id="week-label">Sem 1 / 6</span>
-          <button type="button" onclick="changeWeek(1)">+</button>
+          <button type="button" onclick="changeWeek(1)" aria-label="Semana siguiente">+</button>
         </div>
       </div>
       <p id="phase-desc" style="font-size:12px; color:var(--text-muted); margin-top:8px;"></p>
@@ -466,11 +486,7 @@
           <span style="font-size:10px; font-weight:500;">Toca un día para abrir</span>
         </div>
         <div id="dash-week-map" class="week-map"></div>
-        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; font-size:11px; color:var(--text-muted);">
-          <span>✅ Completado</span>
-          <span>⏳ Pendiente</span>
-          <span>🛌 Descanso</span>
-        </div>
+        <div id="dash-legend" style="display:flex; gap:14px; flex-wrap:wrap; margin-top:10px; font-size:11px; color:var(--text-muted);"></div>
       </div>
 
       <div class="dash-grid">
@@ -511,9 +527,12 @@
           <div class="linked-ex-bar">
             <div>
               <div id="lat-ex-title" class="linked-ex-name">Sin ejercicio cargado</div>
-              <div id="lat-ex-sub" class="linked-ex-sub">Toca "Cargar Rx" en cualquier ejercicio o usa la cola del día</div>
+              <div id="lat-ex-sub" class="linked-ex-sub">Usa "Cargar Rx" en cualquier ejercicio o la cola del día</div>
             </div>
-            <button type="button" id="lat-check-btn" class="linked-done-btn" onclick="completeLinkedExercise()">✓ Marcar hecho</button>
+            <button type="button" id="lat-check-btn" class="linked-done-btn" onclick="completeLinkedExercise()">
+              <span id="lat-check-icon"></span>
+              <span>Marcar hecho</span>
+            </button>
           </div>
 
           <div class="lattice-stage">
@@ -529,10 +548,22 @@
           </div>
 
           <div class="lattice-actions">
-            <button type="button" class="l-btn go" id="lat-toggle-btn" onclick="toggleLattice()">▶ Iniciar</button>
-            <button type="button" class="l-btn" onclick="skipLatticePhase()">⏭ Fase</button>
-            <button type="button" class="l-btn" onclick="nextQueueExercise()">➡ Ej. Sig.</button>
-            <button type="button" class="l-btn" onclick="resetLattice()">↺ Reset</button>
+            <button type="button" class="l-btn go" id="lat-toggle-btn" onclick="toggleLattice()">
+              <span id="lat-toggle-icon"></span>
+              <span id="lat-toggle-label">Iniciar</span>
+            </button>
+            <button type="button" class="l-btn" onclick="skipLatticePhase()">
+              <span id="lat-skip-icon"></span>
+              <span>Fase</span>
+            </button>
+            <button type="button" class="l-btn" onclick="nextQueueExercise()">
+              <span id="lat-next-icon"></span>
+              <span>Ej. Sig.</span>
+            </button>
+            <button type="button" class="l-btn" onclick="resetLattice()">
+              <span id="lat-reset-icon"></span>
+              <span>Reset</span>
+            </button>
           </div>
 
           <div id="lat-params-panel" class="lattice-params">
@@ -575,7 +606,10 @@
       <div class="card">
         <div class="card-title">
           <span>Directorio de Ejercicios</span>
-          <button type="button" class="sync-pill" style="border-color:rgba(45, 212, 191, 0.45); color:var(--accent);" onclick="openNewExModal()">+ Nuevo Ejercicio</button>
+          <button type="button" class="sync-pill" style="border-color:rgba(45, 212, 191, 0.45); color:var(--accent);" onclick="openNewExModal()">
+            <span id="ency-plus-icon"></span>
+            <span>Nuevo Ejercicio</span>
+          </button>
         </div>
         <div class="filter-bar">
           <input id="ency-search" type="text" placeholder="Buscar ejercicio, objetivo o agarre..." oninput="renderEncyclopedia()" style="flex:1; min-width:180px;" />
@@ -609,17 +643,17 @@
           <div>
             <label style="font-size:12px; color:var(--text-muted);">Semáforo Dedos / Poleas</label>
             <div class="traffic-selector" id="dedos-selector">
-              <button type="button" class="t-btn active verde" onclick="setTraffic('dedos','verde',this)">🟢 Verde</button>
-              <button type="button" class="t-btn amarillo" onclick="setTraffic('dedos','amarillo',this)">🟡 Amarillo</button>
-              <button type="button" class="t-btn rojo" onclick="setTraffic('dedos','rojo',this)">🔴 Rojo</button>
+              <button type="button" class="t-btn active verde" onclick="setTraffic('dedos','verde',this)"><span class="t-dot verde"></span><span>Verde</span></button>
+              <button type="button" class="t-btn amarillo" onclick="setTraffic('dedos','amarillo',this)"><span class="t-dot amarillo"></span><span>Amarillo</span></button>
+              <button type="button" class="t-btn rojo" onclick="setTraffic('dedos','rojo',this)"><span class="t-dot rojo"></span><span>Rojo</span></button>
             </div>
           </div>
           <div>
             <label style="font-size:12px; color:var(--text-muted);">Semáforo Codos / Hombros</label>
             <div class="traffic-selector" id="codos-selector">
-              <button type="button" class="t-btn active verde" onclick="setTraffic('codos','verde',this)">🟢 Verde</button>
-              <button type="button" class="t-btn amarillo" onclick="setTraffic('codos','amarillo',this)">🟡 Amarillo</button>
-              <button type="button" class="t-btn rojo" onclick="setTraffic('codos','rojo',this)">🔴 Rojo</button>
+              <button type="button" class="t-btn active verde" onclick="setTraffic('codos','verde',this)"><span class="t-dot verde"></span><span>Verde</span></button>
+              <button type="button" class="t-btn amarillo" onclick="setTraffic('codos','amarillo',this)"><span class="t-dot amarillo"></span><span>Amarillo</span></button>
+              <button type="button" class="t-btn rojo" onclick="setTraffic('codos','rojo',this)"><span class="t-dot rojo"></span><span>Rojo</span></button>
             </div>
           </div>
           <div>
@@ -640,16 +674,16 @@
   <!-- NAVEGACIÓN INFERIOR -->
   <nav class="bottom-nav">
     <button type="button" class="nav-btn active" data-view="dashboard" onclick="switchView('dashboard', this)">
-      <span class="nav-icon">📊</span><span>Dashboard</span>
+      <span class="nav-icon" id="nav-icon-dashboard"></span><span>Dashboard</span>
     </button>
     <button type="button" class="nav-btn" data-view="train" onclick="switchView('train', this)">
-      <span class="nav-icon">🧗</span><span>Entrenar</span>
+      <span class="nav-icon" id="nav-icon-train"></span><span>Entrenar</span>
     </button>
     <button type="button" class="nav-btn" data-view="ency" onclick="switchView('ency', this)">
-      <span class="nav-icon">📘</span><span>Enciclopedia</span>
+      <span class="nav-icon" id="nav-icon-ency"></span><span>Enciclopedia</span>
     </button>
     <button type="button" class="nav-btn" data-view="log" onclick="switchView('log', this)">
-      <span class="nav-icon">📝</span><span>Bitácora</span>
+      <span class="nav-icon" id="nav-icon-log"></span><span>Bitácora</span>
     </button>
   </nav>
 
@@ -658,7 +692,7 @@
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
         <span id="m-cat" class="pill-stat pill-accent">Categoría</span>
-        <button type="button" onclick="closeExModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
+        <button type="button" onclick="closeExModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;" aria-label="Cerrar">✕</button>
       </div>
       <h3 id="m-title" style="font-size:18px; font-weight:800; margin-top:8px;">Nombre</h3>
       <img id="m-media" class="modal-media hidden" alt="" />
@@ -677,7 +711,7 @@
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <h3 style="font-size:16px; font-weight:800;">Nuevo Ejercicio / Calentamiento</h3>
-        <button type="button" onclick="closeNewExModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
+        <button type="button" onclick="closeNewExModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;" aria-label="Cerrar">✕</button>
       </div>
       <div style="display:grid; gap:10px; margin-top:12px;">
         <input id="nex-name" type="text" placeholder="Nombre (ej. Calentamiento Dedos y Poleas)" />
@@ -701,7 +735,7 @@
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <h3 style="font-size:16px; font-weight:800;">Conexión Google Sheets (/exec)</h3>
-        <button type="button" onclick="closeConfigModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
+        <button type="button" onclick="closeConfigModal()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;" aria-label="Cerrar">✕</button>
       </div>
       <p style="font-size:12px; color:var(--text-muted); margin:8px 0 12px;">
         Pega la URL de implementación web de tu proyecto Apps Script para sincronizar bloques, enciclopedia y bitácora.
@@ -712,6 +746,55 @@
   </div>
 
   <script>
+    const ICONS = {
+      dashboard: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>`,
+      train: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="m7 7 5-4 5 4"/><path d="M5 13h4"/><path d="M15 13h4"/><path d="m8 20 4-3 4 3"/></svg>`,
+      ency: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8"/><path d="M8 11h6"/></svg>`,
+      log: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
+      gear: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+      reset: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>`,
+      check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`,
+      clock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`,
+      rest: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
+      play: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M7 5.5v13l11-6.5-11-6.5Z"/></svg>`,
+      pause: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>`,
+      skip: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5v14l10-7-10-7Z"/><path d="M19 5v14"/></svg>`,
+      next: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>`,
+      plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>`,
+      dot: `<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="12" r="5"/></svg>`
+    };
+
+    function iconSvg(name, size = 16) {
+      const raw = ICONS[name] || "";
+      return raw.replace("<svg ", `<svg width="${size}" height="${size}" stroke-width="1.8" class="ui-icon" `);
+    }
+
+    function renderStaticIcons() {
+      const setHtml = (id, html) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+      };
+      setHtml("nav-icon-dashboard", iconSvg("dashboard", 18));
+      setHtml("nav-icon-train", iconSvg("train", 18));
+      setHtml("nav-icon-ency", iconSvg("ency", 18));
+      setHtml("nav-icon-log", iconSvg("log", 18));
+      setHtml("hdr-gear-icon", iconSvg("gear", 14));
+      setHtml("reset-block-icon", iconSvg("reset", 12));
+      setHtml("lat-check-icon", iconSvg("check", 13));
+      setHtml("lat-skip-icon", iconSvg("skip", 14));
+      setHtml("lat-next-icon", iconSvg("next", 14));
+      setHtml("lat-reset-icon", iconSvg("reset", 14));
+      setHtml("ency-plus-icon", iconSvg("plus", 13));
+      setHtml("dash-legend", `
+        <span style="display:inline-flex;align-items:center;gap:4px;"><span style="color:var(--green);display:inline-flex;">${iconSvg("check", 12)}</span> Completado</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;"><span style="display:inline-flex;">${iconSvg("clock", 12)}</span> Pendiente</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;"><span style="display:inline-flex;">${iconSvg("rest", 12)}</span> Descanso</span>
+      `);
+      document.querySelectorAll(".t-dot.verde").forEach(el => { el.style.color = "var(--green)"; el.innerHTML = iconSvg("dot", 11); });
+      document.querySelectorAll(".t-dot.amarillo").forEach(el => { el.style.color = "var(--yellow)"; el.innerHTML = iconSvg("dot", 11); });
+      document.querySelectorAll(".t-dot.rojo").forEach(el => { el.style.color = "var(--red)"; el.innerHTML = iconSvg("dot", 11); });
+    }
+
     const PIN_CODE = "2026";
     const memoryStorage = {};
 
@@ -1243,6 +1326,8 @@
       const totalEl = document.getElementById("lat-total-left");
       const fill = document.getElementById("lat-phase-fill");
       const btn = document.getElementById("lat-toggle-btn");
+      const toggleIcon = document.getElementById("lat-toggle-icon");
+      const toggleLabel = document.getElementById("lat-toggle-label");
       const exTitle = document.getElementById("lat-ex-title");
       const exSub = document.getElementById("lat-ex-sub");
       const paramsPanel = document.getElementById("lat-params-panel");
@@ -1287,7 +1372,8 @@
         fill.style.background = cur.color;
       }
 
-      btn.textContent = latRuntime.running ? "⏸ Pausar" : "▶ Iniciar";
+      if (toggleIcon) toggleIcon.innerHTML = iconSvg(latRuntime.running ? "pause" : "play", 13);
+      if (toggleLabel) toggleLabel.textContent = latRuntime.running ? "Pausar" : "Iniciar";
 
       if (queueEl) {
         queueEl.innerHTML = queue.map((q, idx) => `
@@ -1351,6 +1437,7 @@
 
     document.addEventListener("DOMContentLoaded", function () {
       bindPinEvents();
+      renderStaticIcons();
       renderLattice();
       if (safeStorage.get(STORAGE_KEYS.AUTH) === "1") {
         forceHidePinGate();
@@ -1359,6 +1446,7 @@
     });
 
     function initApp() {
+      renderStaticIcons();
       renderAll();
       syncFromSheets();
     }
@@ -1523,12 +1611,12 @@
         const isDone = completedCodes.has(d.code);
         const isRest = !d.sections || d.sections.length === 0;
         const cls = isDone ? "done" : (isRest ? "rest" : "pending");
-        const icon = isDone ? "✅" : (isRest ? "🛌" : "⏳");
+        const iconName = isDone ? "check" : (isRest ? "rest" : "clock");
         return `
           <div class="day-node ${cls}" onclick="openDayFromDashboard('${d.code}')">
             <span class="d-code">${d.code}</span>
             <span class="d-short">${d.shortTitle}</span>
-            <span class="d-status">${icon}</span>
+            <span class="d-status">${iconSvg(iconName, 13)}</span>
           </div>
         `;
       }).join("");
@@ -1549,14 +1637,14 @@
           counts.rojo > 0 ? "Alerta Articular" : (counts.amarillo > 1 ? "Precaución Moderada" : "Estado Óptimo");
 
         document.getElementById("dash-traffic-pills").innerHTML = `
-          <span class="pill-stat pill-green">🟢 ${counts.verde} Óptimas</span>
-          <span class="pill-stat pill-yellow">🟡 ${counts.amarillo} Alerta</span>
-          <span class="pill-stat pill-red">🔴 ${counts.rojo} Parar</span>
+          <span class="pill-stat pill-green">${iconSvg("dot", 10)} ${counts.verde} Óptimas</span>
+          <span class="pill-stat pill-yellow">${iconSvg("dot", 10)} ${counts.amarillo} Alerta</span>
+          <span class="pill-stat pill-red">${iconSvg("dot", 10)} ${counts.rojo} Parar</span>
         `;
       } else {
         document.getElementById("dash-rpe-badge").textContent = "RPE —";
         document.getElementById("dash-joint-status").textContent = "Sin registros aún";
-        document.getElementById("dash-traffic-pills").innerHTML = `<span class="pill-stat pill-green">🟢 Listo para iniciar</span>`;
+        document.getElementById("dash-traffic-pills").innerHTML = `<span class="pill-stat pill-green">${iconSvg("dot", 10)} Listo para iniciar</span>`;
       }
 
       if (blockLogs.length > 0) {
@@ -1637,8 +1725,10 @@
                 <div class="ex-name">${ex.name}</div>
                 <div class="ex-meta">
                   <span>${rxText}</span>
-                  ${item.rest ? `<span>· Descanso: ${item.rest}</span>` : ""}
-                  <button type="button" class="ex-timer-btn" onclick="event.stopPropagation(); loadExerciseByKey('${checkKey}', false)">Cargar Rx</button>
+                  ${item.rest ? `<span>· Pausa: ${item.rest}</span>` : ""}
+                  <button type="button" class="ex-timer-btn" onclick="event.stopPropagation(); loadExerciseByKey('${checkKey}', false)">
+                    ${iconSvg("clock", 11)}<span>Cargar Rx</span>
+                  </button>
                 </div>
               </div>
             </div>
