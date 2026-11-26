@@ -25,6 +25,8 @@
       --green-soft: rgba(52, 211, 153, 0.12);
       --yellow: #fbbf24;
       --yellow-soft: rgba(251, 191, 36, 0.12);
+      --orange: #fb923c;
+      --orange-soft: rgba(251, 146, 60, 0.13);
       --red: #f87171;
       --red-soft: rgba(248, 113, 113, 0.12);
       --radius: 14px;
@@ -251,12 +253,12 @@
     }
     .timer-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
     .mode-switch {
-      display: inline-flex; background: var(--bg); border: 1px solid var(--hairline);
+      display: inline-flex; flex-wrap: wrap; background: var(--bg); border: 1px solid var(--hairline);
       border-radius: 9px; padding: 2px; gap: 2px;
     }
     .mode-btn {
       background: transparent; border: none; color: var(--text-muted);
-      font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 7px; cursor: pointer;
+      font-size: 10.5px; font-weight: 700; padding: 4px 8px; border-radius: 7px; cursor: pointer;
     }
     .mode-btn.active { background: var(--accent-soft); color: var(--accent); }
     .phase-pill { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 999px; }
@@ -264,6 +266,7 @@
     .p-work { background: var(--accent-soft); color: var(--accent); }
     .p-rest { background: var(--green-soft); color: var(--green); }
     .p-setrest { background: var(--yellow-soft); color: var(--yellow); }
+    .p-warmup { background: var(--orange-soft); color: var(--orange); }
     .p-done { background: var(--green-soft); color: var(--green); }
 
     .linked-ex-bar {
@@ -278,6 +281,21 @@
       background: transparent; border: 1px solid rgba(52, 211, 153, 0.35); color: var(--green);
       border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer;
     }
+
+    /* BARRA DE VENTANA DEL BLOQUE (MODO MURO / BÚLDER) */
+    .block-window-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      background: var(--bg); border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 10px; padding: 8px 12px; margin-bottom: 12px;
+    }
+    .block-window-left { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--aqua-sky); font-weight: 700; }
+    .block-window-digits { font-variant-numeric: tabular-nums; font-size: 15px; font-weight: 800; color: var(--text); }
+    .block-window-btn {
+      background: var(--aqua-sky-soft); border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--aqua-sky); border-radius: 7px; padding: 4px 10px;
+      font-size: 11px; font-weight: 700; cursor: pointer;
+    }
+
     .timer-stage { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
     .timer-digits { font-size: 46px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
     .timer-meta-right { text-align: right; }
@@ -538,12 +556,14 @@
         </div>
         <div id="day-focus" class="focus-banner"></div>
 
-        <!-- TEMPORIZADOR DUAL INTELIGENTE -->
+        <!-- TEMPORIZADOR INTELIGENTE DE 4 MODOS -->
         <div class="timer-card">
           <div class="timer-top">
             <div class="mode-switch">
-              <button type="button" id="mode-btn-rest" class="mode-btn active" onclick="setTimerMode('rest')">Descanso entre series</button>
-              <button type="button" id="mode-btn-interval" class="mode-btn" onclick="setTimerMode('interval')">Intervalos / Multipresa</button>
+              <button type="button" id="mode-btn-warmup" class="mode-btn" onclick="setTimerMode('warmup')">Calentamiento</button>
+              <button type="button" id="mode-btn-block" class="mode-btn" onclick="setTimerMode('block')">Bloque Muro</button>
+              <button type="button" id="mode-btn-rest" class="mode-btn active" onclick="setTimerMode('rest')">Descanso Series</button>
+              <button type="button" id="mode-btn-interval" class="mode-btn" onclick="setTimerMode('interval')">Multipresa</button>
             </div>
             <span id="lat-phase-pill" class="phase-pill p-rest">PAUSA ENTRE SERIES</span>
           </div>
@@ -557,6 +577,15 @@
               <span id="lat-check-icon"></span>
               <span>Completado</span>
             </button>
+          </div>
+
+          <!-- VENTANA TOTAL DEL BLOQUE EN MURO (SOLO MODO BLOCK) -->
+          <div id="block-window-bar" class="block-window-bar hidden">
+            <div class="block-window-left">
+              <span>Ventana del bloque:</span>
+              <span id="block-window-digits" class="block-window-digits">20:00</span>
+            </div>
+            <button type="button" id="block-window-btn" class="block-window-btn" onclick="toggleBlockWindow()">Iniciar Bloque</button>
           </div>
 
           <div class="timer-stage">
@@ -584,7 +613,7 @@
               <span id="lat-toggle-icon"></span>
               <span id="lat-toggle-label">Iniciar Descanso</span>
             </button>
-            <button type="button" class="l-btn" onclick="advanceSetOrPhase()">
+            <button type="button" class="l-btn" id="lat-skip-btn" onclick="advanceSetOrPhase()">
               <span id="lat-skip-icon"></span>
               <span id="lat-skip-label">+1 Serie</span>
             </button>
@@ -1051,22 +1080,25 @@
     }
 
     /* ========================================================================
-       2. TEMPORIZADOR DUAL INTELIGENTE
+       2. TEMPORIZADOR INTELIGENTE DE 4 MODOS (CALENTAMIENTO, BLOQUE MURO, SERIES, MULTIPRESA)
        ======================================================================== */
     let timerCfg = {
-      mode: "rest",
+      mode: "rest",        // "warmup" | "block" | "rest" | "interval"
       prep: 5,
       work: 10,
       restRep: 0,
       reps: 1,
       sets: 4,
-      setRest: 180
+      setRest: 180,
+      warmupSec: 900,      // 15 min por defecto para calentamiento
+      blockWindowSec: 1200 // 20 min por defecto para bloques en muro
     };
 
     let latLinked = {
       checkKey: null,
       exId: null,
       exName: "Sin ejercicio cargado",
+      sectionName: "",
       rx: "",
       restText: "",
       queueIndex: 0
@@ -1077,9 +1109,13 @@
       phase: "setrest",
       rep: 1,
       set: 1,
+      attempt: 1,
       remaining: 180,
       phaseTotal: 180,
-      intervalId: null
+      intervalId: null,
+      blockRemaining: 1200,
+      blockRunning: false,
+      blockIntervalId: null
     };
 
     function beepPhase(type) {
@@ -1115,10 +1151,44 @@
       return fallbackSec;
     }
 
-    function parsePrescriptionSmart(exObj, rxText, restText) {
+    function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
       const rx = String(rxText || "").toLowerCase();
+      const secLower = String(sectionName || "").toLowerCase();
+      const nameLower = String((exObj && exObj.name) || "").toLowerCase();
+      const restLower = String(restText || "").toLowerCase();
       const setRest = parseSecondsFromText(restText, (exObj && Number(exObj.set_rest_sec)) || 120);
 
+      // 1. MODO CALENTAMIENTO: sección o ejercicio de calentamiento / activación o duración única sin series
+      const isWarmup = /calentamiento|activaci[oó]n|movilidad articular/.test(secLower) ||
+                       /calentamiento|activaci[oó]n/.test(nameLower) ||
+                       (/^\d+\s*(?:-\s*\d+\s*)?min/.test(rx.trim()) && !restLower && !/serie|ronda|x\s*\d+/.test(rx));
+      if (isWarmup) {
+        const warmupSec = parseSecondsFromText(rxText, parseSecondsFromText(sectionName, 900));
+        return {
+          mode: "warmup",
+          prep: 0, work: 0, restRep: 0, reps: 1, sets: 1,
+          setRest: 60,
+          warmupSec,
+          blockWindowSec: 1200
+        };
+      }
+
+      // 2. MODO BLOQUE EN MURO: tiene ventana total en minutos (ej. "20 min") + descanso entre pegues/intentos (ej. "2 min"), sin ser multipresa
+      const blockMinMatch = rx.match(/(\d+(?:\.\d+)?)\s*(?:-\s*\d+\s*)?min/);
+      const isRepeater = /(\d+)\s*:\s*(\d+)/.test(rx);
+      const isShortHold = /(?:x|\()\s*\d+\s*(?:seg|s\b)/.test(rx);
+      if (blockMinMatch && !isRepeater && !isShortHold) {
+        const blockWindowSec = Math.max(60, Math.round(parseFloat(blockMinMatch[1]) * 60));
+        return {
+          mode: "block",
+          prep: 0, work: 0, restRep: 0, reps: 1, sets: 1,
+          setRest,
+          warmupSec: 900,
+          blockWindowSec
+        };
+      }
+
+      // 3. MODO INTERVALOS / MULTIPRESA (ej. 7:3 x 6 reps o suspensiones de 10s)
       let sets = (exObj && Number(exObj.sets)) || 3;
       const setsMatch = rx.match(/(\d+)\s*(?:series|rondas)/);
       if (setsMatch) sets = Math.max(1, parseInt(setsMatch[1], 10));
@@ -1133,10 +1203,10 @@
         const restRep = Math.max(1, parseInt(repeaterMatch[2], 10));
         const repsMatch = rx.match(/x\s*(\d+)\s*rep/);
         const reps = repsMatch ? Math.max(1, parseInt(repsMatch[1], 10)) : ((exObj && Number(exObj.reps)) || 6);
-        return { mode: "interval", prep: 5, work, restRep, reps, sets, setRest };
+        return { mode: "interval", prep: 5, work, restRep, reps, sets, setRest, warmupSec: 900, blockWindowSec: 1200 };
       }
 
-      const segMatch = rx.match(/(?:x|\()\s*(\d+)\s*(?:seg|s )/);
+      const segMatch = rx.match(/(?:x|\()\s*(\d+)\s*(?:seg|s\b)/);
       const holdFromDb = exObj ? Number(exObj.hold_sec) : 0;
       if (segMatch || (holdFromDb > 0 && !rx.includes("rep"))) {
         const work = segMatch ? Math.max(1, parseInt(segMatch[1], 10)) : holdFromDb;
@@ -1148,21 +1218,32 @@
           restRep: isLockoff ? 3 : (Number(exObj?.rest_rep_sec) || 0),
           reps: isLockoff ? 3 : (Number(exObj?.reps) || 1),
           sets,
-          setRest
+          setRest,
+          warmupSec: 900,
+          blockWindowSec: 1200
         };
       }
 
-      return { mode: "rest", prep: 0, work: 0, restRep: 0, reps: 1, sets, setRest };
+      // 4. MODO DESCANSO ENTRE SERIES (Fuerza, barra, core, antagonistas)
+      return { mode: "rest", prep: 0, work: 0, restRep: 0, reps: 1, sets, setRest, warmupSec: 900, blockWindowSec: 1200 };
     }
 
     function setTimerMode(newMode) {
-      timerCfg.mode = newMode === "interval" ? "interval" : "rest";
+      const valid = ["warmup", "block", "rest", "interval"];
+      timerCfg.mode = valid.includes(newMode) ? newMode : "rest";
       resetTimer();
     }
 
     function setQuickRest(seconds) {
-      timerCfg.mode = "rest";
-      timerCfg.setRest = Math.max(10, Number(seconds) || 90);
+      if (timerCfg.mode === "warmup") {
+        timerCfg.warmupSec = Math.max(60, Number(seconds) || 900);
+        resetTimer();
+        return;
+      }
+      if (timerCfg.mode !== "block") {
+        timerCfg.mode = "rest";
+      }
+      timerCfg.setRest = Math.max(10, Number(seconds) || 120);
       resetTimer();
     }
 
@@ -1173,14 +1254,50 @@
       timerRun.phaseTotal = safeSec;
     }
 
+    function resetBlockWindow() {
+      clearInterval(timerRun.blockIntervalId);
+      timerRun.blockIntervalId = null;
+      timerRun.blockRunning = false;
+      timerRun.blockRemaining = timerCfg.blockWindowSec || 1200;
+    }
+
+    function toggleBlockWindow() {
+      if (timerRun.blockRunning) {
+        clearInterval(timerRun.blockIntervalId);
+        timerRun.blockIntervalId = null;
+        timerRun.blockRunning = false;
+        renderTimer();
+        return;
+      }
+      if (timerRun.blockRemaining <= 0) timerRun.blockRemaining = timerCfg.blockWindowSec || 1200;
+      timerRun.blockRunning = true;
+      renderTimer();
+      timerRun.blockIntervalId = setInterval(() => {
+        if (timerRun.blockRemaining > 1) {
+          timerRun.blockRemaining -= 1;
+        } else {
+          timerRun.blockRemaining = 0;
+          timerRun.blockRunning = false;
+          clearInterval(timerRun.blockIntervalId);
+          timerRun.blockIntervalId = null;
+          beepPhase("done");
+        }
+        renderTimer();
+      }, 1000);
+    }
+
     function resetTimer() {
       clearInterval(timerRun.intervalId);
       timerRun.intervalId = null;
       timerRun.running = false;
       timerRun.rep = 1;
       timerRun.set = 1;
+      timerRun.attempt = 1;
+      resetBlockWindow();
 
-      if (timerCfg.mode === "rest") enterPhase("setrest", timerCfg.setRest);
+      if (timerCfg.mode === "warmup") enterPhase("warmup", timerCfg.warmupSec);
+      else if (timerCfg.mode === "block") enterPhase("setrest", timerCfg.setRest);
+      else if (timerCfg.mode === "rest") enterPhase("setrest", timerCfg.setRest);
       else if (timerCfg.prep > 0) enterPhase("prep", timerCfg.prep);
       else enterPhase("work", timerCfg.work);
 
@@ -1208,6 +1325,26 @@
     }
 
     function advanceTimerTick() {
+      if (timerCfg.mode === "warmup") {
+        clearInterval(timerRun.intervalId);
+        timerRun.intervalId = null;
+        timerRun.running = false;
+        timerRun.phase = "done";
+        timerRun.remaining = 0;
+        beepPhase("done");
+        return;
+      }
+
+      if (timerCfg.mode === "block") {
+        clearInterval(timerRun.intervalId);
+        timerRun.intervalId = null;
+        timerRun.running = false;
+        beepPhase("work");
+        timerRun.attempt += 1;
+        enterPhase("setrest", timerCfg.setRest);
+        return;
+      }
+
       if (timerCfg.mode === "rest") {
         clearInterval(timerRun.intervalId);
         timerRun.intervalId = null;
@@ -1241,7 +1378,7 @@
           return;
         }
         if (timerRun.set < timerCfg.sets) {
-          if (timerCfg.setRest > 0) {
+          if (timerRun.setRest > 0) {
             enterPhase("setrest", timerCfg.setRest);
             beepPhase("rest");
           } else {
@@ -1275,6 +1412,19 @@
     }
 
     function advanceSetOrPhase() {
+      if (timerCfg.mode === "warmup") {
+        completeLinkedExercise();
+        return;
+      }
+      if (timerCfg.mode === "block") {
+        clearInterval(timerRun.intervalId);
+        timerRun.intervalId = null;
+        timerRun.running = false;
+        timerRun.attempt += 1;
+        enterPhase("setrest", timerCfg.setRest);
+        renderTimer();
+        return;
+      }
       if (timerCfg.mode === "rest") {
         clearInterval(timerRun.intervalId);
         timerRun.intervalId = null;
@@ -1303,6 +1453,10 @@
         return;
       }
       if (timerRun.phase === "done") resetTimer();
+      // En modo Bloque en Muro, arrancar el descanso también activa la ventana total si estaba detenida
+      if (timerCfg.mode === "block" && !timerRun.blockRunning && timerRun.blockRemaining > 0) {
+        toggleBlockWindow();
+      }
       timerRun.running = true;
       renderTimer();
       timerRun.intervalId = setInterval(() => {
@@ -1325,18 +1479,28 @@
       const exSub = document.getElementById("lat-ex-sub");
       const paramsPanel = document.getElementById("lat-params-panel");
       const presetsBar = document.getElementById("rest-presets-bar");
-      const modeRestBtn = document.getElementById("mode-btn-rest");
-      const modeIntBtn = document.getElementById("mode-btn-interval");
+      const blockBar = document.getElementById("block-window-bar");
+      const blockDigits = document.getElementById("block-window-digits");
+      const blockBtn = document.getElementById("block-window-btn");
       const queueEl = document.getElementById("lat-queue");
       if (!pill || !digits || !sr) return;
 
-      const isRestMode = timerCfg.mode === "rest";
-      if (modeRestBtn) modeRestBtn.classList.toggle("active", isRestMode);
-      if (modeIntBtn) modeIntBtn.classList.toggle("active", !isRestMode);
-      if (presetsBar) presetsBar.classList.toggle("hidden", !isRestMode);
-      if (paramsPanel) paramsPanel.classList.toggle("hidden", isRestMode || timerRun.running);
+      const mode = timerCfg.mode;
+      ["warmup", "block", "rest", "interval"].forEach(m => {
+        document.getElementById(`mode-btn-${m}`)?.classList.toggle("active", mode === m);
+      });
 
-      if (isRestMode && presetsBar) {
+      const showPresets = mode === "rest" || mode === "block";
+      if (presetsBar) presetsBar.classList.toggle("hidden", !showPresets);
+      if (paramsPanel) paramsPanel.classList.toggle("hidden", mode !== "interval" || timerRun.running);
+      if (blockBar) blockBar.classList.toggle("hidden", mode !== "block");
+
+      if (mode === "block" && blockDigits && blockBtn) {
+        blockDigits.textContent = fmtSec(timerRun.blockRemaining);
+        blockBtn.textContent = timerRun.blockRunning ? "Pausar Bloque" : "Iniciar Bloque";
+      }
+
+      if (showPresets && presetsBar) {
         presetsBar.querySelectorAll(".preset-chip").forEach(btn => {
           const secMatch = btn.getAttribute("onclick")?.match(/\((\d+)\)/);
           const sVal = secMatch ? Number(secMatch[1]) : 0;
@@ -1345,11 +1509,12 @@
       }
 
       const meta = {
+        warmup: { label: "CALENTAMIENTO", cls: "p-warmup", color: "#fb923c" },
         prep: { label: "PREPARACIÓN", cls: "p-prep", color: "#38bdf8" },
         work: { label: "TRABAJO EN MURO / BARRA", cls: "p-work", color: "#2dd4bf" },
         rest: { label: "PAUSA ENTRE REPS", cls: "p-rest", color: "#34d399" },
-        setrest: { label: "PAUSA ENTRE SERIES", cls: "p-setrest", color: "#fbbf24" },
-        done: { label: "SERIES COMPLETADAS", cls: "p-done", color: "#34d399" }
+        setrest: { label: mode === "block" ? "PAUSA ENTRE PEGUES" : "PAUSA ENTRE SERIES", cls: "p-setrest", color: "#fbbf24" },
+        done: { label: "COMPLETADO", cls: "p-done", color: "#34d399" }
       };
       const cur = meta[timerRun.phase] || meta.setrest;
 
@@ -1358,7 +1523,21 @@
       digits.textContent = fmtSec(timerRun.remaining);
       digits.style.color = cur.color;
 
-      if (isRestMode) {
+      if (mode === "warmup") {
+        sr.textContent = `Activación (${Math.round(timerCfg.warmupSec / 60)} min)`;
+        if (totalEl) totalEl.textContent = timerRun.phase === "done"
+          ? "Calentamiento listo · Pasa al primer ejercicio"
+          : "Activa articulaciones y dedos a tu ritmo";
+        if (toggleLabel) toggleLabel.textContent = timerRun.running ? "Pausar" : "Iniciar Calentamiento";
+        if (skipLabel) skipLabel.textContent = "Listo → Rutina";
+      } else if (mode === "block") {
+        sr.textContent = `Pegue ${timerRun.attempt}`;
+        if (totalEl) totalEl.textContent = timerRun.running
+          ? "Recuperando ATP-PC antes del siguiente pegue..."
+          : "Baja del muro y pulsa Iniciar Descanso";
+        if (toggleLabel) toggleLabel.textContent = timerRun.running ? "Pausar" : "Iniciar Descanso";
+        if (skipLabel) skipLabel.textContent = "+1 Pegue";
+      } else if (mode === "rest") {
         sr.textContent = `Serie ${timerRun.set} de ${timerCfg.sets}`;
         if (totalEl) totalEl.textContent = timerRun.phase === "done"
           ? "Todas las series completadas"
@@ -1746,6 +1925,7 @@
             exId: item.exId,
             exObj: ex,
             exName: ex.name,
+            sectionName: sec.name,
             rx: rxText,
             restText: item.rest || ""
           });
@@ -1757,7 +1937,7 @@
     function syncQueueForCurrentDay(autoLoadFirst = false) {
       const queue = getDayExerciseQueue();
       if (!queue.length) {
-        latLinked = { checkKey: null, exId: null, exName: "Día de descanso", rx: "Sin carga programada", restText: "", queueIndex: 0 };
+        latLinked = { checkKey: null, exId: null, exName: "Día de descanso", sectionName: "", rx: "Sin carga programada", restText: "", queueIndex: 0 };
         renderTimer();
         return;
       }
@@ -1765,6 +1945,7 @@
       if (idx >= 0) {
         latLinked.queueIndex = idx;
         latLinked.exName = queue[idx].exName;
+        latLinked.sectionName = queue[idx].sectionName;
         latLinked.rx = queue[idx].rx;
         latLinked.restText = queue[idx].restText;
         renderTimer();
@@ -1783,12 +1964,13 @@
         checkKey: entry.checkKey,
         exId: entry.exId,
         exName: entry.exName,
+        sectionName: entry.sectionName,
         rx: entry.rx,
         restText: entry.restText,
         queueIndex: safeIdx
       };
 
-      const parsed = parsePrescriptionSmart(entry.exObj, entry.rx, entry.restText);
+      const parsed = parsePrescriptionSmart(entry.exObj, entry.rx, entry.restText, entry.sectionName);
       timerCfg = { ...timerCfg, ...parsed };
       syncIntervalInputsFromCfg();
       resetTimer();
@@ -2063,7 +2245,7 @@
       if (focusTags.length > 1) {
         focusBar.classList.remove("hidden");
         focusBar.innerHTML = focusTags.map(tag => `
-          <button type="button" class="focus-chip ${state.encyFocus === tag ? "active" : ""}" onclick="selectEncyFocus('${tag.replace(/'/g, "\'")}')">${tag}</button>
+          <button type="button" class="focus-chip ${state.encyFocus === tag ? "active" : ""}" onclick="selectEncyFocus('${tag.replace(/'/g, "\\'")}')">${tag}</button>
         `).join("");
       } else {
         focusBar.classList.add("hidden");
@@ -2117,8 +2299,8 @@
       const holdSec = Number(ex.hold_sec) || 0;
       const sets = Math.max(1, Number(ex.sets) || 3);
       const setRest = Math.max(30, Number(ex.set_rest_sec) || 90);
-      latLinked = { checkKey: null, exId: ex.id, exName: ex.name, rx: holdSec > 0 ? `${sets} x ${holdSec}s` : `${sets} series`, restText: `${setRest}s`, queueIndex: 0 };
-      timerCfg = { mode: holdSec > 0 ? "interval" : "rest", prep: 5, work: holdSec || 10, restRep: Number(ex.rest_rep_sec) || 0, reps: Number(ex.reps) || 1, sets, setRest };
+      latLinked = { checkKey: null, exId: ex.id, exName: ex.name, sectionName: "", rx: holdSec > 0 ? `${sets} x ${holdSec}s` : `${sets} series`, restText: `${setRest}s`, queueIndex: 0 };
+      timerCfg = { mode: holdSec > 0 ? "interval" : "rest", prep: 5, work: holdSec || 10, restRep: Number(ex.rest_rep_sec) || 0, reps: Number(ex.reps) || 1, sets, setRest, warmupSec: 900, blockWindowSec: 1200 };
       syncIntervalInputsFromCfg();
       resetTimer();
       renderTrainView();
