@@ -1673,7 +1673,27 @@
       syncFromSheets();
     }
 
-    // NORMALIZADOR DE DATOS DESDE GOOGLE SHEETS (SOPORTA EL CODE.GS UNIFICADO Y FORMATOS PREVIOS)
+    // NORMALIZADORES DE ALIAS HISTÓRICOS, SEMANA Y DÍA PARA PROGRESO EN INICIO
+    function normalizeBlockAlias(rawBlockId, rawMeso) {
+      const txt = `${rawBlockId || ""} ${rawMeso || ""}`.toLowerCase().trim();
+      if (!txt || txt.includes("horst") || txt.includes("anclaje") || txt.includes("6w") || txt.includes("6 semana")) return "horst-6w";
+      if (txt.includes("cimiento") || txt.includes("basico") || txt.includes("básico")) return "cimiento-4w";
+      if (txt.includes("impulso")) return "impulso-4w";
+      if (txt.includes("flujo")) return "flujo-4w";
+      if (txt.includes("cumbre") || txt.includes("avanzado")) return "cumbre-4w";
+      return String(rawBlockId || "horst-6w").trim();
+    }
+
+    function extractWeekNum(rawWeek) {
+      const m = String(rawWeek ?? "").match(/\d+/);
+      return m ? Number(m[0]) : 1;
+    }
+
+    function normalizeDayCode(rawCode) {
+      const m = String(rawCode || "").toUpperCase().match(/D[1-7]/);
+      return m ? m[0] : String(rawCode || "").trim().toUpperCase();
+    }
+
     function normalizeBackendPayload(json) {
       const rawBlocks = json.mesociclos || json.blocks || [];
       const blocks = rawBlocks.length
@@ -1704,7 +1724,7 @@
         const dayMap = new Map();
         rawMicro.forEach(r => {
           const bId = r.block_id || r.blockId;
-          const dCode = r.day_code || r.code;
+          const dCode = normalizeDayCode(r.day_code || r.code);
           const key = `${bId}__${dCode}`;
           if (!dayMap.has(key)) {
             dayMap.set(key, {
@@ -1745,9 +1765,9 @@
       const logs = Array.isArray(rawLogs)
         ? rawLogs.map(l => ({
             date: l.date || "",
-            blockId: l.block_id || l.blockId || "",
-            week: l.week || "",
-            dayCode: l.day_code || l.dayCode || "",
+            blockId: normalizeBlockAlias(l.block_id || l.blockId, l.meso),
+            week: extractWeekNum(l.week),
+            dayCode: normalizeDayCode(l.day_code || l.dayCode || l.day_title),
             dayTitle: l.day_title || l.dayTitle || "",
             rpe: l.rpe || l.sensation || "-",
             dedos: l.dedos || l.pain_flag || "Verde",
@@ -1887,7 +1907,7 @@
       safeStorage.set(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
 
       const allLogs = state.data.logs || [];
-      const blockTotalLogs = allLogs.filter(l => l.blockId === state.blockId).length;
+      const blockTotalLogs = allLogs.filter(l => normalizeBlockAlias(l.blockId, l.dayTitle) === state.blockId).length;
       state.resetBaseline[state.blockId] = {
         week: 1,
         logCount: blockTotalLogs
@@ -1905,14 +1925,14 @@
       if (!days.some(d => d.code === state.dayCode)) state.dayCode = days[0].code;
 
       const logs = state.data.logs || [];
-      const blockLogs = logs.filter(l => l.blockId === block.id);
+      const blockLogs = logs.filter(l => normalizeBlockAlias(l.blockId, l.dayTitle) === block.id);
       const baseline = state.resetBaseline[block.id];
       const isResetWeek1 = baseline && Number(state.week) === 1 && blockLogs.length <= baseline.logCount;
       const weekLogs = isResetWeek1
         ? []
-        : blockLogs.filter(l => Number(l.week) === Number(state.week));
+        : blockLogs.filter(l => extractWeekNum(l.week) === Number(state.week));
 
-      const completedCodes = new Set(weekLogs.map(l => l.dayCode));
+      const completedCodes = new Set(weekLogs.map(l => normalizeDayCode(l.dayCode)));
       const activeDays = days.filter(d => d.sections && d.sections.length > 0);
       const totalTargetSessions = activeDays.length || 4;
       const doneInWeek = Math.min(completedCodes.size, totalTargetSessions);
@@ -1967,7 +1987,7 @@
       document.getElementById("home-map-week").textContent = state.week;
       const mapEl = document.getElementById("home-week-map");
       mapEl.innerHTML = days.map(d => {
-        const isDone = completedCodes.has(d.code);
+        const isDone = completedCodes.has(normalizeDayCode(d.code));
         const isRest = !d.sections || d.sections.length === 0;
         const isSelected = d.code === state.dayCode;
         const cls = [
@@ -2258,7 +2278,6 @@
         }).join("");
       }
 
-      // Chips dinámicos de etiquetas internas (focus) disponibles dentro del grupo elegido
       const basePool = state.encyGroup
         ? allItems.filter(e => resolveExerciseGroup(e).id === state.encyGroup)
         : allItems;
