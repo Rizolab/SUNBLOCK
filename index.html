@@ -263,21 +263,29 @@
     }
     .day-tab small { display: block; font-size: 10px; font-weight: 500; opacity: 0.8; }
 
-    /* LATTICE INTERVAL TIMER CARD */
-    .lattice-card {
+    /* CRONÓMETRO DUAL DE ENTRENAMIENTO (100% ESPAÑOL) */
+    .timer-card {
       background: var(--surface-2);
       border: 1px solid var(--border);
       border-radius: 15px; padding: 16px; margin-bottom: 14px;
     }
-    .lattice-top {
+    .timer-top {
       display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px;
+      flex-wrap: wrap;
     }
-    .lattice-brand {
-      font-size: 10.5px; font-weight: 700; letter-spacing: 0.11em; text-transform: uppercase;
-      color: var(--text-muted);
+    .mode-switch {
+      display: inline-flex; background: var(--bg); border: 1px solid var(--hairline);
+      border-radius: 9px; padding: 2px; gap: 2px;
+    }
+    .mode-btn {
+      background: transparent; border: none; color: var(--text-muted);
+      font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 7px; cursor: pointer;
+    }
+    .mode-btn.active {
+      background: var(--accent-soft); color: var(--accent);
     }
     .phase-pill {
-      font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
       padding: 3px 10px; border-radius: 999px;
     }
     .p-prep { background: var(--aqua-sky-soft); color: var(--aqua-sky); }
@@ -291,7 +299,7 @@
       padding: 9px 0; margin-bottom: 12px;
       display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
     }
-    .linked-ex-name { font-size: 13px; font-weight: 700; color: var(--text); }
+    .linked-ex-name { font-size: 13.5px; font-weight: 700; color: var(--text); }
     .linked-ex-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
     .linked-done-btn {
       display: inline-flex; align-items: center; gap: 5px;
@@ -299,16 +307,16 @@
       border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer;
     }
 
-    .lattice-stage {
+    .timer-stage {
       display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap;
     }
-    .lattice-digits {
+    .timer-digits {
       font-size: 46px; font-weight: 800; font-variant-numeric: tabular-nums;
       letter-spacing: 0.02em; line-height: 1;
     }
-    .lattice-meta-right { text-align: right; }
-    .lattice-sr { font-size: 13.5px; font-weight: 700; color: var(--text); }
-    .lattice-total { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+    .timer-meta-right { text-align: right; }
+    .timer-sr { font-size: 13.5px; font-weight: 700; color: var(--text); }
+    .timer-total { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
 
     .phase-track {
       width: 100%; height: 6px; background: var(--bg);
@@ -318,11 +326,11 @@
       height: 100%; width: 100%; background: var(--accent); transition: width 0.25s linear;
     }
 
-    .lattice-actions {
-      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px;
+    .timer-actions {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px;
     }
     @media (max-width: 520px) {
-      .lattice-actions { grid-template-columns: 1fr 1fr; }
+      .timer-actions { grid-template-columns: 1fr 1fr; }
     }
     .l-btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 5px;
@@ -332,23 +340,34 @@
     .l-btn:hover { border-color: rgba(45, 212, 191, 0.4); }
     .l-btn.go { background: var(--accent); border-color: var(--accent); color: #071316; }
 
-    .lattice-params {
-      display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px;
+    .rest-presets {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;
+    }
+    .preset-chip {
+      font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 8px;
+      background: var(--bg); border: 1px solid var(--hairline); color: var(--text-muted); cursor: pointer;
+    }
+    .preset-chip:hover, .preset-chip.active {
+      border-color: rgba(45, 212, 191, 0.5); color: var(--accent); background: var(--accent-soft);
+    }
+
+    .timer-params {
+      display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin-top: 8px;
     }
     @media (max-width: 640px) {
-      .lattice-params { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .timer-params { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
     .lp-box {
       background: var(--bg); border: 1px solid var(--hairline); border-radius: 9px; padding: 6px 8px;
     }
     .lp-box label {
-      display: block; font-size: 9.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;
+      display: block; font-size: 9.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;
     }
     .lp-box input {
       background: transparent; border: none; padding: 2px 0 0; font-size: 13.5px; font-weight: 800;
     }
 
-    .lattice-queue {
+    .timer-queue {
       display: flex; gap: 6px; overflow-x: auto; padding-top: 10px; margin-top: 10px;
       border-top: 1px solid var(--hairline);
     }
@@ -391,108 +410,50 @@
     .ex-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 3px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .ex-timer-btn {
       display: inline-flex; align-items: center; gap: 4px;
-      background: transparent; border: none; color: var(--accent);
-      padding: 1px 4px; font-size: 11px; font-weight: 700; cursor: pointer;
+      background: var(--accent-soft); border: 1px solid rgba(45, 212, 191, 0.3); border-radius: 6px;
+      color: var(--accent); padding: 2px 7px; font-size: 11px; font-weight: 700; cursor: pointer;
     }
 
-    /* ENCYCLOPEDIA: LUPA + 8 GRUPOS LATTICE + ETIQUETAS + VISTA DETALLE */
+    /* ENCYCLOPEDIA */
     .search-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
+      position: relative; display: flex; align-items: center;
     }
     .search-wrap .search-icon {
-      position: absolute;
-      left: 12px;
-      color: var(--text-muted);
-      pointer-events: none;
-      display: flex;
+      position: absolute; left: 12px; color: var(--text-muted); pointer-events: none; display: flex;
     }
-    .search-wrap input {
-      padding-left: 36px;
-      padding-right: 34px;
-    }
+    .search-wrap input { padding-left: 36px; padding-right: 34px; }
     .search-clear {
-      position: absolute;
-      right: 8px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 14px;
-      cursor: pointer;
-      padding: 4px;
+      position: absolute; right: 8px; background: transparent; border: none;
+      color: var(--text-muted); font-size: 14px; cursor: pointer; padding: 4px;
     }
     .groups-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 12px;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px;
     }
     @media (min-width: 620px) {
       .groups-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     }
     .group-tile {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 8px;
-      text-align: left;
-      background: var(--surface-2);
-      border: 1px solid var(--hairline);
-      border-radius: 12px;
-      padding: 11px 12px;
-      cursor: pointer;
+      display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
+      text-align: left; background: var(--surface-2); border: 1px solid var(--hairline);
+      border-radius: 12px; padding: 11px 12px; cursor: pointer;
       transition: border-color 0.15s, background 0.15s, transform 0.12s;
     }
     .group-tile:hover { transform: translateY(-1px); border-color: rgba(148, 163, 184, 0.35); }
-    .group-tile-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-    }
-    .group-swatch {
-      width: 12px;
-      height: 12px;
-      border-radius: 4px;
-    }
-    .group-count {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-    .group-name {
-      font-size: 12.5px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.25;
-    }
+    .group-tile-top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+    .group-swatch { width: 12px; height: 12px; border-radius: 4px; }
+    .group-count { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+    .group-name { font-size: 12.5px; font-weight: 700; color: var(--text); line-height: 1.25; }
 
     .focus-filter-bar {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding: 2px 0 8px;
-      margin-bottom: 6px;
+      display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 8px; margin-bottom: 6px;
     }
     .focus-chip {
-      flex: 0 0 auto;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--hairline);
-      background: var(--surface);
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      flex: 0 0 auto; font-size: 11px; font-weight: 600; padding: 4px 10px;
+      border-radius: 999px; border: 1px solid var(--hairline); background: var(--surface);
+      color: var(--text-muted); cursor: pointer;
     }
-    .focus-chip:hover { border-color: rgba(45, 212, 191, 0.4); color: var(--text); }
     .focus-chip.active {
-      background: var(--accent-soft);
-      border-color: rgba(45, 212, 191, 0.55);
-      color: var(--accent);
-      font-weight: 700;
+      background: var(--accent-soft); border-color: rgba(45, 212, 191, 0.55); color: var(--accent); font-weight: 700;
     }
 
     .ency-card {
@@ -502,12 +463,7 @@
       position: relative; overflow: hidden;
     }
     .ency-card:hover { border-color: rgba(45, 212, 191, 0.45); }
-    .ency-accent-bar {
-      width: 4px;
-      align-self: stretch;
-      border-radius: 4px;
-      flex-shrink: 0;
-    }
+    .ency-accent-bar { width: 4px; align-self: stretch; border-radius: 4px; flex-shrink: 0; }
     .ency-img {
       width: 78px; height: 54px; border-radius: 8px; object-fit: cover;
       border: 1px solid var(--hairline); background: var(--surface-2); flex-shrink: 0;
@@ -517,29 +473,17 @@
 
     /* VISTA DEDICADA DETALLE DE EJERCICIO */
     .detail-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; flex-wrap: wrap; margin-bottom: 14px;
     }
     .detail-hero-img {
-      width: 100%;
-      max-height: 260px;
-      object-fit: contain;
-      background: var(--surface-2);
-      border: 1px solid var(--hairline);
-      border-radius: 13px;
-      margin: 12px 0;
+      width: 100%; max-height: 260px; object-fit: contain;
+      background: var(--surface-2); border: 1px solid var(--hairline);
+      border-radius: 13px; margin: 12px 0;
     }
     .detail-steps {
-      padding-left: 20px;
-      margin: 10px 0 14px;
-      font-size: 13.5px;
-      color: var(--text);
-      display: grid;
-      gap: 8px;
+      padding-left: 20px; margin: 10px 0 14px; font-size: 13.5px;
+      color: var(--text); display: grid; gap: 8px;
     }
 
     /* LOG FORM */
@@ -592,7 +536,7 @@
     <div class="pin-card">
       <div class="brand-badge">SUNBLOCK · ELBLOQUE</div>
       <h1>Acceso al Sistema</h1>
-      <p>Ingresa tu PIN de entrenamiento para cargar tus mesociclos y enciclopedia.</p>
+      <p>Ingresa tu PIN de entrenamiento para cargar tu plan Eric Hörst y bitácora.</p>
       <input id="pin-input" class="pin-input" type="password" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off" />
       <button type="button" id="pin-submit-btn" class="btn-primary">Entrar</button>
       <div id="pin-err" class="pin-err"></div>
@@ -616,10 +560,10 @@
   </header>
 
   <main>
-    <!-- SELECTOR GLOBAL DE PLAN (5 BLOQUES) Y SEMANA -->
+    <!-- SELECTOR GLOBAL DE PLAN Y SEMANA -->
     <div id="global-plan-card" class="card">
       <div class="card-title">
-        <span>Plan Elegido y Semana</span>
+        <span>Plan Activo y Semana</span>
         <div style="display:flex; align-items:center; gap:6px;">
           <button type="button" class="subtle-reset-btn" onclick="resetCurrentBlock()" title="Reiniciar progreso de la semana y casillas">
             <span id="reset-block-icon"></span>
@@ -632,7 +576,7 @@
         <select id="block-select" onchange="onBlockChange()"></select>
         <div class="week-stepper">
           <button type="button" onclick="changeWeek(-1)" aria-label="Semana anterior">−</button>
-          <span id="week-label">Sem 1 / 4</span>
+          <span id="week-label">Sem 1 / 6</span>
           <button type="button" onclick="changeWeek(1)" aria-label="Semana siguiente">+</button>
         </div>
       </div>
@@ -660,8 +604,8 @@
 
       <div class="card">
         <div class="card-title">
-          <span>Plan Overview · Weekly Breakdown</span>
-          <span id="home-overview-count" style="font-size:10.5px; font-weight:600;">4 semanas</span>
+          <span>Estructura del Mesociclo (Periodización)</span>
+          <span id="home-overview-count" style="font-size:10.5px; font-weight:600;">6 semanas</span>
         </div>
         <p id="home-overview-summary" style="font-size:12px; color:var(--text-muted); margin-bottom:6px;"></p>
         <div id="home-weekly-breakdown" class="breakdown-list"></div>
@@ -681,17 +625,20 @@
         </div>
         <div id="day-focus" class="focus-banner"></div>
 
-        <!-- TEMPORIZADOR CONECTADO A EJERCICIOS -->
-        <div class="lattice-card">
-          <div class="lattice-top">
-            <span class="lattice-brand">LATTICE INTERVAL TIMER</span>
-            <span id="lat-phase-pill" class="phase-pill p-prep">PREPARACIÓN</span>
+        <!-- TEMPORIZADOR DUAL EN ESPAÑOL (DESCANSO ENTRE SERIES vs INTERVALOS) -->
+        <div class="timer-card">
+          <div class="timer-top">
+            <div class="mode-switch">
+              <button type="button" id="mode-btn-rest" class="mode-btn active" onclick="setTimerMode('rest')">Descanso entre series</button>
+              <button type="button" id="mode-btn-interval" class="mode-btn" onclick="setTimerMode('interval')">Intervalos / Multipresa</button>
+            </div>
+            <span id="lat-phase-pill" class="phase-pill p-rest">PAUSA ENTRE SERIES</span>
           </div>
 
           <div class="linked-ex-bar">
             <div>
               <div id="lat-ex-title" class="linked-ex-name">Sin ejercicio cargado</div>
-              <div id="lat-ex-sub" class="linked-ex-sub">Usa "Cargar Rx" en cualquier ejercicio o la cola del día</div>
+              <div id="lat-ex-sub" class="linked-ex-sub">Toca "Cargar en Timer" en cualquier ejercicio</div>
             </div>
             <button type="button" id="lat-check-btn" class="linked-done-btn" onclick="completeLinkedExercise()">
               <span id="lat-check-icon"></span>
@@ -699,11 +646,11 @@
             </button>
           </div>
 
-          <div class="lattice-stage">
-            <div id="lat-digits" class="lattice-digits">00:05</div>
-            <div class="lattice-meta-right">
-              <div id="lat-sr" class="lattice-sr">Serie 1 / 4 · Rep 1 / 1</div>
-              <div id="lat-total-left" class="lattice-total">Siguiente: Trabajo</div>
+          <div class="timer-stage">
+            <div id="lat-digits" class="timer-digits">03:00</div>
+            <div class="timer-meta-right">
+              <div id="lat-sr" class="timer-sr">Serie 1 / 4</div>
+              <div id="lat-total-left" class="timer-total">Haz tus reps y cronometra la pausa</div>
             </div>
           </div>
 
@@ -711,53 +658,63 @@
             <div id="lat-phase-fill" class="phase-fill"></div>
           </div>
 
-          <div class="lattice-actions">
-            <button type="button" class="l-btn go" id="lat-toggle-btn" onclick="toggleLattice()">
+          <!-- Atajos rápidos de descanso para modo Fuerza / Búlder -->
+          <div id="rest-presets-bar" class="rest-presets">
+            <button type="button" class="preset-chip" onclick="setQuickRest(60)">1 min</button>
+            <button type="button" class="preset-chip" onclick="setQuickRest(90)">1:30 min</button>
+            <button type="button" class="preset-chip" onclick="setQuickRest(120)">2 min</button>
+            <button type="button" class="preset-chip" onclick="setQuickRest(180)">3 min</button>
+            <button type="button" class="preset-chip" onclick="setQuickRest(240)">4 min</button>
+          </div>
+
+          <div class="timer-actions">
+            <button type="button" class="l-btn go" id="lat-toggle-btn" onclick="toggleTimer()">
               <span id="lat-toggle-icon"></span>
-              <span id="lat-toggle-label">Iniciar</span>
+              <span id="lat-toggle-label">Iniciar Descanso</span>
             </button>
-            <button type="button" class="l-btn" onclick="skipLatticePhase()">
+            <button type="button" class="l-btn" onclick="advanceSetOrPhase()">
               <span id="lat-skip-icon"></span>
-              <span>Fase</span>
+              <span id="lat-skip-label">+1 Serie</span>
             </button>
             <button type="button" class="l-btn" onclick="nextQueueExercise()">
               <span id="lat-next-icon"></span>
               <span>Ej. Sig.</span>
             </button>
-            <button type="button" class="l-btn" onclick="resetLattice()">
+            <button type="button" class="l-btn" onclick="resetTimer()">
               <span id="lat-reset-icon"></span>
-              <span>Reset</span>
+              <span>Reiniciar</span>
             </button>
           </div>
 
-          <div id="lat-params-panel" class="lattice-params">
+          <!-- Parámetros editables (en español, solo visibles en modo Intervalos o al pausar) -->
+          <div id="lat-params-panel" class="timer-params hidden">
             <div class="lp-box">
               <label>Prep (s)</label>
-              <input id="lat-prep" type="number" min="0" max="60" value="5" onchange="applyLatticeInputs()" />
+              <input id="lat-prep" type="number" min="0" max="60" value="5" onchange="applyIntervalInputs()" />
             </div>
             <div class="lp-box">
-              <label>Work (s)</label>
-              <input id="lat-work" type="number" min="1" max="600" value="10" onchange="applyLatticeInputs()" />
+              <label>Trabajo (s)</label>
+              <input id="lat-work" type="number" min="1" max="600" value="10" onchange="applyIntervalInputs()" />
             </div>
             <div class="lp-box">
-              <label>Rest (s)</label>
-              <input id="lat-rest" type="number" min="0" max="600" value="0" onchange="applyLatticeInputs()" />
+              <label>Pausa Rep (s)</label>
+              <input id="lat-rest" type="number" min="0" max="600" value="0" onchange="applyIntervalInputs()" />
             </div>
             <div class="lp-box">
               <label>Reps</label>
-              <input id="lat-reps" type="number" min="1" max="50" value="1" onchange="applyLatticeInputs()" />
+              <input id="lat-reps" type="number" min="1" max="50" value="1" onchange="applyIntervalInputs()" />
             </div>
             <div class="lp-box">
-              <label>Sets</label>
-              <input id="lat-sets" type="number" min="1" max="30" value="4" onchange="applyLatticeInputs()" />
+              <label>Series</label>
+              <input id="lat-sets" type="number" min="1" max="30" value="4" onchange="applyIntervalInputs()" />
             </div>
             <div class="lp-box">
-              <label>Set Rest (s)</label>
-              <input id="lat-setrest" type="number" min="0" max="900" value="180" onchange="applyLatticeInputs()" />
+              <label>Pausa Serie (s)</label>
+              <input id="lat-setrest" type="number" min="0" max="900" value="180" onchange="applyIntervalInputs()" />
             </div>
           </div>
 
-          <div id="lat-queue" class="lattice-queue"></div>
+          <div id="lat-queue" class="timer-queue"></div>
         </div>
 
         <div id="day-sections"></div>
@@ -765,12 +722,12 @@
       </div>
     </section>
 
-    <!-- VISTA 3: ENCICLOPEDIA (LUPA + 8 GRUPOS LATTICE + ETIQUETAS + VISTA DETALLE) -->
+    <!-- VISTA 3: ENCICLOPEDIA (O FICHA DE EJERCICIO CON RETORNO ORGÁNICO) -->
     <section id="view-ency" class="hidden">
       <div id="ency-browser">
         <div class="card">
           <div class="card-title">
-            <span>Enciclopedia · 8 Grupos Lattice</span>
+            <span>Enciclopedia de Ejercicios</span>
             <button type="button" class="sync-pill" style="border-color:rgba(45, 212, 191, 0.45); color:var(--accent);" onclick="openNewExModal()">
               <span id="ency-plus-icon"></span>
               <span>Nuevo</span>
@@ -778,7 +735,7 @@
           </div>
           <div class="search-wrap">
             <span id="ency-search-icon" class="search-icon"></span>
-            <input id="ency-search" type="text" placeholder="Buscar ejercicio, grupo Lattice o etiqueta..." oninput="onEncySearchInput()" />
+            <input id="ency-search" type="text" placeholder="Buscar ejercicio, músculo o categoría..." oninput="onEncySearchInput()" />
             <button type="button" id="ency-search-clear" class="search-clear hidden" onclick="clearEncySearch()" aria-label="Limpiar búsqueda">✕</button>
           </div>
           <div id="ency-groups-grid" class="groups-grid"></div>
@@ -867,10 +824,10 @@
       <div style="display:grid; gap:10px; margin-top:12px;">
         <input id="nex-name" type="text" placeholder="Nombre del ejercicio" />
         <select id="nex-group"></select>
-        <input id="nex-focus" type="text" placeholder="Etiqueta funcional (ej. Core / Psoas, Tracción, Empuje / Prehab)" />
+        <input id="nex-focus" type="text" placeholder="Etiqueta funcional (ej. Pierna / Psoas, Tracción, Empuje)" />
         <input id="nex-goal" type="text" placeholder="Objetivo principal del ejercicio" />
         <input id="nex-media" type="text" placeholder="Ruta imagen (ej. assets/ex-hang20.webp)" />
-        <textarea id="nex-steps" rows="3" placeholder="Pasos separados por | (ej. Movilidad muñeca 3 min|Descarga 50% en canto|2 series suaves)"></textarea>
+        <textarea id="nex-steps" rows="3" placeholder="Pasos separados por | (ej. Paso 1|Paso 2|Paso 3)"></textarea>
         <input id="nex-alt" type="text" placeholder="Alternativa segura (si hay molestia o falta equipo)" />
         <button type="button" id="btn-save-ex" class="btn-primary" onclick="saveNewExercise()">Guardar en Enciclopedia</button>
       </div>
@@ -895,37 +852,32 @@
   <script>
     const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbyZNbEWVu5_YoxPGNeeEJppnAo3WOuPtAy0nHZdVuZOV9iY-d5G1OjTaB0MVwIlA9iV0g/exec";
 
-    // LOS 8 CONJUNTOS MACRO OFICIALES DE LATTICE
     const EXERCISE_GROUPS = [
-      { id: "Aerobic Base",     name: "Aerobic Base",     color: "#38bdf8", soft: "rgba(56, 189, 248, 0.13)" },
-      { id: "Conditioning",     name: "Conditioning",     color: "#fbbf24", soft: "rgba(251, 191, 36, 0.13)" },
-      { id: "Fingerboard",      name: "Fingerboard",      color: "#2dd4bf", soft: "rgba(45, 212, 191, 0.13)" },
-      { id: "Flexibility",      name: "Flexibility",      color: "#34d399", soft: "rgba(52, 211, 153, 0.13)" },
-      { id: "Open",             name: "Open",             color: "#c084fc", soft: "rgba(192, 132, 252, 0.13)" },
-      { id: "Other",            name: "Other",            color: "#94a3b8", soft: "rgba(148, 163, 184, 0.14)" },
-      { id: "Power Endurance",  name: "Power Endurance",  color: "#fb923c", soft: "rgba(251, 146, 60, 0.14)" },
-      { id: "Strength & Power", name: "Strength & Power", color: "#fb7185", soft: "rgba(251, 113, 133, 0.13)" }
+      { id: "Fingerboard",      name: "Multipresa / Dedos",   color: "#2dd4bf", soft: "rgba(45, 212, 191, 0.13)" },
+      { id: "Strength & Power", name: "Fuerza y Potencia",    color: "#fb7185", soft: "rgba(251, 113, 133, 0.13)" },
+      { id: "Power Endurance",  name: "Fuerza-Resistencia",   color: "#fb923c", soft: "rgba(251, 146, 60, 0.14)" },
+      { id: "Conditioning",     name: "Cara B / Pierna-Core", color: "#fbbf24", soft: "rgba(251, 191, 36, 0.13)" },
+      { id: "Aerobic Base",     name: "Base Aeróbica",        color: "#38bdf8", soft: "rgba(56, 189, 248, 0.13)" },
+      { id: "Open",             name: "Técnica y Búlder",     color: "#c084fc", soft: "rgba(192, 132, 252, 0.13)" },
+      { id: "Flexibility",      name: "Movilidad / Prehab",   color: "#34d399", soft: "rgba(52, 211, 153, 0.13)" },
+      { id: "Other",            name: "Descarga / Tendón",    color: "#94a3b8", soft: "rgba(148, 163, 184, 0.14)" }
     ];
 
     function resolveExerciseGroup(ex) {
       if (ex && ex.group) {
         const rawGrp = String(ex.group).trim().toLowerCase();
-        const byExact = EXERCISE_GROUPS.find(g => g.id.toLowerCase() === rawGrp);
+        const byExact = EXERCISE_GROUPS.find(g => g.id.toLowerCase() === rawGrp || g.name.toLowerCase() === rawGrp);
         if (byExact) return byExact;
       }
-      if (ex && ex.groupId) {
-        const byId = EXERCISE_GROUPS.find(g => g.id.toLowerCase() === String(ex.groupId).toLowerCase());
-        if (byId) return byId;
-      }
       const raw = `${(ex && ex.focus) || ""} ${(ex && ex.category) || ""} ${(ex && ex.name) || ""}`.toLowerCase();
-      if (/aeróbica|aerobica|arc|carcing|travesía/.test(raw)) return EXERCISE_GROUPS[0];
-      if (/dedos|regleta|pinza|romo|bolsillo|repeater|contacto/.test(raw)) return EXERCISE_GROUPS[2];
-      if (/flexibilidad|movilidad|cadera|thread|lunge|horse stance/.test(raw)) return EXERCISE_GROUPS[3];
-      if (/libre|técnica|silencios|hovering/.test(raw)) return EXERCISE_GROUPS[4];
-      if (/recuperación|tendinoso ligero/.test(raw)) return EXERCISE_GROUPS[5];
-      if (/resistencia|4x4|frenchies|pirámide|destrep/.test(raw)) return EXERCISE_GROUPS[6];
-      if (/fuerza y potencia|búlder límite|pecho|dinámico|bloqueo|arquero|one arm|power/.test(raw)) return EXERCISE_GROUPS[7];
-      return EXERCISE_GROUPS[1];
+      if (/dedos|regleta|pinza|romo|bolsillo|repeater|contacto/.test(raw)) return EXERCISE_GROUPS[0];
+      if (/fuerza y potencia|búlder límite|pecho|dinámico|bloqueo|arquero|power/.test(raw)) return EXERCISE_GROUPS[1];
+      if (/resistencia|4x4|frenchies|pirámide|destrep/.test(raw)) return EXERCISE_GROUPS[2];
+      if (/aeróbica|aerobica|arc|carcing|travesía/.test(raw)) return EXERCISE_GROUPS[4];
+      if (/libre|técnica|silencios|hovering|pausa suspendida/.test(raw)) return EXERCISE_GROUPS[5];
+      if (/flexibilidad|movilidad|cadera|thread|lunge|horse stance/.test(raw)) return EXERCISE_GROUPS[6];
+      if (/recuperación|tendinoso ligero/.test(raw)) return EXERCISE_GROUPS[7];
+      return EXERCISE_GROUPS[3];
     }
 
     function getExerciseFocusTag(ex) {
@@ -938,7 +890,7 @@
       train: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="m7 7 5-4 5 4"/><path d="M5 13h4"/><path d="M15 13h4"/><path d="m8 20 4-3 4 3"/></svg>`,
       ency: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8"/><path d="M8 11h6"/></svg>`,
       log: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
-      gear: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+      gear: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
       reset: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>`,
       check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`,
       clock: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`,
@@ -995,19 +947,9 @@
 
     const safeStorage = {
       get(key) {
-        if (Object.prototype.hasOwnProperty.call(memoryStorage, key)) {
-          return memoryStorage[key];
-        }
-        try {
-          if (window.sessionStorage && window.sessionStorage.getItem(key) !== null) {
-            return window.sessionStorage.getItem(key);
-          }
-        } catch (_) {}
-        try {
-          if (window.localStorage && window.localStorage.getItem(key) !== null) {
-            return window.localStorage.getItem(key);
-          }
-        } catch (_) {}
+        if (Object.prototype.hasOwnProperty.call(memoryStorage, key)) return memoryStorage[key];
+        try { if (window.sessionStorage && window.sessionStorage.getItem(key) !== null) return window.sessionStorage.getItem(key); } catch (_) {}
+        try { if (window.localStorage && window.localStorage.getItem(key) !== null) return window.localStorage.getItem(key); } catch (_) {}
         return null;
       },
       set(key, val) {
@@ -1031,20 +973,13 @@
       try { gateEl.remove(); } catch (_) {}
     }
 
-    window.addEventListener("error", function (ev) {
-      const errEl = document.getElementById("pin-err");
-      if (errEl && document.getElementById("pin-gate")) {
-        errEl.textContent = "Aviso script: " + (ev.message || "error de carga");
-      }
-    });
-
     const STORAGE_KEYS = {
       AUTH: "sunblock_auth_ok",
       API_URL: "sunblock_api_url",
-      BLOCK: "sunblock_selected_block",
-      WEEK: "sunblock_selected_week",
+      BLOCK: "sunblock_selected_block_v2",
+      WEEK: "sunblock_selected_week_v2",
       CHECKS: "sunblock_checks_v2",
-      CACHE: "sunblock_data_cache_v4",
+      CACHE: "sunblock_data_cache_v6",
       RESET_BASELINE: "sunblock_reset_baseline_v1"
     };
 
@@ -1055,110 +990,125 @@
     const BACKUP_DATA = {
       blocks: [
         {
+          id: "horst-6w",
+          title: "Plan Eric Hörst · 6 Semanas (3-2-1 + Cara B ELBLOQUE)",
+          weeks: 6,
+          phases: [
+            { weeks: [1, 2, 3], name: "Fase 1 · Fuerza Máxima y Potencia (Sem 1–3)", desc: "Regleta 20mm (10 seg dejando 1-2 seg en reserva), dominadas al pecho explosivas, búlder límite y fuerza base Cara B." },
+            { weeks: [4, 5], name: "Fase 2 · Fuerza-Resistencia y Capacidad (Sem 4–5)", desc: "Transición a Repeaters 7:3 en regleta cómoda, circuitos 4x4 en muro y sostenimiento de potencia." },
+            { weeks: [6], name: "Fase 3 · Descarga y Supercompensación (Sem 6)", desc: "Reduce el volumen un 40-50% para disipar fatiga tendinosa de poleas y consolidar ganancias." }
+          ]
+        },
+        {
           id: "cimiento-4w",
-          title: "Bloque 0 · CIMIENTO · Nivel Básico (4 Semanas)",
+          title: "Bloque 0 · CIMIENTO · Base Técnica y Pies Silenciosos (4 Semanas)",
           weeks: 4,
           phases: [
             { weeks: [1, 2], name: "Fase 1 · Pies Silenciosos y Control Postural", desc: "Cero regletas de 20mm. Prioriza pausas de 3 seg antes de agarrar, postura de cadera y prehab de codos." },
             { weeks: [3, 4], name: "Fase 2 · Consolidación y Volumen Seguro", desc: "Aumenta el volumen técnico continuo manteniendo 100% control articular y tendinoso." }
           ]
-        },
-        {
-          id: "horst-6w",
-          title: "Bloque 1 · ANCLAJE · Nivel Intermedio (6 Semanas)",
-          weeks: 6,
-          phases: [
-            { weeks: [1, 2], name: "Fase 1 · Adaptación Anatómica y Base", desc: "Construye tolerancia en regleta de 20mm, pinza, bloqueos isométricos y fuerza base completa." },
-            { weeks: [3, 4, 5], name: "Fase 2 · Reclutamiento y Fuerza Máxima", desc: "Aumenta intensidad de búlder límite y carga controlada dejando 1-2 seg en reserva." },
-            { weeks: [6], name: "Fase 3 · Descarga y Supercompensación (Deload)", desc: "Reduce volumen un 40-50% para disipar fatiga tendinosa y consolidar ganancias." }
-          ]
-        },
-        {
-          id: "impulso-4w",
-          title: "Bloque 2 · IMPULSO · Nivel Intermedio (4 Semanas)",
-          weeks: 4,
-          phases: [
-            { weeks: [1, 2, 3], name: "Fase 1 · Potencia de Contacto y Coordinación", desc: "Contactos rápidos (5 seg), dinámicos y explosividad de tronco con descanso completo (3-4 min)." },
-            { weeks: [4], name: "Fase 2 · Descarga Neural (Deload)", desc: "Reduce el volumen al 50% para asimilar velocidad y proteger hombros y dedos." }
-          ]
-        },
-        {
-          id: "flujo-4w",
-          title: "Bloque 3 · FLUJO · Nivel Intermedio (4 Semanas)",
-          weeks: 4,
-          phases: [
-            { weeks: [1, 2, 3], name: "Fase 1 · Resistencia Local y Continuidad", desc: "Repeaters 7:3, Up-Down-Up, Pirámides y circuitos 4x4 sosteniendo técnica bajo fatiga." },
-            { weeks: [4], name: "Fase 2 · Descarga y Supercompensación", desc: "Sesiones fluidas sin acumulación de lactato para recuperar frescura muscular." }
-          ]
-        },
-        {
-          id: "cumbre-4w",
-          title: "Bloque 4 · CUMBRE · Nivel Avanzado (4 Semanas)",
-          weeks: 4,
-          phases: [
-            { weeks: [1, 2, 3], name: "Fase 1 · Alta Intensidad y Micro-Agarres", desc: "Regleta mínima 10-12mm, bolsillos de 2 dedos, Frenchies y búlder límite máximo (solo tendones acondicionados)." },
-            { weeks: [4], name: "Fase 2 · Pico de Rendimiento (Tapering)", desc: "Descarga profunda de volumen manteniendo breves estímulos neurales de alta calidad." }
-          ]
         }
       ],
       encyclopedia: [
-        { id: "ex-mov", group: "Flexibility", name: "Movilidad Articular + Activación Escapular", focus: "Flexibilidad y Calentamiento", hold_sec: 0, reps: 8, sets: 3, set_rest_sec: 60, media_url: "assets/ex-warm-thoracic.webp", goal: "Lubricar cápsulas articulares y activar estabilizadores de hombro y flexores antes de cargar peso.", steps: ["Realiza círculos controlados de cuello, hombros, codos y muñecas durante 5 min.", "Haz 2 series de 6 retracciones escapulares colgado en barra con brazos rectos.", "Escala 3 bloques muy fáciles enfocando respiración y pies suaves."], safeAlt: "Activación escapular con bandas elásticas de resistencia baja.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-lightrep", group: "Other", name: "Protocolo Tendinoso Ligero", focus: "Otros / Recuperación", hold_sec: 10, reps: 6, sets: 3, set_rest_sec: 120, goal: "Estimular la síntesis de colágeno y la vascularización tendinosa en días de descarga o calentamiento progresivo.", steps: ["Mantén los pies apoyados en el suelo descargando el 60-70% de tu peso corporal.", "Sostén una regleta cómoda 10 seg y descansa 5 seg (6 repeticiones por serie).", "Realiza 2-3 series con 2 min de pausa."], safeAlt: "Terapia con plastilina terapéutica o apertura de dedos con banda elástica.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-hang20", group: "Fingerboard", name: "Suspensiones Máximas (Regleta 20mm)", focus: "Multipresa / Dedos", hold_sec: 10, reps: 1, sets: 4, set_rest_sec: 180, media_url: "assets/ex-hang20.webp", goal: "Aumentar la fuerza máxima isométrica de flexores de dedos y rigidez tendinosa sin estrés extremo.", steps: ["Usa agarre semi-arqueado (half crimp) con el pulgar relajado al costado.", "Mantén hombros activos (lejos de las orejas) y cuelga 10 seg dejando 1-2 seg en reserva.", "Descansa 3 minutos completos entre cada serie."], safeAlt: "Regleta de 25-30 mm o descargar peso apoyando un pie en cajón.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-contact5", group: "Fingerboard", name: "Potencia de Contacto en Canto Cómodo (5 seg)", focus: "Multipresa / Dedos", hold_sec: 5, reps: 1, sets: 5, set_rest_sec: 180, goal: "Mejorar la velocidad de reclutamiento neural al agarrar una presa sin dañar poleas.", steps: ["Usa una regleta cómoda (25-30 mm) o canto profundo.", "Toma el agarre y aplica tensión máxima explosiva durante 5 segundos exactos.", "Descansa 3 minutos completos entre series."], safeAlt: "Suspensiones rápidas con pies apoyados.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-repeaters", group: "Fingerboard", name: "Intermitentes Repeaters 7:3 (Resistencia Local)", focus: "Multipresa / Dedos", hold_sec: 7, reps: 6, sets: 3, set_rest_sec: 180, goal: "Aumentar la capacidad oxidativa y tolerancia al ácido láctico en los flexores del antebrazo.", steps: ["Usa regleta cómoda de 22-25 mm en agarre semi-arqueado.", "Cuélgate 7 seg y descansa 3 seg; repite 6 veces para completar 1 serie.", "Descansa 3 minutos entre series."], safeAlt: "Reducir a 4 repeticiones por serie o usar canto más grande.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-pinch", group: "Fingerboard", name: "Pinza en Bloque", focus: "Multipresa / Dedos", hold_sec: 10, reps: 1, sets: 3, set_rest_sec: 120, goal: "Fortalecer el aductor del pulgar y los flexores profundos para dominar volúmenes y presas de pinza.", steps: ["Sujeta un bloque de madera o disco con el pulgar opuesto a los 4 dedos.", "Despega el peso del suelo manteniendo la muñeca neutra y sostén 8-10 seg por mano.", "Descansa 2-3 minutos entre series."], safeAlt: "Pinza estática en una presa ancha del muro con los pies apoyados.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-sloper", group: "Fingerboard", name: "Suspensiones en Romos", focus: "Multipresa / Dedos", hold_sec: 10, reps: 1, sets: 3, set_rest_sec: 180, goal: "Desarrollar fuerza de fricción, compresión de muñeca y tensión de hombros en agarres abiertos.", steps: ["Coloca las manos abiertas sobre los romos superiores de la multipresa.", "Cuelga con muñecas neutras, hombros activos y codos ligeramente flexionados por 8-10 seg.", "Descansa 3 minutos completos entre series."], safeAlt: "Romos más profundos o descargar peso apoyando un pie en un cajón.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-pockets", group: "Fingerboard", name: "Bolsillos de 2 Dedos", focus: "Multipresa / Dedos", hold_sec: 7, reps: 1, sets: 3, set_rest_sec: 180, goal: "Acondicionar los tendones flexores profundos para monodedos y bidedos en roca o competencia.", steps: ["Usa la pareja de dedos medios (anular y corazón) en un bolsillo profundo sin arquear.", "Cuelga 7-8 seg manteniendo el resto de dedos relajados.", "Descansa 3 minutos completos entre series."], safeAlt: "Usar 3 dedos (índice, medio y anular) o evitar en bloques de iniciación.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-maxedge", group: "Fingerboard", name: "Regleta Mínima (10-12 mm)", focus: "Multipresa / Dedos", hold_sec: 8, reps: 1, sets: 4, set_rest_sec: 180, goal: "Maximizar la fuerza de contacto en micro-regletas manteniendo un ángulo articular seguro.", steps: ["Usa exclusivamente agarre semi-arqueado; queda prohibido el arqueo cerrado.", "Cuelga 6-8 seg sin lastre excesivo dejando 2 seg en reserva.", "Descansa 3-4 minutos entre series."], safeAlt: "Mantenerse en regleta de 18-20 mm añadiendo lastre moderado.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-chestpull", group: "Strength & Power", name: "Dominadas Explosivas al Pecho", focus: "Fuerza y Potencia", hold_sec: 0, reps: 5, sets: 4, set_rest_sec: 180, goal: "Desarrollar potencia de tracción explosiva y cierre escapular profundo protegiendo poleas.", steps: ["Desde colgado activo, tracciona explosivamente llevando el pecho hacia la barra.", "Controla la fase de bajada durante 2 a 3 segundos.", "Descansa 3 minutos entre series."], safeAlt: "Dominadas estrictas al mentón o asistidas con banda elástica.", author: "Adaptación ELBLOQUE" },
-        { id: "ex-lockoff", group: "Strength & Power", name: "Bloqueos Isométricos a 90° y 120°", focus: "Fuerza y Potencia", hold_sec: 4, reps: 3, sets: 3, set_rest_sec: 180, goal: "Desarrollar fuerza estática para sostener posiciones mientras se alcanza una presa lejana.", steps: ["Sube en dominada y mantén la barbilla sobre la barra 4 segundos.", "Baja a un ángulo de 90° y sostén 4 seg; baja a 120° y sostén otros 4 seg.", "Descansa 3 minutos entre repeticiones."], safeAlt: "Realizar un solo ángulo (90°) asistido con banda elástica.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-archer", group: "Strength & Power", name: "Dominadas Tipo Arquero", focus: "Fuerza y Potencia", hold_sec: 0, reps: 4, sets: 3, set_rest_sec: 180, goal: "Desarrollar fuerza unilateral de tracción y control escapular asimétrico.", steps: ["Toma la barra con agarre ancho y sube hacia una mano extendiendo el brazo contrario.", "Desplázate horizontalmente hacia la otra mano sin perder altura.", "Baja controlado y descansa 3 minutos."], safeAlt: "Dominadas con una mano agarrando la muñeca contraria.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-limit", group: "Strength & Power", name: "Búlder Límite (Proyectos Cortos)", focus: "Fuerza y Potencia", hold_sec: 0, reps: 4, sets: 4, set_rest_sec: 180, goal: "Reclutar unidades motoras de alto umbral y transferir fuerza máxima a movimientos complejos.", steps: ["Elige 2 o 3 bloques cerca de tu límite máximo (4 a 6 movimientos).", "Realiza intentos de máxima calidad descansando 3 a 4 minutos entre pegues.", "Corta la sesión apenas notes que pierdes potencia o precisión."], safeAlt: "Aislar 2 movimientos duros de un bloque sin necesidad de encadenarlo.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-dyno", group: "Strength & Power", name: "Bloque Dinámico y Coordinaciones", focus: "Fuerza y Potencia", hold_sec: 0, reps: 3, sets: 4, set_rest_sec: 180, goal: "Entrenar la transferencia de impulso de piernas y cadera hacia agarres dinámicos.", steps: ["Elige 2-3 bloques de 3 a 4 movimientos que exijan impulso o coordinación.", "Visualiza el punto exacto de recepción antes de saltar y descansa 3-4 min entre pegues."], safeAlt: "Practicar lanzamientos cortos hacia agarres grandes.", author: "Adaptación ELBLOQUE" },
-        { id: "ex-4x4", group: "Power Endurance", name: "Circuito 4x4 Técnico (Resistencia a la Fuerza)", focus: "Resistencia a la Fuerza", hold_sec: 0, reps: 4, sets: 4, set_rest_sec: 180, goal: "Desarrollar resistencia a la fuerza anaeróbica láctica y eficiencia técnica bajo fatiga.", steps: ["Selecciona 4 bloques unos 2 grados por debajo de tu máximo.", "Escala los 4 bloques seguidos sin descanso entre ellos (1 ronda).", "Descansa 3 minutos entre rondas hasta completar el volumen prescrito."], safeAlt: "Reducir a 3 bloques por ronda o bajar un grado la dificultad.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-frenchies", group: "Power Endurance", name: "Dominada con Paradas Isométricas", focus: "Resistencia a la Fuerza", hold_sec: 4, reps: 3, sets: 3, set_rest_sec: 180, goal: "Combinar fuerza máxima de tracción y resistencia isométrica al bloqueo en una misma serie.", steps: ["Haz 1 dominada completa y bloquea arriba 4 seg; baja hasta extender los brazos.", "Sube y bloquea a 90° por 4 seg; baja y sube para bloquear a 120° por 4 seg.", "Descansa 3-4 minutos entre series."], safeAlt: "Reducir las paradas isométricas a 2 segundos por ángulo.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-updown", group: "Power Endurance", name: "Subir, Destrepar y Volver a Subir", focus: "Resistencia a la Fuerza", hold_sec: 0, reps: 1, sets: 3, set_rest_sec: 180, goal: "Mejorar la precisión de pies en destrepe y aumentar el tiempo bajo tensión sin sobrecargar dedos.", steps: ["Escala un bloque de dificultad media hasta el final con control.", "Destrepa el mismo bloque hasta el inicio sin bajar a la colchoneta.", "Vuelve a subirlo de inmediato y descansa 3 minutos."], safeAlt: "Subir y destrepar una sola vez por serie.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-pyramid", group: "Power Endurance", name: "Pirámide de Resistencia (V1-V2-V3-V2-V1)", focus: "Resistencia a la Fuerza", hold_sec: 0, reps: 5, sets: 2, set_rest_sec: 60, goal: "Entrenar la recuperación activa y el ritmo respiratorio a través de intensidades crecientes.", steps: ["Escala 5 bloques seguidos subiendo hasta tu grado medio y bajando nuevamente.", "Descansa exactamente 1 minuto entre bloque y bloque.", "Mantén la respiración fluida en cada secuencia."], safeAlt: "Pirámide corta de 3 bloques (V1-V2-V1).", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-silent", group: "Open", name: "Pies Silenciosos y Pirámide Técnica (V0-V2)", focus: "Escalada Libre / Técnica", hold_sec: 0, reps: 4, sets: 3, set_rest_sec: 120, goal: "Desarrollar precisión de apoyos, colocación de cadera y economía de movimiento sin estrés en poleas.", steps: ["Sube 3 bloques fáciles pisando cada presa sin hacer ruido.", "Mantén la vista en el pie hasta que quede firme antes de mover las manos."], safeAlt: "Escalar solo en placa vertical con cantos grandes.", author: "Sistema · Base Técnica" },
-        { id: "ex-hovering", group: "Open", name: "Pausa Suspendida de 3 Segundos", focus: "Escalada Libre / Técnica", hold_sec: 3, reps: 4, sets: 3, set_rest_sec: 120, goal: "Eliminar el impulso descontrolado y obligar al cuerpo a encontrar el equilibrio sobre los pies.", steps: ["Escala un bloque fácil o moderado en silencio.", "Antes de agarrar cada presa de mano, mantén la mano suspendida a 5 cm durante 3 segundos.", "Fija el pie antes de mover la mano."], safeAlt: "Aplicar pausa de 2 segundos en bloques de placa vertical.", author: "Eric Hörst · Entrenamiento para Escalada" },
-        { id: "ex-traverse", group: "Aerobic Base", name: "Travesía Continua o Enlace de 15-20 Movimientos", focus: "Base Aeróbica", hold_sec: 0, reps: 20, sets: 3, set_rest_sec: 180, goal: "Desarrollar capacidad aeróbica local en antebrazos y fluidez en transiciones largas.", steps: ["Desplázate lateralmente en el muro realizando 15 a 20 movimientos seguidos.", "Mantén un ritmo constante sin detenerte a sacudir demasiado.", "Descansa 3-4 minutos entre rondas."], safeAlt: "Dividir en dos tramos de 10 movimientos con 1 minuto de reposo.", author: "Eric Hörst · Entrenamiento para Escalada" }
+        { id: "ex-mov", group: "Flexibility", name: "Movilidad Articular + Activación Escapular", focus: "Calentamiento / Prehab", timer_mode: "rest", hold_sec: 0, reps: 8, sets: 2, set_rest_sec: 60, media_url: "assets/ex-warm-thoracic.webp", goal: "Lubricar cápsulas articulares y activar estabilizadores de hombro y flexores antes de cargar peso.", steps: ["Realiza círculos controlados de cuello, hombros, codos y muñecas durante 5 min.", "Haz 2 series de 6 retracciones escapulares colgado en barra con brazos rectos.", "Escala 3 bloques muy fáciles enfocando respiración y pies suaves."], safeAlt: "Activación escapular con bandas elásticas de resistencia baja.", author: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-silent", group: "Open", name: "Pies Silenciosos y Precisión de Apoyos", focus: "Técnica de Pies / Cadera", timer_mode: "rest", hold_sec: 0, reps: 3, sets: 3, set_rest_sec: 120, goal: "Desarrollar colocación exacta del pie, silencio al apoyar y transferencia del peso hacia la cadera sin estrés en dedos.", steps: ["Elige 3 bloques fáciles (V0–V2) con presas de pie definidas.", "Mira la presa de pie hasta que la puntera quede completamente quieta antes de mover las manos.", "Evita reacomodar el pie una vez apoyado; si hace ruido, repite el paso."], safeAlt: "Escalar en placa vertical con apoyos grandes.", author: "Sistema · Base Técnica" },
+        { id: "ex-hovering", group: "Open", name: "Pausa Suspendida de 3 Segundos (Hovering)", focus: "Equilibrio / Control Estático", timer_mode: "rest", hold_sec: 3, reps: 3, sets: 3, set_rest_sec: 120, goal: "Eliminar el impulso descontrolado y obligar al cuerpo a encontrar el equilibrio sobre los pies antes de cerrar la mano.", steps: ["Escala 3 bloques en placa vertical o desplome suave.", "Antes de agarrar cada presa de mano, detén la mano suspendida a 5 cm durante 3 segundos.", "Ajusta la cadera y el centro de gravedad mientras la mano flota y luego agarra suavemente."], safeAlt: "Aplicar pausa de 2 segundos solo en presas grandes.", author: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-hang20", group: "Fingerboard", name: "Suspensiones Máximas (Regleta 20mm)", focus: "Multipresa / Dedos", timer_mode: "interval", hold_sec: 10, reps: 1, sets: 4, set_rest_sec: 180, media_url: "assets/ex-hang20.webp", goal: "Aumentar la fuerza máxima isométrica de flexores de dedos y rigidez tendinosa sin estrés extremo.", steps: ["Usa agarre semi-arqueado (half crimp) con el pulgar relajado al costado.", "Mantén hombros activos (lejos de las orejas) y cuelga 10 seg dejando 1-2 seg en reserva.", "Descansa 3 minutos completos entre cada serie."], safeAlt: "Regleta de 25-30 mm o descargar peso apoyando un pie en cajón.", author: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-repeaters", group: "Fingerboard", name: "Repeaters 7:3 (Resistencia Local de Dedos)", focus: "Multipresa / Dedos", timer_mode: "interval", hold_sec: 7, rest_rep_sec: 3, reps: 6, sets: 3, set_rest_sec: 180, goal: "Aumentar la capacidad oxidativa y tolerancia a la congestión en los flexores del antebrazo.", steps: ["Usa regleta cómoda de 22-25 mm en agarre semi-arqueado.", "Cuélgate 7 seg y descansa 3 seg; repite 6 veces para completar 1 serie.", "Descansa 3 minutos completos entre series."], safeAlt: "Reducir a 4 repeticiones por serie o usar canto más grande.", author: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-pinch", group: "Fingerboard", name: "Pinza en Bloque", focus: "Multipresa / Dedos", timer_mode: "interval", hold_sec: 10, reps: 1, sets: 3, set_rest_sec: 120, goal: "Fortalecer el aductor del pulgar y los flexores profundos para dominar volúmenes y presas de pinza.", steps: ["Sujeta un bloque de madera o disco con el pulgar opuesto a los 4 dedos.", "Despega el peso del suelo manteniendo la muñeca neutra y sostén 10 seg por mano.", "Descansa 2 minutos entre series."], safeAlt: "Pinza estática en una presa ancha del muro con los pies apoyados.", author: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-sloper", group: "Fingerboard", name: "Suspensiones en Romos", focus: "Multipresa / Dedos", timer_mode: "interval", hold_sec: 10, reps: 1, sets: 3, set_rest_sec: 180, goal: "Desarrollar fuerza de fricción, compresión de muñeca y tensión de hombros en agarres abiertos.", steps: ["Coloca las manos abiertas sobre los romos superiores de la multipresa.", "Cuelga con muñecas neutras, hombros activos y codos ligeramente flexionados por 10 seg.", "Descansa 3 minutos completos entre series."], safeAlt: "Romos más profundos o descargar peso apoyando un pie en un cajón.", author: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-limit", group: "Strength & Power", name: "Búlder Límite (Proyectos Cortos)", focus: "Fuerza y Potencia", timer_mode: "rest", hold_sec: 0, reps: 4, sets: 4, set_rest_sec: 240, goal: "Reclutar unidades motoras de alto umbral y transferir fuerza máxima a movimientos complejos.", steps: ["Elige 2 o 3 bloques cerca de tu límite máximo (4 a 6 movimientos).", "Realiza intentos de máxima calidad descansando 3 a 4 minutos entre pegues.", "Corta la sesión apenas notes que pierdes potencia o precisión."], safeAlt: "Aislar 2 movimientos duros de un bloque sin necesidad de encadenarlo.", author: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-chestpull", group: "Strength & Power", name: "Dominadas Explosivas al Pecho", focus: "Tracción / Reemplazo Campus", timer_mode: "rest", hold_sec: 0, reps: 5, sets: 4, set_rest_sec: 180, goal: "Desarrollar potencia de tracción explosiva y cierre escapular profundo protegiendo poleas (reemplazo seguro del campus board en ELBLOQUE).", steps: ["Desde colgado activo, tracciona explosivamente llevando el pecho hacia la barra.", "Controla la fase de bajada durante 2 a 3 segundos.", "Descansa 3 minutos entre series."], safeAlt: "Dominadas estrictas al mentón o asistidas con banda elástica.", author: "Adaptación ELBLOQUE" },
+        { id: "ex-lockoff", group: "Strength & Power", name: "Bloqueos Isométricos a 90° y 120°", focus: "Tracción / Bloqueo", timer_mode: "interval", hold_sec: 4, rest_rep_sec: 3, reps: 3, sets: 3, set_rest_sec: 180, goal: "Desarrollar fuerza estática para sostener posiciones mientras se alcanza una presa lejana.", steps: ["Sube en dominada y mantén la barbilla sobre la barra 4 segundos.", "Baja a 90° y sostén 4 seg; baja a 120° y sostén otros 4 seg.", "Descansa 3 minutos entre series."], safeAlt: "Realizar un solo ángulo (90°) asistido con banda elástica.", author: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-4x4", group: "Power Endurance", name: "Circuito 4x4 Técnico (Resistencia a la Fuerza)", focus: "Fuerza-Resistencia", timer_mode: "rest", hold_sec: 0, reps: 4, sets: 3, set_rest_sec: 180, goal: "Desarrollar resistencia a la fuerza anaeróbica láctica y eficiencia técnica bajo fatiga.", steps: ["Selecciona 4 bloques unos 2 grados por debajo de tu máximo.", "Escala los 4 bloques seguidos sin descanso entre ellos (1 ronda).", "Descansa 3 minutos entre rondas hasta completar las rondas prescritas."], safeAlt: "Reducir a 3 bloques por ronda o bajar un grado la dificultad.", author: "Eric Hörst · Entrenamiento para Escalada" },
+        { id: "ex-push", group: "Conditioning", name: "Flexiones o Press Inclinado con Mancuernas", focus: "Cara B · Empuje Antagonista", timer_mode: "rest", hold_sec: 0, reps: 10, sets: 3, set_rest_sec: 90, goal: "Equilibrar la musculatura pectoral y deltoidea frente al volumen de tracción de la escalada.", steps: ["Mantén el abdomen firme y los codos a 45° del torso.", "Baja controlado en 2 segundos y empuja con firmeza.", "Descansa 90 segundos entre series."], safeAlt: "Flexiones con manos elevadas en cajón.", author: "Plan Cara B · ELBLOQUE" },
+        { id: "ex-skull", group: "Conditioning", name: "Rompecráneos con Mancuernas (Tríceps)", focus: "Cara B · Empuje / Codos", timer_mode: "rest", hold_sec: 0, reps: 10, sets: 3, set_rest_sec: 90, goal: "Fortalecer el tríceps y proteger el tendón distal frente a bloqueos y mantos.", steps: ["Acostado en banco, lleva las mancuernas hacia los lados de la frente manteniendo los codos fijos.", "Extiende los brazos de forma controlada sin bloquear bruscamente.", "Descansa 90 segundos entre series."], safeAlt: "Extensiones de tríceps con banda elástica.", author: "Plan Cara B · ELBLOQUE" },
+        { id: "ex-bulgarian", group: "Conditioning", name: "Zancada Búlgara Unilateral", focus: "Cara B · Pierna Alta", timer_mode: "rest", hold_sec: 0, reps: 8, sets: 3, set_rest_sec: 90, goal: "Potenciar la fuerza unilateral de cadera y cuádriceps para pies altos y pasos largos.", steps: ["Apoya el empeine trasero en un banco y desciende verticalmente con la pierna delantera.", "Empuja desde el talón delantero para subir con estabilidad.", "Descansa 90 segundos entre series."], safeAlt: "Zancada estática en el suelo sin elevación trasera.", author: "Plan Cara B · ELBLOQUE" },
+        { id: "ex-hamstring", group: "Conditioning", name: "Peso Muerto Rumano Unilateral", focus: "Cara B · Isquios / Taloneo", timer_mode: "rest", hold_sec: 0, reps: 8, sets: 3, set_rest_sec: 90, goal: "Fortalecer isquiotibiales y glúteo para taloneos potentes en desplomes.", steps: ["Apoya el peso en una pierna con la rodilla ligeramente desbloqueada.", "Inclina el torso manteniendo la espalda neutra hasta sentir tensión en el isquio.", "Regresa contrayendo el glúteo y descansa 90 segundos."], safeAlt: "Puente de glúteo unilateral en colchoneta.", author: "Plan Cara B · ELBLOQUE" },
+        { id: "ex-psoas", group: "Conditioning", name: "Elevación de Rodillas Colgado / Psoas", focus: "Cara B · Core y Psoas", timer_mode: "rest", hold_sec: 0, reps: 8, sets: 3, set_rest_sec: 90, goal: "Fortalecer los flexores de cadera (psoas) y el abdomen inferior para subir pies altos en desplome.", steps: ["Colgado en barra con hombros activos, eleva las rodillas por encima de la cadera sin balancearte.", "Desciende lentamente en 3 segundos.", "Descansa 90 segundos entre series."], safeAlt: "Elevación de rodillas sentado en banco con banda elástica en los pies.", author: "Plan Cara B · ELBLOQUE" },
+        { id: "ex-lumbar", group: "Conditioning", name: "Plancha Frontal con Arrastre o Pallof Press", focus: "Cara B · Anti-Rotación Core", timer_mode: "interval", hold_sec: 25, reps: 1, sets: 3, set_rest_sec: 60, goal: "Estabilizar la cadena central para evitar que los pies se suelten en muros desplomados.", steps: ["Mantén pelvis neutra, glúteos activos y abdomen contraído durante 25 seg.", "Respira corto y controlado sin hundir la zona lumbar.", "Descansa 60 segundos entre series."], safeAlt: "Plancha frontal apoyando rodillas.", author: "Plan Cara B · ELBLOQUE" },
+        { id: "ex-traverse", group: "Aerobic Base", name: "Travesía Continua o Enlace de 15-20 Movimientos", focus: "Base Aeróbica", timer_mode: "rest", hold_sec: 0, reps: 20, sets: 3, set_rest_sec: 180, goal: "Desarrollar capacidad aeróbica local en antebrazos y fluidez en transiciones largas.", steps: ["Desplázate lateralmente en el muro realizando 15 a 20 movimientos seguidos.", "Mantén un ritmo constante sin detenerte a sacudir demasiado.", "Descansa 3 minutos entre rondas."], safeAlt: "Dividir en dos tramos de 10 movimientos con 1 minuto de reposo.", author: "Eric Hörst · Entrenamiento para Escalada" }
       ],
       microcycles: [
+        // PLAN ERIC HÖRST 6 SEMANAS (3-2-1 + CARA B)
         { blockId: "horst-6w", code: "D1", shortTitle: "Dedos + Límite", title: "Fuerza Máxima de Dedos, Pinza y Búlder Límite", tag: "FUERZA MÁXIMA", duration: "90 min", focus: "Regla de oro: Deja 1-2 seg en reserva. Nunca arqueo cerrado (full crimp).", sections: [
-          { name: "1. Calentamiento Progresivo", items: [{ exId: "ex-mov", rx: "15 min", rest: "Continuo" }] },
-          { name: "2. Fuerza Específica de Agarre", items: [{ exId: "ex-hang20", rx: "4 series x 10 seg", rest: "3 min", p2: "5 series x 10 seg", p3: "3 series x 8 seg (Descarga)" }, { exId: "ex-pinch", rx: "3 series x 8-10 seg/mano", rest: "2 min", p2: "4 series x 8-10 seg", p3: "2 series (Descarga)" }] },
-          { name: "3. Transferencia en Muro", items: [{ exId: "ex-limit", rx: "35 min (2-3 bloques máx)", rest: "3-4 min", p2: "40 min (3 bloques)", p3: "20 min (Técnica suave)" }] }
+          { name: "1. Calentamiento Progresivo", items: [{ exId: "ex-mov", rx: "15 min (Movilidad + 3 bloques suaves)", rest: "60 seg" }] },
+          { name: "2. Fuerza Específica de Agarre", items: [
+            { exId: "ex-hang20", rx: "4 series x 10 seg (Regleta 20mm)", rest: "3 min", p2: "Repeaters 7:3 · 3 series x 6 reps (22mm)", p3: "2 series x 8 seg (Descarga 50%)" },
+            { exId: "ex-pinch", rx: "3 series x 10 seg/mano", rest: "2 min", p2: "3 series x 10 seg/mano", p3: "2 series x 8 seg (Descarga)" }
+          ]},
+          { name: "3. Transferencia en Muro", items: [
+            { exId: "ex-limit", rx: "35 min · Búlder límite (2-3 bloques máx)", rest: "3-4 min", p2: "25 min · Enlaces técnicos sin congestión", p3: "20 min · Escalada fluida suave" }
+          ]}
         ]},
-        { blockId: "horst-6w", code: "D2", shortTitle: "Fuerza Base", title: "Fuerza Base: Empuje, Pierna Unilateral y Core", tag: "ACONDICIONAMIENTO", duration: "55 min", focus: "Cero agarre hoy. Equilibra antagonistas y potencia pierna alta para taloneos.", sections: [
-          { name: "1. Empuje Antagonista", items: [{ exId: "ex-push", rx: "3 x 10-12 reps", rest: "90 seg", p2: "4 x 10-12 reps", p3: "2 x 10 reps" }, { exId: "ex-skull", rx: "3 x 10-12 reps", rest: "90 seg", p2: "4 x 10 reps", p3: "2 x 10 reps" }] },
-          { name: "2. Pierna Alta, Taloneo y Pantorrilla", items: [{ exId: "ex-bulgarian", rx: "3 x 6-8 por pierna", rest: "90 seg", p2: "4 x 6-8 por pierna", p3: "2 x 6 por pierna" }, { exId: "ex-hamstring", rx: "3 x 8 por pierna", rest: "60 seg", p2: "4 x 8 por pierna", p3: "2 x 8 por pierna" }, { exId: "ex-calfraise", rx: "3 x 10 excéntricas/pie", rest: "60 seg" }] },
-          { name: "3. Cadena Central (Psoas y Lumbar)", items: [{ exId: "ex-psoas", rx: "3 x 8 reps", rest: "90 seg", p2: "4 x 8 reps", p3: "2 x 6 reps" }, { exId: "ex-lumbar", rx: "3 x 20-25 seg", rest: "60 seg", p2: "4 x 25 seg", p3: "2 x 20 seg" }] }
+        { blockId: "horst-6w", code: "D2", shortTitle: "Tracción + 4x4", title: "Dominadas al Pecho, Bloqueos y Circuitos 4x4", tag: "POTENCIA Y RESISTENCIA", duration: "90 min", focus: "Dominadas al pecho explosivas (reemplazo seguro del campus) + bloqueos isométricos.", sections: [
+          { name: "1. Calentamiento Progresivo", items: [{ exId: "ex-mov", rx: "15 min", rest: "60 seg" }] },
+          { name: "2. Potencia y Bloqueo", items: [
+            { exId: "ex-chestpull", rx: "4 x 4-5 reps explosivas al pecho", rest: "3 min", p2: "3 x 4 reps explosivas", p3: "2 x 4 reps (Descarga)" },
+            { exId: "ex-lockoff", rx: "3 series (4s arriba / 90° / 120°)", rest: "3 min", p2: "3 series (4s arriba / 90° / 120°)", p3: "2 series (Descarga)" }
+          ]},
+          { name: "3. Resistencia a la Fuerza", items: [
+            { exId: "ex-4x4", rx: "2 rondas x 4 bloques (Base)", rest: "3 min", p2: "4 rondas x 4 bloques (Pico 4x4)", p3: "1 ronda suave (Descarga)" }
+          ]}
         ]},
         { blockId: "horst-6w", code: "D3", shortTitle: "Descanso", title: "Recuperación Tendinosa y Neural", tag: "DESCANSO TOTAL", duration: "0 min", focus: "Las poleas de los dedos se recuperan en 48-72h. Prioriza sueño e hidratación.", sections: [] },
-        { blockId: "horst-6w", code: "D4", shortTitle: "Tracción + 4x4", title: "Barra al Pecho, Bloqueos Isométricos y Circuitos 4x4", tag: "POTENCIA Y RESISTENCIA", duration: "90 min", focus: "Barra al pecho explosiva (reemplazo seguro del campus) + bloqueos a 90°/120°.", sections: [
-          { name: "1. Calentamiento Progresivo", items: [{ exId: "ex-mov", rx: "15 min", rest: "Continuo" }] },
-          { name: "2. Potencia y Bloqueo", items: [{ exId: "ex-chestpull", rx: "4 x 4-5 reps explosivas", rest: "3 min", p2: "5 x 4-5 reps", p3: "2 x 4 reps (Descarga)" }, { exId: "ex-lockoff", rx: "3 series (4s arriba / 90° / 120°)", rest: "3 min", p2: "4 series", p3: "2 series" }] },
-          { name: "3. Resistencia a la Fuerza", items: [{ exId: "ex-4x4", rx: "3 rondas x 4 bloques", rest: "3 min entre rondas", p2: "4 rondas x 4 bloques", p3: "2 rondas (Descarga)" }] }
+        { blockId: "horst-6w", code: "D4", shortTitle: "Cara B · Pierna/Psoas", title: "Fuerza Base: Empuje, Pierna Unilateral y Psoas", tag: "CARA B · SIN AGARRE", duration: "55 min", focus: "Cero agarre hoy. Equilibra antagonistas y potencia pierna alta y psoas para taloneos.", sections: [
+          { name: "1. Empuje Antagonista", items: [
+            { exId: "ex-push", rx: "3 x 10-12 reps", rest: "90 seg", p2: "3 x 10-12 reps", p3: "2 x 10 reps" },
+            { exId: "ex-skull", rx: "3 x 10-12 reps (Mancuernas)", rest: "90 seg", p2: "3 x 10-12 reps", p3: "2 x 10 reps" }
+          ]},
+          { name: "2. Pierna Alta y Taloneo", items: [
+            { exId: "ex-bulgarian", rx: "3 x 6-8 reps por pierna", rest: "90 seg", p2: "3 x 8 reps por pierna", p3: "2 x 6 por pierna" },
+            { exId: "ex-hamstring", rx: "3 x 8 reps por pierna", rest: "90 seg", p2: "3 x 8 reps por pierna", p3: "2 x 6 por pierna" }
+          ]},
+          { name: "3. Cadena Central (Psoas y Anti-Rotación)", items: [
+            { exId: "ex-psoas", rx: "3 x 8 reps controladas", rest: "90 seg", p2: "4 x 8 reps", p3: "2 x 6 reps" },
+            { exId: "ex-lumbar", rx: "3 series x 25 seg", rest: "60 seg", p2: "3 series x 30 seg", p3: "2 series x 20 seg" }
+          ]}
         ]},
         { blockId: "horst-6w", code: "D5", shortTitle: "Descanso", title: "Descanso Previo a Sesión Social", tag: "DESCANSO TOTAL", duration: "0 min", focus: "Llega fresco al sábado para escalar con amigos.", sections: [] },
         { blockId: "horst-6w", code: "D6", shortTitle: "Búlder Social", title: "Escalada Libre y Romos en ELBLOQUE", tag: "VOLUMEN Y TÉCNICA", duration: "90 min", focus: "Escala libremente con amigos y corta apenas baje tu calidad de movimiento.", sections: [
-          { name: "1. Activación", items: [{ exId: "ex-mov", rx: "15 min", rest: "Continuo" }] },
-          { name: "2. Trabajo en Romos y Muro", items: [{ exId: "ex-sloper", rx: "3 series x 8-10 seg", rest: "3 min", p2: "4 series", p3: "2 series" }, { exId: "ex-traverse", rx: "2 rondas suaves (15 movs)", rest: "3 min", p2: "3 rondas", p3: "1 ronda" }] }
+          { name: "1. Activación", items: [{ exId: "ex-mov", rx: "15 min", rest: "60 seg" }] },
+          { name: "2. Trabajo en Romos y Fluidez", items: [
+            { exId: "ex-sloper", rx: "3 series x 10 seg en romos", rest: "3 min", p2: "3 series x 10 seg", p3: "2 series x 8 seg" },
+            { exId: "ex-traverse", rx: "2 rondas suaves (15-20 movs)", rest: "3 min", p2: "3 rondas continuas", p3: "1 ronda suave" }
+          ]}
         ]},
-        { blockId: "horst-6w", code: "D7", shortTitle: "Descanso", title: "Descanso Obligatorio y Cierre de Semana", tag: "DESCANSO OBLIGATORIO", duration: "0 min", focus: "Registra el semáforo de dedos y codos en tu bitácora antes de iniciar la nueva semana.", sections: [] }
+        { blockId: "horst-6w", code: "D7", shortTitle: "Descanso", title: "Descanso Obligatorio y Cierre de Semana", tag: "DESCANSO OBLIGATORIO", duration: "0 min", focus: "Registra el semáforo de dedos y codos en tu bitácora antes de iniciar la nueva semana.", sections: [] },
+
+        // BLOQUE 0 CIMIENTO (D1 CORREGIDO CON DOS BLOQUES DE MURO DIFERENCIADOS)
+        { blockId: "cimiento-4w", code: "D1", shortTitle: "Pies Silenciosos", title: "Precisión de Pies y Control en Pausa (Hovering)", tag: "BASE TÉCNICA", duration: "75 min", focus: "Cero regletas pequeñas. Primero enfoca silencio al pisar; luego controla la cadera con pausa de 3 seg.", sections: [
+          { name: "1. Activación y Movilidad", items: [
+            { exId: "ex-mov", rx: "15 min (Movilidad articular + escapular)", rest: "60 seg" }
+          ]},
+          { name: "2. Bloque Técnico 1 · Colocación de Pies", items: [
+            { exId: "ex-silent", rx: "3 bloques fáciles (V0–V2) · Pisada 100% silenciosa", rest: "2 min" }
+          ]},
+          { name: "3. Bloque Técnico 2 · Control Estático de Cadera", items: [
+            { exId: "ex-hovering", rx: "3 bloques en placa · Pausa de 3 seg antes de agarrar", rest: "2 min" }
+          ]}
+        ]},
+        { blockId: "cimiento-4w", code: "D2", shortTitle: "Descanso", title: "Descanso Activo / Movilidad", tag: "DESCANSO TOTAL", duration: "0 min", focus: "Recuperación articular.", sections: [] },
+        { blockId: "cimiento-4w", code: "D3", shortTitle: "Cara B Base", title: "Fuerza Base Antagonista y Core", tag: "ACONDICIONAMIENTO", duration: "50 min", focus: "Fortalecimiento postural sin estrés en dedos.", sections: [
+          { name: "1. Empuje y Pierna", items: [{ exId: "ex-push", rx: "3 x 10 reps", rest: "90 seg" }, { exId: "ex-bulgarian", rx: "3 x 8/pierna", rest: "90 seg" }] },
+          { name: "2. Core", items: [{ exId: "ex-lumbar", rx: "3 series x 25 seg", rest: "60 seg" }] }
+        ]},
+        { blockId: "cimiento-4w", code: "D4", shortTitle: "Continuidad", title: "Resistencia Aeróbica Ligera en Muro", tag: "CAPACIDAD BASE", duration: "75 min", focus: "Ritmo respiratorio continuo sin llegar al fallo.", sections: [
+          { name: "1. Calentamiento", items: [{ exId: "ex-mov", rx: "15 min", rest: "60 seg" }] },
+          { name: "2. Travesías", items: [{ exId: "ex-traverse", rx: "3 rondas x 20 movs", rest: "3 min" }] }
+        ]},
+        { blockId: "cimiento-4w", code: "D5", shortTitle: "Descanso", title: "Descanso Previo a Sesión Social", tag: "DESCANSO TOTAL", duration: "0 min", focus: "Recuperación.", sections: [] },
+        { blockId: "cimiento-4w", code: "D6", shortTitle: "Búlder Social", title: "Búlder Recreativo en ELBLOQUE", tag: "TÉCNICA LIBRE", duration: "80 min", focus: "Disfrutar bloques variados sin forzar arqueos.", sections: [
+          { name: "1. Activación", items: [{ exId: "ex-mov", rx: "15 min", rest: "60 seg" }] }
+        ]},
+        { blockId: "cimiento-4w", code: "D7", shortTitle: "Descanso", title: "Descanso Obligatorio", tag: "DESCANSO OBLIGATORIO", duration: "0 min", focus: "Cierre de semana.", sections: [] }
       ],
       logs: []
     };
 
     function safeJsonParse(raw, fallback) {
       if (!raw) return fallback;
-      try {
-        const parsed = JSON.parse(raw);
-        return parsed ?? fallback;
-      } catch (_) {
-        return fallback;
-      }
+      try { const parsed = JSON.parse(raw); return parsed ?? fallback; } catch (_) { return fallback; }
     }
 
     const cachedData = safeJsonParse(safeStorage.get(STORAGE_KEYS.CACHE), null);
@@ -1168,9 +1118,11 @@
 
     let state = {
       data: initialData,
-      blockId: safeStorage.get(STORAGE_KEYS.BLOCK) || "cimiento-4w",
+      blockId: safeStorage.get(STORAGE_KEYS.BLOCK) || "horst-6w",
       week: Number(safeStorage.get(STORAGE_KEYS.WEEK)) || 1,
       dayCode: "D1",
+      currentView: "home",
+      prevView: null,
       checks: safeJsonParse(safeStorage.get(STORAGE_KEYS.CHECKS), {}),
       resetBaseline: safeJsonParse(safeStorage.get(STORAGE_KEYS.RESET_BASELINE), {}),
       traffic: { dedos: "verde", codos: "verde" },
@@ -1180,24 +1132,35 @@
       encyDetailId: null
     };
 
-    // LATTICE INTERVAL TIMER + EXERCISE QUEUE
-    let latCfg = { prep: 5, work: 10, rest: 0, reps: 1, sets: 4, setRest: 180 };
+    // =========================================================================
+    // CRONÓMETRO DUAL EN ESPAÑOL (MODO DESCANSO ENTRE SERIES vs MODO INTERVALOS)
+    // =========================================================================
+    let timerCfg = {
+      mode: "rest",
+      prep: 5,
+      work: 10,
+      restRep: 0,
+      reps: 1,
+      sets: 4,
+      setRest: 180
+    };
+
     let latLinked = {
       checkKey: null,
       exId: null,
-      exName: "Suspensiones Máximas (Regleta 20mm)",
-      rx: "4 series x 10 seg",
-      restText: "3 min",
-      queueIndex: 0,
-      autoAdvanceEx: true
+      exName: "Sin ejercicio cargado",
+      rx: "",
+      restText: "",
+      queueIndex: 0
     };
-    let latRuntime = {
+
+    let timerRun = {
       running: false,
-      phase: "prep",
+      phase: "setrest",
       rep: 1,
       set: 1,
-      remaining: 5,
-      phaseTotal: 5,
+      remaining: 180,
+      phaseTotal: 180,
       intervalId: null
     };
 
@@ -1226,49 +1189,313 @@
     function parseSecondsFromText(text, fallbackSec) {
       if (!text) return fallbackSec;
       const t = String(text).toLowerCase();
-      const m = t.match(/([\d.]+)\s*min/);
-      if (m) return Math.max(1, Math.round(parseFloat(m[1]) * 60));
-      const s = t.match(/(\d+)\s*seg/);
+      const m = t.match(/(\d+(?:\.\d+)?)\s*(?:-\s*\d+\s*)?min/);
+      if (m) return Math.max(10, Math.round(parseFloat(m[1]) * 60));
+      const s = t.match(/(\d+)\s*(?:-\s*\d+\s*)?seg/);
       if (s) return Math.max(1, parseInt(s[1], 10));
       return fallbackSec;
     }
 
-    function parsePrescriptionToCfg(rxText, restText) {
+    function parsePrescriptionSmart(exObj, rxText, restText) {
       const rx = String(rxText || "").toLowerCase();
-      let sets = 4;
-      let reps = 1;
-      let work = 10;
-      let rest = 0;
+      const setRest = parseSecondsFromText(restText, (exObj && Number(exObj.set_rest_sec)) || 120);
 
+      let sets = (exObj && Number(exObj.sets)) || 3;
       const setsMatch = rx.match(/(\d+)\s*(?:series|rondas)/);
-      if (setsMatch) sets = Math.max(1, parseInt(setsMatch[1], 10));
-
-      const xMatch = rx.match(/(\d+)\s*x\s*(\d+)(?:\s*-\s*\d+)?\s*(seg|s|reps|rep)/);
-      if (xMatch) {
-        const firstNum = parseInt(xMatch[1], 10);
-        const secondNum = parseInt(xMatch[2], 10);
-        const unit = xMatch[3];
-        if (!setsMatch) sets = Math.max(1, firstNum);
-        if (unit.startsWith("seg") || unit === "s") {
-          work = Math.max(1, secondNum);
-        } else {
-          reps = Math.max(1, secondNum);
-          work = 45;
-          rest = 15;
-        }
+      if (setsMatch) {
+        sets = Math.max(1, parseInt(setsMatch[1], 10));
       } else {
-        const segMatch = rx.match(/(\d+)(?:\s*-\s*\d+)?\s*seg/);
-        if (segMatch) work = Math.max(1, parseInt(segMatch[1], 10));
-        const minMatch = rx.match(/(\d+)\s*min/);
-        if (minMatch && !setsMatch) {
-          sets = 1;
-          reps = 1;
-          work = Math.max(10, parseInt(minMatch[1], 10) * 60);
-        }
+        const xPrefix = rx.match(/^(\d+)\s*x\s*\d+/);
+        if (xPrefix) sets = Math.max(1, parseInt(xPrefix[1], 10));
       }
 
-      const setRest = parseSecondsFromText(restText, 180);
-      return { prep: 5, work, rest, reps, sets, setRest };
+      const repeaterMatch = rx.match(/(\d+)\s*:\s*(\d+)/);
+      if (repeaterMatch) {
+        const work = Math.max(1, parseInt(repeaterMatch[1], 10));
+        const restRep = Math.max(1, parseInt(repeaterMatch[2], 10));
+        const repsMatch = rx.match(/x\s*(\d+)\s*rep/);
+        const reps = repsMatch ? Math.max(1, parseInt(repsMatch[1], 10)) : ((exObj && Number(exObj.reps)) || 6);
+        return { mode: "interval", prep: 5, work, restRep, reps, sets, setRest };
+      }
+
+      const segMatch = rx.match(/(?:x|\()\s*(\d+)\s*(?:seg|s\b)/);
+      const isExplicitTime = Boolean(segMatch) || (exObj && exObj.timer_mode === "interval" && Number(exObj.hold_sec) > 0 && !rx.includes("rep"));
+      if (isExplicitTime) {
+        const work = segMatch ? Math.max(1, parseInt(segMatch[1], 10)) : (Number(exObj.hold_sec) || 10);
+        const isLockoff = /90°|120°|bloqueo/.test(rx);
+        return {
+          mode: "interval",
+          prep: 5,
+          work,
+          restRep: isLockoff ? 3 : 0,
+          reps: isLockoff ? 3 : 1,
+          sets,
+          setRest
+        };
+      }
+
+      return {
+        mode: "rest",
+        prep: 0,
+        work: 0,
+        restRep: 0,
+        reps: 1,
+        sets,
+        setRest
+      };
+    }
+
+    function setTimerMode(newMode) {
+      timerCfg.mode = newMode === "interval" ? "interval" : "rest";
+      resetTimer();
+    }
+
+    function setQuickRest(seconds) {
+      timerCfg.mode = "rest";
+      timerCfg.setRest = Math.max(10, Number(seconds) || 90);
+      resetTimer();
+    }
+
+    function enterPhase(phase, sec) {
+      const safeSec = Math.max(1, Number(sec) || 1);
+      timerRun.phase = phase;
+      timerRun.remaining = safeSec;
+      timerRun.phaseTotal = safeSec;
+    }
+
+    function resetTimer() {
+      clearInterval(timerRun.intervalId);
+      timerRun.intervalId = null;
+      timerRun.running = false;
+      timerRun.rep = 1;
+      timerRun.set = 1;
+
+      if (timerCfg.mode === "rest") {
+        enterPhase("setrest", timerCfg.setRest);
+      } else if (timerCfg.prep > 0) {
+        enterPhase("prep", timerCfg.prep);
+      } else {
+        enterPhase("work", timerCfg.work);
+      }
+      renderTimer();
+    }
+
+    function applyIntervalInputs() {
+      timerCfg.prep = Math.max(0, Number(document.getElementById("lat-prep")?.value) || 0);
+      timerCfg.work = Math.max(1, Number(document.getElementById("lat-work")?.value) || 10);
+      timerCfg.restRep = Math.max(0, Number(document.getElementById("lat-rest")?.value) || 0);
+      timerCfg.reps = Math.max(1, Number(document.getElementById("lat-reps")?.value) || 1);
+      timerCfg.sets = Math.max(1, Number(document.getElementById("lat-sets")?.value) || 1);
+      timerCfg.setRest = Math.max(10, Number(document.getElementById("lat-setrest")?.value) || 60);
+      resetTimer();
+    }
+
+    function syncIntervalInputsFromCfg() {
+      const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+      setVal("lat-prep", timerCfg.prep);
+      setVal("lat-work", timerCfg.work);
+      setVal("lat-rest", timerCfg.restRep);
+      setVal("lat-reps", timerCfg.reps);
+      setVal("lat-sets", timerCfg.sets);
+      setVal("lat-setrest", timerCfg.setRest);
+    }
+
+    function advanceTimerTick() {
+      if (timerCfg.mode === "rest") {
+        clearInterval(timerRun.intervalId);
+        timerRun.intervalId = null;
+        timerRun.running = false;
+        beepPhase("done");
+
+        if (timerRun.set < timerCfg.sets) {
+          timerRun.set += 1;
+          enterPhase("setrest", timerCfg.setRest);
+        } else {
+          timerRun.phase = "done";
+          timerRun.remaining = 0;
+        }
+        return;
+      }
+
+      if (timerRun.phase === "prep") {
+        enterPhase("work", timerCfg.work);
+        beepPhase("work");
+        return;
+      }
+      if (timerRun.phase === "work") {
+        if (timerRun.rep < timerCfg.reps) {
+          if (timerCfg.restRep > 0) {
+            enterPhase("rest", timerCfg.restRep);
+            beepPhase("rest");
+          } else {
+            timerRun.rep += 1;
+            enterPhase("work", timerCfg.work);
+            beepPhase("work");
+          }
+          return;
+        }
+        if (timerRun.set < timerCfg.sets) {
+          if (timerCfg.setRest > 0) {
+            enterPhase("setrest", timerCfg.setRest);
+            beepPhase("rest");
+          } else {
+            timerRun.set += 1;
+            timerRun.rep = 1;
+            enterPhase("work", timerCfg.work);
+            beepPhase("work");
+          }
+          return;
+        }
+        timerRun.phase = "done";
+        timerRun.remaining = 0;
+        timerRun.running = false;
+        clearInterval(timerRun.intervalId);
+        timerRun.intervalId = null;
+        beepPhase("done");
+        return;
+      }
+      if (timerRun.phase === "rest") {
+        timerRun.rep += 1;
+        enterPhase("work", timerCfg.work);
+        beepPhase("work");
+        return;
+      }
+      if (timerRun.phase === "setrest") {
+        timerRun.set += 1;
+        timerRun.rep = 1;
+        enterPhase("work", timerCfg.work);
+        beepPhase("work");
+      }
+    }
+
+    function advanceSetOrPhase() {
+      if (timerCfg.mode === "rest") {
+        clearInterval(timerRun.intervalId);
+        timerRun.intervalId = null;
+        timerRun.running = false;
+        if (timerRun.set < timerCfg.sets) {
+          timerRun.set += 1;
+          enterPhase("setrest", timerCfg.setRest);
+        } else {
+          timerRun.phase = "done";
+          timerRun.remaining = 0;
+        }
+        renderTimer();
+        return;
+      }
+      if (timerRun.phase === "done") return;
+      advanceTimerTick();
+      renderTimer();
+    }
+
+    function toggleTimer() {
+      if (timerRun.running) {
+        clearInterval(timerRun.intervalId);
+        timerRun.intervalId = null;
+        timerRun.running = false;
+        renderTimer();
+        return;
+      }
+      if (timerRun.phase === "done") resetTimer();
+      timerRun.running = true;
+      renderTimer();
+      timerRun.intervalId = setInterval(() => {
+        if (timerRun.remaining > 1) {
+          timerRun.remaining -= 1;
+        } else {
+          advanceTimerTick();
+        }
+        renderTimer();
+      }, 1000);
+    }
+
+    function renderTimer() {
+      const pill = document.getElementById("lat-phase-pill");
+      const digits = document.getElementById("lat-digits");
+      const sr = document.getElementById("lat-sr");
+      const totalEl = document.getElementById("lat-total-left");
+      const fill = document.getElementById("lat-phase-fill");
+      const toggleIcon = document.getElementById("lat-toggle-icon");
+      const toggleLabel = document.getElementById("lat-toggle-label");
+      const skipLabel = document.getElementById("lat-skip-label");
+      const exTitle = document.getElementById("lat-ex-title");
+      const exSub = document.getElementById("lat-ex-sub");
+      const paramsPanel = document.getElementById("lat-params-panel");
+      const presetsBar = document.getElementById("rest-presets-bar");
+      const modeRestBtn = document.getElementById("mode-btn-rest");
+      const modeIntBtn = document.getElementById("mode-btn-interval");
+      const queueEl = document.getElementById("lat-queue");
+      if (!pill || !digits || !sr) return;
+
+      const isRestMode = timerCfg.mode === "rest";
+      if (modeRestBtn) modeRestBtn.classList.toggle("active", isRestMode);
+      if (modeIntBtn) modeIntBtn.classList.toggle("active", !isRestMode);
+      if (presetsBar) presetsBar.classList.toggle("hidden", !isRestMode);
+      if (paramsPanel) paramsPanel.classList.toggle("hidden", isRestMode || timerRun.running);
+
+      if (isRestMode && presetsBar) {
+        presetsBar.querySelectorAll(".preset-chip").forEach(btn => {
+          const secMatch = btn.getAttribute("onclick")?.match(/\((\d+)\)/);
+          const sVal = secMatch ? Number(secMatch[1]) : 0;
+          btn.classList.toggle("active", sVal === timerCfg.setRest);
+        });
+      }
+
+      const meta = {
+        prep: { label: "PREPARACIÓN", cls: "p-prep", color: "#38bdf8" },
+        work: { label: "TRABAJO EN MURO / BARRA", cls: "p-work", color: "#2dd4bf" },
+        rest: { label: "PAUSA ENTRE REPS", cls: "p-rest", color: "#34d399" },
+        setrest: { label: isRestMode ? "PAUSA ENTRE SERIES" : "DESCANSO ENTRE SERIES", cls: "p-setrest", color: "#fbbf24" },
+        done: { label: "SERIES COMPLETADAS", cls: "p-done", color: "#34d399" }
+      };
+      const cur = meta[timerRun.phase] || meta.setrest;
+
+      pill.textContent = cur.label;
+      pill.className = `phase-pill ${cur.cls}`;
+      digits.textContent = fmtSec(timerRun.remaining);
+      digits.style.color = cur.color;
+
+      if (isRestMode) {
+        sr.textContent = `Serie ${timerRun.set} de ${timerCfg.sets}`;
+        if (totalEl) {
+          totalEl.textContent = timerRun.phase === "done"
+            ? "Todas las series completadas"
+            : (timerRun.running ? "Descansando antes de la siguiente serie..." : "Haz tus reps y pulsa Iniciar Descanso");
+        }
+        if (toggleLabel) toggleLabel.textContent = timerRun.running ? "Pausar" : "Iniciar Descanso";
+        if (skipLabel) skipLabel.textContent = "+1 Serie";
+      } else {
+        sr.textContent = `Serie ${timerRun.set}/${timerCfg.sets} · Rep ${timerRun.rep}/${timerCfg.reps}`;
+        if (totalEl) {
+          totalEl.textContent = `Trabajo ${timerCfg.work}s · Descanso serie ${fmtSec(timerCfg.setRest)}`;
+        }
+        if (toggleLabel) toggleLabel.textContent = timerRun.running ? "Pausar" : "Iniciar";
+        if (skipLabel) skipLabel.textContent = "Saltar Fase";
+      }
+
+      if (exTitle) exTitle.textContent = latLinked.exName;
+      if (exSub) {
+        exSub.textContent = latLinked.rx
+          ? `${latLinked.rx}${latLinked.restText ? ` · Pausa prescrita: ${latLinked.restText}` : ""}`
+          : "Selecciona un ejercicio abajo";
+      }
+
+      if (fill) {
+        const pct = timerRun.phaseTotal > 0 ? Math.max(0, Math.min(100, (timerRun.remaining / timerRun.phaseTotal) * 100)) : 0;
+        fill.style.width = `${timerRun.phase === "done" ? 100 : pct}%`;
+        fill.style.background = cur.color;
+      }
+
+      if (toggleIcon) toggleIcon.innerHTML = iconSvg(timerRun.running ? "pause" : "play", 13);
+
+      const queue = getDayExerciseQueue();
+      if (queueEl) {
+        queueEl.innerHTML = queue.map((q, idx) => `
+          <button type="button" class="q-chip ${idx === latLinked.queueIndex ? "active" : ""}" onclick="loadQueueExerciseAt(${idx}, false)">
+            ${idx + 1}. ${q.exName}
+          </button>
+        `).join("");
+      }
     }
 
     function getDayExerciseQueue() {
@@ -1278,15 +1505,16 @@
       if (!day || !day.sections) return queue;
       const block = getActiveBlock();
       const isDeload = state.week === block.weeks && block.weeks >= 4;
-      const isPhase2 = !isDeload && state.week >= 3;
+      const isPhase2 = !isDeload && state.week >= 4;
 
       day.sections.forEach((sec, sIdx) => {
         sec.items.forEach((item, iIdx) => {
-          const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { name: item.exId };
+          const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { id: item.exId, name: item.exId };
           const rxText = (isDeload && item.p3) ? item.p3 : ((isPhase2 && item.p2) ? item.p2 : item.rx);
           queue.push({
             checkKey: `${state.blockId}_w${state.week}_${day.code}_s${sIdx}_i${iIdx}`,
             exId: item.exId,
+            exObj: ex,
             exName: ex.name,
             rx: rxText,
             restText: item.rest || ""
@@ -1299,26 +1527,20 @@
     function syncQueueForCurrentDay(autoLoadFirst = false) {
       const queue = getDayExerciseQueue();
       if (!queue.length) {
-        latLinked.checkKey = null;
-        latLinked.exId = null;
-        latLinked.exName = "Día de descanso";
-        latLinked.rx = "Sin carga programada";
-        latLinked.restText = "";
-        latLinked.queueIndex = 0;
-        renderLattice();
+        latLinked = { checkKey: null, exId: null, exName: "Día de descanso", rx: "Sin carga programada", restText: "", queueIndex: 0 };
+        renderTimer();
         return;
       }
-
       const idx = queue.findIndex(q => q.checkKey === latLinked.checkKey);
       if (idx >= 0) {
         latLinked.queueIndex = idx;
         latLinked.exName = queue[idx].exName;
         latLinked.rx = queue[idx].rx;
         latLinked.restText = queue[idx].restText;
+        renderTimer();
       } else if (autoLoadFirst || !latLinked.checkKey) {
         loadQueueExerciseAt(0, false);
       }
-      renderLattice();
     }
 
     function loadQueueExerciseAt(index, shouldStart = false) {
@@ -1333,30 +1555,31 @@
         exName: entry.exName,
         rx: entry.rx,
         restText: entry.restText,
-        queueIndex: safeIdx,
-        autoAdvanceEx: true
+        queueIndex: safeIdx
       };
 
-      const cfg = parsePrescriptionToCfg(entry.rx, entry.restText);
-      applyLatticePreset(cfg);
+      const parsed = parsePrescriptionSmart(entry.exObj, entry.rx, entry.restText);
+      timerCfg = { ...timerCfg, ...parsed };
+      syncIntervalInputsFromCfg();
+      resetTimer();
       renderTrainView();
 
-      if (shouldStart && !latRuntime.running) {
-        toggleLattice();
+      if (shouldStart && !timerRun.running) {
+        toggleTimer();
       }
     }
 
     function loadExerciseByKey(checkKey, shouldStart = false) {
       const queue = getDayExerciseQueue();
       const idx = queue.findIndex(q => q.checkKey === checkKey);
-      if (idx >= 0) {
-        loadQueueExerciseAt(idx, shouldStart);
-      }
+      if (idx >= 0) loadQueueExerciseAt(idx, shouldStart);
     }
 
     function sendExerciseToTimer(exId) {
       const ex = state.data.encyclopedia.find(e => e.id === exId);
       if (!ex) return;
+      state.encyDetailId = null;
+      state.prevView = null;
       const queue = getDayExerciseQueue();
       const inDayIdx = queue.findIndex(q => q.exId === exId);
       const navBtn = document.querySelector('.nav-btn[data-view="train"]');
@@ -1370,13 +1593,9 @@
       const holdSec = Number(ex.hold_sec) || 0;
       const reps = Math.max(1, Number(ex.reps) || 1);
       const sets = Math.max(1, Number(ex.sets) || 3);
-      const setRest = Math.max(0, Number(ex.set_rest_sec) || 90);
+      const setRest = Math.max(30, Number(ex.set_rest_sec) || 90);
       const isIso = holdSec > 0;
-      const work = isIso ? holdSec : 40;
-      const rest = isIso ? (reps > 1 ? 3 : 0) : (reps > 1 ? 10 : 0);
-      const rxLabel = isIso
-        ? (reps > 1 ? `${sets} series x (${reps} reps ${holdSec}s)` : `${sets} series x ${holdSec} seg`)
-        : `${sets} series x ${reps} reps`;
+      const rxLabel = isIso ? `${sets} series x ${holdSec} seg` : `${sets} series x ${reps} reps`;
 
       latLinked = {
         checkKey: null,
@@ -1384,10 +1603,19 @@
         exName: ex.name,
         rx: rxLabel,
         restText: `${setRest} seg`,
-        queueIndex: 0,
-        autoAdvanceEx: false
+        queueIndex: 0
       };
-      applyLatticePreset({ prep: 5, work, rest, reps, sets, setRest });
+      timerCfg = {
+        mode: isIso ? "interval" : "rest",
+        prep: 5,
+        work: holdSec || 10,
+        restRep: Number(ex.rest_rep_sec) || 0,
+        reps,
+        sets,
+        setRest
+      };
+      syncIntervalInputsFromCfg();
+      resetTimer();
       renderTrainView();
     }
 
@@ -1402,208 +1630,6 @@
       state.checks[latLinked.checkKey] = true;
       safeStorage.set(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
       nextQueueExercise();
-    }
-
-    function enterLatticePhase(phase, sec) {
-      const safeSec = Math.max(1, Number(sec) || 1);
-      latRuntime.phase = phase;
-      latRuntime.remaining = safeSec;
-      latRuntime.phaseTotal = safeSec;
-    }
-
-    function resetLattice() {
-      clearInterval(latRuntime.intervalId);
-      latRuntime.intervalId = null;
-      latRuntime.running = false;
-      latRuntime.rep = 1;
-      latRuntime.set = 1;
-      if (latCfg.prep > 0) {
-        enterLatticePhase("prep", latCfg.prep);
-      } else {
-        enterLatticePhase("work", latCfg.work);
-      }
-      renderLattice();
-    }
-
-    function applyLatticeInputs() {
-      latCfg.prep = Math.max(0, Number(document.getElementById("lat-prep")?.value) || 0);
-      latCfg.work = Math.max(1, Number(document.getElementById("lat-work")?.value) || 10);
-      latCfg.rest = Math.max(0, Number(document.getElementById("lat-rest")?.value) || 0);
-      latCfg.reps = Math.max(1, Number(document.getElementById("lat-reps")?.value) || 1);
-      latCfg.sets = Math.max(1, Number(document.getElementById("lat-sets")?.value) || 1);
-      latCfg.setRest = Math.max(0, Number(document.getElementById("lat-setrest")?.value) || 0);
-      resetLattice();
-    }
-
-    function applyLatticePreset(p) {
-      latCfg = {
-        prep: p.prep ?? 5,
-        work: p.work ?? 10,
-        rest: p.rest ?? 0,
-        reps: p.reps ?? 1,
-        sets: p.sets ?? 4,
-        setRest: p.setRest ?? 180
-      };
-      if (document.getElementById("lat-prep")) document.getElementById("lat-prep").value = latCfg.prep;
-      if (document.getElementById("lat-work")) document.getElementById("lat-work").value = latCfg.work;
-      if (document.getElementById("lat-rest")) document.getElementById("lat-rest").value = latCfg.rest;
-      if (document.getElementById("lat-reps")) document.getElementById("lat-reps").value = latCfg.reps;
-      if (document.getElementById("lat-sets")) document.getElementById("lat-sets").value = latCfg.sets;
-      if (document.getElementById("lat-setrest")) document.getElementById("lat-setrest").value = latCfg.setRest;
-      resetLattice();
-    }
-
-    function advanceLatticePhase() {
-      if (latRuntime.phase === "prep") {
-        enterLatticePhase("work", latCfg.work);
-        beepPhase("work");
-        return;
-      }
-      if (latRuntime.phase === "work") {
-        if (latRuntime.rep < latCfg.reps) {
-          if (latCfg.rest > 0) {
-            enterLatticePhase("rest", latCfg.rest);
-            beepPhase("rest");
-          } else {
-            latRuntime.rep += 1;
-            enterLatticePhase("work", latCfg.work);
-            beepPhase("work");
-          }
-          return;
-        }
-        if (latRuntime.set < latCfg.sets) {
-          if (latCfg.setRest > 0) {
-            enterLatticePhase("setrest", latCfg.setRest);
-            beepPhase("rest");
-          } else {
-            latRuntime.set += 1;
-            latRuntime.rep = 1;
-            enterLatticePhase("work", latCfg.work);
-            beepPhase("work");
-          }
-          return;
-        }
-        latRuntime.phase = "done";
-        latRuntime.remaining = 0;
-        latRuntime.running = false;
-        clearInterval(latRuntime.intervalId);
-        latRuntime.intervalId = null;
-        beepPhase("done");
-
-        const queue = getDayExerciseQueue();
-        if (latLinked.autoAdvanceEx && queue.length > 1 && latLinked.queueIndex < queue.length - 1) {
-          if (latLinked.checkKey) {
-            state.checks[latLinked.checkKey] = true;
-            safeStorage.set(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
-          }
-          loadQueueExerciseAt(latLinked.queueIndex + 1, false);
-        }
-        return;
-      }
-      if (latRuntime.phase === "rest") {
-        latRuntime.rep += 1;
-        enterLatticePhase("work", latCfg.work);
-        beepPhase("work");
-        return;
-      }
-      if (latRuntime.phase === "setrest") {
-        latRuntime.set += 1;
-        latRuntime.rep = 1;
-        enterLatticePhase("work", latCfg.work);
-        beepPhase("work");
-      }
-    }
-
-    function skipLatticePhase() {
-      if (latRuntime.phase === "done") return;
-      advanceLatticePhase();
-      renderLattice();
-    }
-
-    function toggleLattice() {
-      if (latRuntime.running) {
-        clearInterval(latRuntime.intervalId);
-        latRuntime.intervalId = null;
-        latRuntime.running = false;
-        renderLattice();
-        return;
-      }
-      if (latRuntime.phase === "done") resetLattice();
-      latRuntime.running = true;
-      renderLattice();
-      latRuntime.intervalId = setInterval(() => {
-        if (latRuntime.remaining > 1) {
-          latRuntime.remaining -= 1;
-        } else {
-          advanceLatticePhase();
-        }
-        renderLattice();
-      }, 1000);
-    }
-
-    function renderLattice() {
-      const pill = document.getElementById("lat-phase-pill");
-      const digits = document.getElementById("lat-digits");
-      const sr = document.getElementById("lat-sr");
-      const totalEl = document.getElementById("lat-total-left");
-      const fill = document.getElementById("lat-phase-fill");
-      const btn = document.getElementById("lat-toggle-btn");
-      const toggleIcon = document.getElementById("lat-toggle-icon");
-      const toggleLabel = document.getElementById("lat-toggle-label");
-      const exTitle = document.getElementById("lat-ex-title");
-      const exSub = document.getElementById("lat-ex-sub");
-      const paramsPanel = document.getElementById("lat-params-panel");
-      const queueEl = document.getElementById("lat-queue");
-      if (!pill || !digits || !sr || !btn) return;
-
-      const meta = {
-        prep: { label: "PREPARACIÓN", cls: "p-prep", color: "#38bdf8" },
-        work: { label: "TRABAJO (WORK)", cls: "p-work", color: "#2dd4bf" },
-        rest: { label: "DESCANSO REP", cls: "p-rest", color: "#34d399" },
-        setrest: { label: "DESCANSO SERIE", cls: "p-setrest", color: "#fbbf24" },
-        done: { label: "COMPLETADO", cls: "p-done", color: "#34d399" }
-      };
-      const cur = meta[latRuntime.phase] || meta.prep;
-
-      pill.textContent = cur.label;
-      pill.className = `phase-pill ${cur.cls}`;
-      digits.textContent = fmtSec(latRuntime.remaining);
-      digits.style.color = cur.color;
-      sr.textContent = `Serie ${latRuntime.set} / ${latCfg.sets} · Rep ${latRuntime.rep} / ${latCfg.reps}`;
-
-      const queue = getDayExerciseQueue();
-      const nextEx = queue[latLinked.queueIndex + 1];
-      if (totalEl) {
-        totalEl.textContent = nextEx ? `Siguiente: ${nextEx.exName}` : "Último ejercicio del día";
-      }
-
-      if (exTitle) exTitle.textContent = latLinked.exName;
-      if (exSub) {
-        exSub.textContent = latLinked.rx
-          ? `${latLinked.rx}${latLinked.restText ? ` · Pausa: ${latLinked.restText}` : ""}`
-          : "Listo para iniciar";
-      }
-
-      if (paramsPanel) {
-        paramsPanel.classList.toggle("hidden", latRuntime.running);
-      }
-
-      if (fill) {
-        const pct = latRuntime.phaseTotal > 0 ? Math.max(0, Math.min(100, (latRuntime.remaining / latRuntime.phaseTotal) * 100)) : 0;
-        fill.style.width = `${latRuntime.phase === "done" ? 100 : pct}%`;
-        fill.style.background = cur.color;
-      }
-
-      if (toggleIcon) toggleIcon.innerHTML = iconSvg(latRuntime.running ? "pause" : "play", 13);
-      if (toggleLabel) toggleLabel.textContent = latRuntime.running ? "Pausar" : "Iniciar";
-
-      if (queueEl) {
-        queueEl.innerHTML = queue.map((q, idx) => `
-          <button type="button" class="q-chip ${idx === latLinked.queueIndex ? "active" : ""}" onclick="loadQueueExerciseAt(${idx}, false)">
-            ${idx + 1}. ${q.exName}
-          </button>
-        `).join("");
-      }
     }
 
     function getAssetSrc(ex) {
@@ -1624,11 +1650,7 @@
         safeStorage.set(STORAGE_KEYS.AUTH, "1");
         if (errEl) errEl.textContent = "";
         forceHidePinGate();
-        try {
-          initApp();
-        } catch (err) {
-          console.error("Error al iniciar SUNBLOCK tras login:", err);
-        }
+        initApp();
       } else if (errEl) {
         errEl.textContent = `PIN incorrecto ("${val || "vacío"}"). Usa ${PIN_CODE}.`;
       }
@@ -1640,18 +1662,12 @@
       if (pinInput && !pinInput.dataset.bound) {
         pinInput.dataset.bound = "1";
         pinInput.addEventListener("keydown", function (e) {
-          if (e.key === "Enter" || e.keyCode === 13) {
-            e.preventDefault();
-            unlockApp();
-          }
+          if (e.key === "Enter" || e.keyCode === 13) { e.preventDefault(); unlockApp(); }
         });
       }
       if (pinBtn && !pinBtn.dataset.bound) {
         pinBtn.dataset.bound = "1";
-        pinBtn.addEventListener("click", function (e) {
-          e.preventDefault();
-          unlockApp();
-        });
+        pinBtn.addEventListener("click", function (e) { e.preventDefault(); unlockApp(); });
       }
     }
 
@@ -1660,7 +1676,7 @@
     document.addEventListener("DOMContentLoaded", function () {
       bindPinEvents();
       renderStaticIcons();
-      renderLattice();
+      renderTimer();
       if (safeStorage.get(STORAGE_KEYS.AUTH) === "1") {
         forceHidePinGate();
         initApp();
@@ -1673,15 +1689,12 @@
       syncFromSheets();
     }
 
-    // NORMALIZADORES BLINDADOS PARA BLOQUES, SEMANAS Y BITÁCORA
+    // NORMALIZADORES PARA SHEETS
     function normalizeBlockAlias(rawBlockId, rawMeso) {
       const txt = `${rawBlockId || ""} ${rawMeso || ""}`.toLowerCase().trim();
       if (!txt) return "";
       if (txt.includes("cimiento") || txt.includes("basico") || txt.includes("básico") || txt.includes("bloque 0")) return "cimiento-4w";
       if (txt.includes("horst") || txt.includes("anclaje") || txt.includes("6w") || txt.includes("6 semana") || txt.includes("bloque 1")) return "horst-6w";
-      if (txt.includes("impulso") || txt.includes("bloque 2")) return "impulso-4w";
-      if (txt.includes("flujo") || txt.includes("bloque 3")) return "flujo-4w";
-      if (txt.includes("cumbre") || txt.includes("avanzado") || txt.includes("bloque 4")) return "cumbre-4w";
       return String(rawBlockId).trim();
     }
 
@@ -1696,35 +1709,40 @@
     }
 
     function normalizeBackendPayload(json) {
-      const rawBlocks = json.mesociclos || json.blocks || [];
-      const blocks = rawBlocks.length
-        ? rawBlocks.map(b => ({
-            id: b.block_id || b.id,
-            title: b.title,
-            weeks: Number(b.weeks) || 4,
-            phases: Array.isArray(b.phases) ? b.phases : []
-          }))
-        : BACKUP_DATA.blocks;
-
-      const rawEncy = Array.isArray(json.encyclopedia) && json.encyclopedia.length
-        ? json.encyclopedia
-        : BACKUP_DATA.encyclopedia;
-      const encyclopedia = rawEncy.map(e => ({
-        ...e,
-        group: e.group || resolveExerciseGroup(e).id,
-        focus: e.focus || e.category || "",
-        safeAlt: e.safeAlt || e.alt || "",
-        author: e.author || e.source || "Lattice · SUNBLOCK"
+      const sheetBlocks = (json.mesociclos || json.blocks || []).map(b => ({
+        id: b.block_id || b.id,
+        title: b.title,
+        weeks: Number(b.weeks) || 4,
+        phases: Array.isArray(b.phases) ? b.phases : []
       }));
+      const mergedBlocks = [...BACKUP_DATA.blocks];
+      sheetBlocks.forEach(sb => {
+        if (sb.id && !mergedBlocks.some(mb => mb.id === sb.id)) {
+          mergedBlocks.push(sb);
+        }
+      });
 
+      const encyMap = new Map(BACKUP_DATA.encyclopedia.map(e => [e.id, e]));
+      (json.encyclopedia || []).forEach(e => {
+        if (!e || !e.id) return;
+        const existing = encyMap.get(e.id) || {};
+        encyMap.set(e.id, {
+          ...existing,
+          ...e,
+          group: e.group || existing.group || resolveExerciseGroup(e).id,
+          focus: e.focus || existing.focus || "",
+          safeAlt: e.safeAlt || existing.safeAlt || "",
+          author: e.author || existing.author || "SUNBLOCK"
+        });
+      });
+
+      const microcycles = [...BACKUP_DATA.microcycles];
       const rawMicro = json.microciclos || json.microcycles || [];
-      let microcycles = [];
-      if (rawMicro.length && rawMicro[0].sections) {
-        microcycles = rawMicro;
-      } else if (rawMicro.length) {
+      if (rawMicro.length) {
         const dayMap = new Map();
         rawMicro.forEach(r => {
           const bId = r.block_id || r.blockId;
+          if (!bId || bId === "horst-6w" || bId === "cimiento-4w") return;
           const dCode = normalizeDayCode(r.day_code || r.code);
           const key = `${bId}__${dCode}`;
           if (!dayMap.has(key)) {
@@ -1744,51 +1762,36 @@
           const exId = (r.ex_id || r.exId || "").trim();
           if (secName && exId) {
             let secObj = dayObj.sections.find(s => s.name === secName);
-            if (!secObj) {
-              secObj = { name: secName, items: [] };
-              dayObj.sections.push(secObj);
-            }
-            secObj.items.push({
-              exId,
-              rx: r.rx || "",
-              rest: r.rest || "",
-              p2: r.p2 || "",
-              p3: r.p3 || ""
-            });
+            if (!secObj) { secObj = { name: secName, items: [] }; dayObj.sections.push(secObj); }
+            secObj.items.push({ exId, rx: r.rx || "", rest: r.rest || "", p2: r.p2 || "", p3: r.p3 || "" });
           }
         });
-        microcycles = Array.from(dayMap.values());
-      } else {
-        microcycles = BACKUP_DATA.microcycles;
+        dayMap.forEach(v => microcycles.push(v));
       }
 
       const rawLogs = json.bitacora || json.logs || [];
       const logs = Array.isArray(rawLogs)
-        ? rawLogs.map(l => {
-            const isArr = Array.isArray(l);
-            const rawBlock = isArr ? l[1] : (l.block_id || l.blockId || l.bloque || l.Bloque || "");
-            const rawMeso  = isArr ? l[2] : (l.meso || l.Mesociclo || l.plan || "");
-            const rawWeek  = isArr ? l[3] : (l.week ?? l.semana ?? l.Semana ?? 1);
-            const rawDay   = isArr ? l[4] : (l.day_code || l.dayCode || l.dia || l.Dia || l.day_title || "");
-            const rawTitle = isArr ? l[5] : (l.day_title || l.dayTitle || l.titulo || "");
-            return {
-              date: isArr ? String(l[0] || "") : (l.date || l.fecha || l.Fecha || ""),
-              blockId: normalizeBlockAlias(rawBlock, rawMeso),
-              week: extractWeekNum(rawWeek),
-              dayCode: normalizeDayCode(rawDay || rawTitle),
-              dayTitle: rawTitle,
-              rpe: isArr ? (l[7] || "-") : (l.rpe || l.RPE || l.sensation || "-"),
-              dedos: isArr ? (l[8] || "Verde") : (l.dedos || l.Dedos || l.pain_flag || "Verde"),
-              codos: isArr ? (l[9] || "Verde") : (l.codos || l.Codos || l.pain_flag || "Verde"),
-              note: isArr ? (l[10] || "") : (l.notes || l.note || l.notas || l.Notas || "")
-            };
-          })
+        ? rawLogs.map(l => ({
+            date: l.date || "",
+            blockId: normalizeBlockAlias(l.block_id || l.blockId, l.meso_title || l.day_title),
+            week: extractWeekNum(l.week),
+            dayCode: normalizeDayCode(l.day_code || l.dayCode || l.day_title),
+            dayTitle: l.day_title || l.dayTitle || "",
+            rpe: l.rpe ?? "-",
+            dedos: l.dedos || "verde",
+            codos: l.codos || "verde",
+            note: l.note || l.notes || ""
+          }))
         : [];
 
-      return { blocks, encyclopedia, microcycles, logs };
+      return {
+        blocks: mergedBlocks,
+        encyclopedia: Array.from(encyMap.values()),
+        microcycles,
+        logs
+      };
     }
 
-    // SYNC WITH GOOGLE SHEETS
     async function syncFromSheets() {
       const url = safeStorage.get(STORAGE_KEYS.API_URL) || DEFAULT_API_URL;
       const dot = document.getElementById("sync-dot");
@@ -1810,7 +1813,7 @@
           state.data = normalizeBackendPayload(json);
           safeStorage.set(STORAGE_KEYS.CACHE, JSON.stringify(state.data));
           if (dot) dot.className = "dot online";
-          if (label) label.textContent = `Conectado (${state.data.encyclopedia.length})`;
+          if (label) label.textContent = `Conectado`;
           renderAll();
         } else {
           throw new Error("Respuesta inválida");
@@ -1849,7 +1852,7 @@
 
     function getBlockDays() {
       const days = state.data.microcycles.filter(m => m.blockId === state.blockId);
-      return days.length ? days : BACKUP_DATA.microcycles;
+      return days.length ? days : BACKUP_DATA.microcycles.filter(m => m.blockId === "horst-6w");
     }
 
     function getPhaseForWeek(block, weekNum) {
@@ -1907,22 +1910,10 @@
     function resetCurrentBlock() {
       state.week = 1;
       safeStorage.set(STORAGE_KEYS.WEEK, "1");
-
       Object.keys(state.checks).forEach(k => {
-        if (k.startsWith(state.blockId + "_")) {
-          delete state.checks[k];
-        }
+        if (k.startsWith(state.blockId + "_")) delete state.checks[k];
       });
       safeStorage.set(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
-
-      const allLogs = state.data.logs || [];
-      const blockTotalLogs = allLogs.filter(l => normalizeBlockAlias(l.blockId, l.dayTitle) === state.blockId).length;
-      state.resetBaseline[state.blockId] = {
-        week: 1,
-        logCount: blockTotalLogs
-      };
-      safeStorage.set(STORAGE_KEYS.RESET_BASELINE, JSON.stringify(state.resetBaseline));
-
       latLinked.checkKey = null;
       renderAll();
     }
@@ -1935,11 +1926,7 @@
 
       const logs = state.data.logs || [];
       const blockLogs = logs.filter(l => normalizeBlockAlias(l.blockId, l.dayTitle) === block.id);
-      const baseline = state.resetBaseline[block.id];
-      const isResetWeek1 = baseline && Number(state.week) === 1 && blockLogs.length <= baseline.logCount;
-      const weekLogs = isResetWeek1
-        ? []
-        : blockLogs.filter(l => extractWeekNum(l.week) === Number(state.week));
+      const weekLogs = blockLogs.filter(l => extractWeekNum(l.week) === Number(state.week));
 
       const completedCodes = new Set(weekLogs.map(l => normalizeDayCode(l.dayCode)));
       const activeDays = days.filter(d => d.sections && d.sections.length > 0);
@@ -1949,7 +1936,7 @@
 
       const day = days.find(d => d.code === state.dayCode) || days[0];
       const isDeload = state.week === block.weeks && block.weeks >= 4;
-      const isPhase2 = !isDeload && state.week >= 3;
+      const isPhase2 = !isDeload && state.week >= 4;
 
       document.getElementById("home-today-code").textContent = `${day.code} · Sem ${state.week}`;
       document.getElementById("home-today-pct").textContent = `${pct}% Sem (${doneInWeek}/${totalTargetSessions})`;
@@ -2095,7 +2082,7 @@
       }
 
       const isDeload = state.week === block.weeks && block.weeks >= 4;
-      const isPhase2 = !isDeload && state.week >= 3;
+      const isPhase2 = !isDeload && state.week >= 4;
 
       secEl.innerHTML = day.sections.map((sec, sIdx) => {
         const itemsHtml = sec.items.map((item, iIdx) => {
@@ -2117,7 +2104,7 @@
                   <span>${rxText}</span>
                   ${item.rest ? `<span>· Pausa: ${item.rest}</span>` : ""}
                   <button type="button" class="ex-timer-btn" onclick="event.stopPropagation(); loadExerciseByKey('${checkKey}', false)">
-                    ${iconSvg("clock", 11)}<span>Cargar Rx</span>
+                    ${iconSvg("clock", 11)}<span>Cargar en Timer</span>
                   </button>
                 </div>
               </div>
@@ -2149,7 +2136,7 @@
       document.getElementById("log-day").value = state.dayCode;
     }
 
-    // ENCICLOPEDIA: LUPA + 8 GRUPOS LATTICE + ETIQUETAS INTERNAS + VISTA DEDICADA
+    // ENCICLOPEDIA + NAVEGACIÓN ORGÁNICA DE RETORNO
     function onEncySearchInput() {
       const input = document.getElementById("ency-search");
       state.encySearch = input ? input.value : "";
@@ -2189,15 +2176,36 @@
     function openExerciseDetail(exId) {
       const ex = state.data.encyclopedia.find(e => e.id === exId);
       if (!ex) return;
+
+      // Guarda exactamente desde qué pestaña entraste (train, home o ency)
+      const originView = state.currentView || "ency";
+      state.prevView = originView !== "ency" ? originView : null;
       state.encyDetailId = exId;
-      const navBtn = document.querySelector('.nav-btn[data-view="ency"]');
-      switchView("ency", navBtn);
+
+      // Muestra el contenedor de la ficha sin perder el foco activo de la barra inferior si vienes de Entrenar/Inicio
+      ["home", "train", "ency", "log"].forEach(v => {
+        document.getElementById(`view-${v}`).classList.toggle("hidden", v !== "ency");
+      });
+      const planCard = document.getElementById("global-plan-card");
+      if (planCard) planCard.classList.add("hidden");
+
       renderEncyclopedia();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function closeExerciseDetail() {
+      const returnTo = state.prevView;
       state.encyDetailId = null;
+      state.prevView = null;
+
+      if (returnTo && returnTo !== "ency") {
+        const btn = document.querySelector(`.nav-btn[data-view="${returnTo}"]`);
+        switchView(returnTo, btn);
+        return;
+      }
+
+      const encyBtn = document.querySelector('.nav-btn[data-view="ency"]');
+      switchView("ency", encyBtn);
       renderEncyclopedia();
     }
 
@@ -2216,7 +2224,11 @@
             ? ex.steps
             : String(ex.steps || "").split("|").map(s => s.trim()).filter(Boolean);
           const altText = ex.safeAlt || ex.alt || "Ajustar volumen o descargar peso según sensaciones.";
-          const sourceText = ex.author || ex.source || "Lattice · SUNBLOCK";
+          const sourceText = ex.author || ex.source || "Eric Hörst · SUNBLOCK";
+
+          const backLabel = state.prevView === "train"
+            ? `Volver a Entrenar (${state.dayCode})`
+            : (state.prevView === "home" ? "Volver a Inicio" : "Volver a Enciclopedia");
 
           browserEl.classList.add("hidden");
           detailEl.classList.remove("hidden");
@@ -2224,7 +2236,7 @@
             <div class="card" style="border-top: 3px solid ${grp.color};">
               <div class="detail-header">
                 <button type="button" class="btn-secondary" onclick="closeExerciseDetail()">
-                  ${iconSvg("back", 14)}<span>Volver a Enciclopedia</span>
+                  ${iconSvg("back", 14)}<span>${backLabel}</span>
                 </button>
                 <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
                   <span class="grp-pill" style="background:${grp.soft}; color:${grp.color};">
@@ -2373,31 +2385,27 @@
       if (sel && state.encyGroup) sel.value = state.encyGroup;
       document.getElementById("new-ex-modal").classList.add("open");
     }
-    function closeNewExModal() {
-      document.getElementById("new-ex-modal").classList.remove("open");
-    }
+    function closeNewExModal() { document.getElementById("new-ex-modal").classList.remove("open"); }
 
     async function saveNewExercise() {
       const name = document.getElementById("nex-name").value.trim();
       const group = document.getElementById("nex-group").value || "Conditioning";
-      const grp = EXERCISE_GROUPS.find(g => g.id === group) || EXERCISE_GROUPS[1];
-      const focus = document.getElementById("nex-focus").value.trim() || "Acondicionamiento";
+      const grp = EXERCISE_GROUPS.find(g => g.id === group) || EXERCISE_GROUPS[3];
+      const focus = document.getElementById("nex-focus").value.trim() || "Cara B · Acondicionamiento";
       const goal = document.getElementById("nex-goal").value.trim() || "Preparación y acondicionamiento específico para escalada.";
       const media_url = document.getElementById("nex-media").value.trim();
       const rawSteps = document.getElementById("nex-steps").value.trim();
       const steps = rawSteps ? rawSteps.split("|").map(s => s.trim()).filter(Boolean) : ["Ejecutar con control técnico y descanso adecuado."];
       const safeAlt = document.getElementById("nex-alt").value.trim() || "Reducir carga o volumen según sensaciones.";
 
-      if (!name) {
-        alert("Escribe al menos el nombre del ejercicio.");
-        return;
-      }
+      if (!name) { alert("Escribe al menos el nombre del ejercicio."); return; }
 
       const newEx = {
         id: "ex-" + Date.now(),
         group: grp.id,
         name,
         focus,
+        timer_mode: "rest",
         hold_sec: 0,
         reps: 8,
         sets: 3,
@@ -2474,7 +2482,6 @@
       const dayCode = document.getElementById("log-day").value;
       const dayObj = days.find(d => d.code === dayCode) || { title: dayCode };
       const rpeVal = Number(document.getElementById("log-rpe").value) || 7;
-      const painSummary = `Dedos: ${state.traffic.dedos} | Codos: ${state.traffic.codos}`;
 
       const entry = {
         date: new Date().toISOString().slice(0, 10),
@@ -2486,13 +2493,9 @@
         dayCode: dayCode,
         day_title: dayObj.title,
         dayTitle: dayObj.title,
-        status: "Completado",
-        sensation: `RPE ${rpeVal}/10`,
-        pain_flag: painSummary,
         rpe: rpeVal,
         dedos: state.traffic.dedos,
         codos: state.traffic.codos,
-        notes: document.getElementById("log-note").value.trim(),
         note: document.getElementById("log-note").value.trim()
       };
 
@@ -2500,10 +2503,7 @@
       safeStorage.set(STORAGE_KEYS.CACHE, JSON.stringify(state.data));
       renderAll();
 
-      if (!url) {
-        alert("Guardado localmente (configura la URL /exec en ⚙️ para enviar a Google Sheets).");
-        return;
-      }
+      if (!url) return;
 
       const btn = document.getElementById("btn-save-log");
       btn.disabled = true;
@@ -2527,13 +2527,17 @@
 
     // NAVIGATION
     function switchView(viewName, btn) {
+      state.currentView = viewName;
+      if (viewName === "ency") {
+        state.encyDetailId = null;
+        state.prevView = null;
+        renderEncyclopedia();
+      }
       ["home", "train", "ency", "log"].forEach(v => {
         document.getElementById(`view-${v}`).classList.toggle("hidden", v !== viewName);
       });
       const planCard = document.getElementById("global-plan-card");
-      if (planCard) {
-        planCard.classList.toggle("hidden", viewName === "ency");
-      }
+      if (planCard) planCard.classList.toggle("hidden", viewName === "ency");
       document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
       if (btn) btn.classList.add("active");
     }
