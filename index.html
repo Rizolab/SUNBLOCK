@@ -632,7 +632,7 @@
         <select id="block-select" onchange="onBlockChange()"></select>
         <div class="week-stepper">
           <button type="button" onclick="changeWeek(-1)" aria-label="Semana anterior">−</button>
-          <span id="week-label">Sem 1 / 6</span>
+          <span id="week-label">Sem 1 / 4</span>
           <button type="button" onclick="changeWeek(1)" aria-label="Semana siguiente">+</button>
         </div>
       </div>
@@ -661,7 +661,7 @@
       <div class="card">
         <div class="card-title">
           <span>Plan Overview · Weekly Breakdown</span>
-          <span id="home-overview-count" style="font-size:10.5px; font-weight:600;">6 semanas</span>
+          <span id="home-overview-count" style="font-size:10.5px; font-weight:600;">4 semanas</span>
         </div>
         <p id="home-overview-summary" style="font-size:12px; color:var(--text-muted); margin-bottom:6px;"></p>
         <div id="home-weekly-breakdown" class="breakdown-list"></div>
@@ -1044,7 +1044,7 @@
       BLOCK: "sunblock_selected_block",
       WEEK: "sunblock_selected_week",
       CHECKS: "sunblock_checks_v2",
-      CACHE: "sunblock_data_cache_v3",
+      CACHE: "sunblock_data_cache_v4",
       RESET_BASELINE: "sunblock_reset_baseline_v1"
     };
 
@@ -1168,7 +1168,7 @@
 
     let state = {
       data: initialData,
-      blockId: safeStorage.get(STORAGE_KEYS.BLOCK) || "horst-6w",
+      blockId: safeStorage.get(STORAGE_KEYS.BLOCK) || "cimiento-4w",
       week: Number(safeStorage.get(STORAGE_KEYS.WEEK)) || 1,
       dayCode: "D1",
       checks: safeJsonParse(safeStorage.get(STORAGE_KEYS.CHECKS), {}),
@@ -1673,15 +1673,16 @@
       syncFromSheets();
     }
 
-    // NORMALIZADORES DE ALIAS HISTÓRICOS, SEMANA Y DÍA PARA PROGRESO EN INICIO
+    // NORMALIZADORES BLINDADOS PARA BLOQUES, SEMANAS Y BITÁCORA
     function normalizeBlockAlias(rawBlockId, rawMeso) {
       const txt = `${rawBlockId || ""} ${rawMeso || ""}`.toLowerCase().trim();
-      if (!txt || txt.includes("horst") || txt.includes("anclaje") || txt.includes("6w") || txt.includes("6 semana")) return "horst-6w";
-      if (txt.includes("cimiento") || txt.includes("basico") || txt.includes("básico")) return "cimiento-4w";
-      if (txt.includes("impulso")) return "impulso-4w";
-      if (txt.includes("flujo")) return "flujo-4w";
-      if (txt.includes("cumbre") || txt.includes("avanzado")) return "cumbre-4w";
-      return String(rawBlockId || "horst-6w").trim();
+      if (!txt) return "";
+      if (txt.includes("cimiento") || txt.includes("basico") || txt.includes("básico") || txt.includes("bloque 0")) return "cimiento-4w";
+      if (txt.includes("horst") || txt.includes("anclaje") || txt.includes("6w") || txt.includes("6 semana") || txt.includes("bloque 1")) return "horst-6w";
+      if (txt.includes("impulso") || txt.includes("bloque 2")) return "impulso-4w";
+      if (txt.includes("flujo") || txt.includes("bloque 3")) return "flujo-4w";
+      if (txt.includes("cumbre") || txt.includes("avanzado") || txt.includes("bloque 4")) return "cumbre-4w";
+      return String(rawBlockId).trim();
     }
 
     function extractWeekNum(rawWeek) {
@@ -1763,17 +1764,25 @@
 
       const rawLogs = json.bitacora || json.logs || [];
       const logs = Array.isArray(rawLogs)
-        ? rawLogs.map(l => ({
-            date: l.date || "",
-            blockId: normalizeBlockAlias(l.block_id || l.blockId, l.meso),
-            week: extractWeekNum(l.week),
-            dayCode: normalizeDayCode(l.day_code || l.dayCode || l.day_title),
-            dayTitle: l.day_title || l.dayTitle || "",
-            rpe: l.rpe || l.sensation || "-",
-            dedos: l.dedos || l.pain_flag || "Verde",
-            codos: l.codos || l.pain_flag || "Verde",
-            note: l.notes || l.note || ""
-          }))
+        ? rawLogs.map(l => {
+            const isArr = Array.isArray(l);
+            const rawBlock = isArr ? l[1] : (l.block_id || l.blockId || l.bloque || l.Bloque || "");
+            const rawMeso  = isArr ? l[2] : (l.meso || l.Mesociclo || l.plan || "");
+            const rawWeek  = isArr ? l[3] : (l.week ?? l.semana ?? l.Semana ?? 1);
+            const rawDay   = isArr ? l[4] : (l.day_code || l.dayCode || l.dia || l.Dia || l.day_title || "");
+            const rawTitle = isArr ? l[5] : (l.day_title || l.dayTitle || l.titulo || "");
+            return {
+              date: isArr ? String(l[0] || "") : (l.date || l.fecha || l.Fecha || ""),
+              blockId: normalizeBlockAlias(rawBlock, rawMeso),
+              week: extractWeekNum(rawWeek),
+              dayCode: normalizeDayCode(rawDay || rawTitle),
+              dayTitle: rawTitle,
+              rpe: isArr ? (l[7] || "-") : (l.rpe || l.RPE || l.sensation || "-"),
+              dedos: isArr ? (l[8] || "Verde") : (l.dedos || l.Dedos || l.pain_flag || "Verde"),
+              codos: isArr ? (l[9] || "Verde") : (l.codos || l.Codos || l.pain_flag || "Verde"),
+              note: isArr ? (l[10] || "") : (l.notes || l.note || l.notas || l.Notas || "")
+            };
+          })
         : [];
 
       return { blocks, encyclopedia, microcycles, logs };
