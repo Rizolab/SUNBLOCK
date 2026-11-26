@@ -210,6 +210,7 @@
     .day-node {
       min-width: 0; background: transparent; border: 1px solid var(--hairline);
       border-radius: 10px; padding: 8px 3px; text-align: center; cursor: pointer;
+      color: var(--text);
     }
     .day-node:hover { border-color: rgba(45, 212, 191, 0.45); background: var(--surface-2); }
     .day-node.selected-day { border-color: var(--accent); background: var(--accent-soft); }
@@ -365,11 +366,13 @@
       display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
       text-align: left; background: var(--surface-2); border: 1px solid var(--hairline);
       border-radius: 12px; padding: 11px 12px; cursor: pointer;
+      color: var(--text);
     }
+    .group-tile:hover { border-color: rgba(148, 163, 184, 0.35); }
     .group-tile-top { display: flex; align-items: center; justify-content: space-between; width: 100%; }
     .group-swatch { width: 12px; height: 12px; border-radius: 4px; }
     .group-count { font-size: 11px; font-weight: 700; color: var(--text-muted); }
-    .group-name { font-size: 12.5px; font-weight: 700; line-height: 1.25; }
+    .group-name { font-size: 12.5px; font-weight: 700; line-height: 1.25; color: var(--text); }
     .focus-filter-bar { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 8px; margin-bottom: 6px; }
     .focus-chip {
       flex: 0 0 auto; font-size: 11px; font-weight: 600; padding: 4px 10px;
@@ -853,7 +856,7 @@
 
   <script>
     /* ========================================================================
-       1. CONFIGURACIÓN, ALMACENAMIENTO Y SINCRONIZACIÓN API
+1. CONFIGURACIÓN, ALMACENAMIENTO Y SINCRONIZACIÓN API
        ======================================================================== */
     const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbyhs-VJFh0Apnj4kQcKjalThItp5POk6TOH9Kc8XEnZ6oCQVX0Inu_ziB0YEBElkCglrA/exec";
     const PIN_CODE = "2026";
@@ -1080,7 +1083,7 @@
     }
 
     /* ========================================================================
-       2. TEMPORIZADOR INTELIGENTE DE 4 MODOS (CALENTAMIENTO, BLOQUE MURO, SERIES, MULTIPRESA)
+2. TEMPORIZADOR INTELIGENTE DE 4 MODOS (CALENTAMIENTO, BLOQUE MURO, SERIES, MULTIPRESA)
        ======================================================================== */
     let timerCfg = {
       mode: "rest",        // "warmup" | "block" | "rest" | "interval"
@@ -1368,7 +1371,7 @@
       if (timerRun.phase === "work") {
         if (timerRun.rep < timerCfg.reps) {
           if (timerRun.restRep > 0) {
-            enterPhase("rest", timerRun.restRep);
+            enterPhase("rest", timerCfg.restRep);
             beepPhase("rest");
           } else {
             timerRun.rep += 1;
@@ -1575,7 +1578,7 @@
     }
 
     /* ========================================================================
-       3. LÓGICA PRINCIPAL DE VISTAS, ENCICLOPEDIA Y BITÁCORA
+3. LÓGICA PRINCIPAL DE VISTAS, ENCICLOPEDIA Y BITÁCORA
        ======================================================================== */
     const EXERCISE_GROUPS = [
       { id: "Strength & Power", name: "Fuerza y Potencia",             color: "#fb7185", soft: "rgba(251, 113, 133, 0.13)" },
