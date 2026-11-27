@@ -112,14 +112,40 @@ function parseSecondsFromText(text, fallbackSec) {
 }
 
 function isUnilateralHoldExercise(exObj, rxText) {
-  const id = String((exObj && exObj.id) || "").toLowerCase();
-  const rx = String(rxText || "").toLowerCase();
+  const id = String((exObj && exObj.id) || latLinked.exId || "").toLowerCase();
+  const name = String((exObj && exObj.name) || latLinked.exName || "").toLowerCase();
+  const rx = String(rxText || latLinked.rx || "").toLowerCase();
   const repsDb = Number(exObj && exObj.reps) || 1;
   const holdDb = Number(exObj && exObj.hold_sec) || 0;
   return id === "ex-pinch" ||
          id === "ex-nohang" ||
+         /pinza en bloque|no-hang|unilateral/.test(name) ||
          /\/\s*mano|por mano|cada mano|\/\s*lado|por lado/.test(rx) ||
          (holdDb > 0 && repsDb === 2);
+}
+
+function enforceUnilateralTimerState() {
+  if (timerCfg.mode !== "interval") return false;
+  const unilateral = isUnilateralHoldExercise(
+    { id: latLinked.exId, name: latLinked.exName, hold_sec: timerCfg.work, reps: timerCfg.reps },
+    latLinked.rx
+  );
+  if (!unilateral) return false;
+  let changed = false;
+  if (timerCfg.reps !== 2) {
+    timerCfg.reps = 2;
+    changed = true;
+  }
+  if (!timerCfg.restRep || timerCfg.restRep <= 0) {
+    timerCfg.restRep = 5;
+    changed = true;
+  }
+  if (!timerCfg.prep || timerCfg.prep <= 0) {
+    timerCfg.prep = 5;
+    changed = true;
+  }
+  if (changed) syncIntervalInputsFromCfg();
+  return true;
 }
 
 function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
@@ -203,12 +229,7 @@ function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
 function setTimerMode(newMode) {
   const valid = ["warmup", "block", "rest", "interval"];
   timerCfg.mode = valid.includes(newMode) ? newMode : "rest";
-  if (timerCfg.mode === "interval" && isUnilateralHoldExercise({ id: latLinked.exId, hold_sec: timerCfg.work, reps: timerCfg.reps }, latLinked.rx)) {
-    timerCfg.reps = 2;
-    if (!timerCfg.restRep || timerCfg.restRep <= 0) timerCfg.restRep = 5;
-    if (!timerCfg.prep || timerCfg.prep <= 0) timerCfg.prep = 5;
-    syncIntervalInputsFromCfg();
-  }
+  enforceUnilateralTimerState();
   resetTimer();
 }
 
@@ -276,6 +297,8 @@ function resetTimer() {
   timerRun.set = 1;
   timerRun.attempt = 1;
   resetBlockWindow();
+
+  enforceUnilateralTimerState();
 
   if (timerCfg.mode === "warmup") enterPhase("warmup", timerCfg.warmupSec);
   else if (timerCfg.mode === "block") enterPhase("setrest", timerCfg.setRest);
@@ -345,6 +368,8 @@ function advanceTimerTick() {
     }
     return;
   }
+
+  enforceUnilateralTimerState();
 
   if (timerRun.phase === "prep") {
     enterPhase("work", timerCfg.work);
@@ -448,6 +473,8 @@ function toggleTimer() {
     return;
   }
   if (timerRun.phase === "done") resetTimer();
+  else enforceUnilateralTimerState();
+
   // En modo Bloque en Muro, arrancar el descanso también activa la ventana total si estaba detenida
   if (timerCfg.mode === "block" && !timerRun.blockRunning && timerRun.blockRemaining > 0) {
     toggleBlockWindow();
@@ -481,6 +508,8 @@ function renderTimer() {
   const queueEl = document.getElementById("lat-queue");
   if (!pill || !digits || !sr) return;
 
+  const isUnilateral = enforceUnilateralTimerState();
+
   const mode = timerCfg.mode;
   ["warmup", "block", "rest", "interval"].forEach(m => {
     document.getElementById(`mode-btn-${m}`)?.classList.toggle("active", mode === m);
@@ -504,10 +533,6 @@ function renderTimer() {
     });
   }
 
-  const isUnilateral = mode === "interval" && isUnilateralHoldExercise(
-    { id: latLinked.exId, hold_sec: timerCfg.work, reps: timerCfg.reps },
-    latLinked.rx
-  );
   const handLabel = isUnilateral ? (timerRun.rep === 1 ? "MANO DERECHA" : "MANO IZQUIERDA") : "TRABAJO EN MURO / BARRA";
   const restRepLabel = isUnilateral ? "ALISTAR OTRA MANO" : "PAUSA ENTRE REPS";
 
