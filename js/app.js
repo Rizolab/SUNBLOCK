@@ -3,7 +3,7 @@
    ======================================================================== */
 const ICONS = {
   home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>`,
-  train: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c0-1.1.9-2 2-2s2 .9 2 2c0 2.2-1.8 4-4 4-3.3 0-6-2.7-6-6 0-4.4 3.6-8 8-8 5.5 0 10 4.5 10 10 0 6.6-5.4 12-12 12-7.7 0-14-6.3-14-14"/></svg>`,
+  train: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="overflow: visible; display: block; flex-shrink: 0;"><path d="M12 12c0-.8.7-1.4 1.5-1.4 1.3 0 2.3 1.1 2.3 2.4 0 2-1.7 3.6-3.8 3.6-2.8 0-5-2.3-5-5.1 0-3.6 3-6.5 6.6-6.5 4.4 0 7.9 3.6 7.9 8 0 5.1-4.2 9.2-9.3 9.2-4.2 0-7.8-2.6-9-6.4" /></svg>`,
   ency: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8"/><path d="M8 11h6"/></svg>`,
   log: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
   gear: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
@@ -22,6 +22,9 @@ const ICONS = {
 
 function iconSvg(name, size = 16) {
   const raw = ICONS[name] || "";
+  if (raw.includes("stroke-width=")) {
+    return raw.replace("<svg ", `<svg width="${size}" height="${size}" class="ui-icon" `);
+  }
   return raw.replace("<svg ", `<svg width="${size}" height="${size}" stroke-width="1.8" class="ui-icon" `);
 }
 
