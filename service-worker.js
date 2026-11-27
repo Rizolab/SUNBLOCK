@@ -1,5 +1,5 @@
-const STATIC_CACHE = "sunblock-static-v1";
-const DATA_CACHE = "sunblock-api-v1";
+const STATIC_CACHE = "sunblock-static-v3";
+const DATA_CACHE = "sunblock-api-v3";
 
 const STATIC_ASSETS = [
   "./",

@@ -1,17 +1,17 @@
 /* ========================================================================
-2. TEMPORIZADOR INTELIGENTE DE 4 MODOS (CALENTAMIENTO, BLOQUE MURO, SERIES, MULTIPRESA)
-   Incluye Screen Wake Lock API para evitar que la pantalla se apague mientras corre el reloj
+   TEMPORIZADOR INTELIGENTE — 4 MODOS (CALENTAMIENTO, BLOQUE MURO, SERIES, MULTIPRESA)
+   v2.1 — Secuencia unilateral corregida · Screen Wake Lock API
    ======================================================================== */
 let timerCfg = {
   mode: "rest",        // "warmup" | "block" | "rest" | "interval"
   prep: 5,
   work: 10,
-  restRep: 0,
+  restRep: 0,          // pausa entre reps (s); en unilateral = 5 (cambio de mano)
   reps: 1,
   sets: 4,
   setRest: 180,
-  warmupSec: 900,      // 15 min por defecto para calentamiento
-  blockWindowSec: 1200 // 20 min por defecto para bloques en muro
+  warmupSec: 900,
+  blockWindowSec: 1200
 };
 
 let latLinked = {
@@ -49,9 +49,7 @@ async function requestWakeLock() {
   if (wakeLockSentinel && !wakeLockSentinel.released) return;
   try {
     wakeLockSentinel = await navigator.wakeLock.request("screen");
-    wakeLockSentinel.addEventListener("release", () => {
-      wakeLockSentinel = null;
-    });
+    wakeLockSentinel.addEventListener("release", () => { wakeLockSentinel = null; });
   } catch (_) {}
 }
 
@@ -59,23 +57,16 @@ async function releaseWakeLock() {
   if (!wakeLockSentinel) return;
   const sentinel = wakeLockSentinel;
   wakeLockSentinel = null;
-  try {
-    await sentinel.release();
-  } catch (_) {}
+  try { await sentinel.release(); } catch (_) {}
 }
 
 function syncWakeLock() {
-  if (isAnyTimerRunning()) {
-    requestWakeLock();
-  } else {
-    releaseWakeLock();
-  }
+  if (isAnyTimerRunning()) requestWakeLock();
+  else releaseWakeLock();
 }
 
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible" && isAnyTimerRunning()) {
-    requestWakeLock();
-  }
+  if (document.visibilityState === "visible" && isAnyTimerRunning()) requestWakeLock();
 });
 
 function beepPhase(type) {
@@ -111,10 +102,11 @@ function parseSecondsFromText(text, fallbackSec) {
   return fallbackSec;
 }
 
+/* ── DETECCION UNILATERAL ─────────────────────────────────────────────── */
 function isUnilateralHoldExercise(exObj, rxText) {
-  const id = String((exObj && exObj.id) || latLinked.exId || "").toLowerCase();
+  const id   = String((exObj && exObj.id)   || latLinked.exId   || "").toLowerCase();
   const name = String((exObj && exObj.name) || latLinked.exName || "").toLowerCase();
-  const rx = String(rxText || latLinked.rx || "").toLowerCase();
+  const rx   = String(rxText || latLinked.rx || "").toLowerCase();
   const repsDb = Number(exObj && exObj.reps) || 1;
   const holdDb = Number(exObj && exObj.hold_sec) || 0;
   return id === "ex-pinch" ||
@@ -124,6 +116,11 @@ function isUnilateralHoldExercise(exObj, rxText) {
          (holdDb > 0 && repsDb === 2);
 }
 
+/**
+ * Fuerza reps=2 y restRep>=5 en modo interval para ejercicios unilaterales.
+ * Nunca baja restRep a 0.
+ * Retorna true si el ejercicio es unilateral.
+ */
 function enforceUnilateralTimerState() {
   if (timerCfg.mode !== "interval") return false;
   const unilateral = isUnilateralHoldExercise(
@@ -132,78 +129,72 @@ function enforceUnilateralTimerState() {
   );
   if (!unilateral) return false;
   let changed = false;
-  if (timerCfg.reps !== 2) {
-    timerCfg.reps = 2;
-    changed = true;
-  }
-  if (!timerCfg.restRep || timerCfg.restRep <= 0) {
-    timerCfg.restRep = 5;
-    changed = true;
-  }
-  if (!timerCfg.prep || timerCfg.prep <= 0) {
-    timerCfg.prep = 5;
-    changed = true;
-  }
+  if (timerCfg.reps !== 2)         { timerCfg.reps    = 2; changed = true; }
+  if (timerCfg.restRep < 5)        { timerCfg.restRep = 5; changed = true; }
+  if (!timerCfg.prep || timerCfg.prep < 1) { timerCfg.prep = 5; changed = true; }
   if (changed) syncIntervalInputsFromCfg();
   return true;
 }
 
+/* ── LECTURA / ESCRITURA DE INPUTS ───────────────────────────────────── */
 function readIntervalInputsIfPresent() {
   if (timerCfg.mode !== "interval") return;
-  const prepEl = document.getElementById("lat-prep");
-  const workEl = document.getElementById("lat-work");
-  const restEl = document.getElementById("lat-rest");
-  const repsEl = document.getElementById("lat-reps");
-  const setsEl = document.getElementById("lat-sets");
+  const prepEl    = document.getElementById("lat-prep");
+  const workEl    = document.getElementById("lat-work");
+  const restEl    = document.getElementById("lat-rest");
+  const repsEl    = document.getElementById("lat-reps");
+  const setsEl    = document.getElementById("lat-sets");
   const setRestEl = document.getElementById("lat-setrest");
   if (!prepEl || !workEl || !restEl || !repsEl || !setsEl || !setRestEl) return;
 
-  timerCfg.prep = Math.max(0, Number(prepEl.value) || 0);
-  timerCfg.work = Math.max(1, Number(workEl.value) || 10);
-  timerCfg.restRep = Math.max(0, Number(restEl.value) || 0);
-  timerCfg.reps = Math.max(1, Number(repsEl.value) || 1);
-  timerCfg.sets = Math.max(1, Number(setsEl.value) || 1);
+  timerCfg.prep    = Math.max(0, Number(prepEl.value)    || 0);
+  timerCfg.work    = Math.max(1, Number(workEl.value)    || 10);
+  timerCfg.restRep = Math.max(0, Number(restEl.value)    || 0);
+  timerCfg.reps    = Math.max(1, Number(repsEl.value)    || 1);
+  timerCfg.sets    = Math.max(1, Number(setsEl.value)    || 1);
   timerCfg.setRest = Math.max(10, Number(setRestEl.value) || 60);
+
+  // Re-aplicar restricciones unilaterales tras leer inputs manuales
+  enforceUnilateralTimerState();
 }
 
-function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
-  const rx = String(rxText || "").toLowerCase();
-  const secLower = String(sectionName || "").toLowerCase();
-  const nameLower = String((exObj && exObj.name) || "").toLowerCase();
-  const restLower = String(restText || "").toLowerCase();
-  const setRest = parseSecondsFromText(restText, (exObj && Number(exObj.set_rest_sec)) || 120);
+function syncIntervalInputsFromCfg() {
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+  setVal("lat-prep",    timerCfg.prep);
+  setVal("lat-work",    timerCfg.work);
+  setVal("lat-rest",    timerCfg.restRep);
+  setVal("lat-reps",    timerCfg.reps);
+  setVal("lat-sets",    timerCfg.sets);
+  setVal("lat-setrest", timerCfg.setRest);
+}
 
-  // 1. MODO CALENTAMIENTO
+/* ── PARSER DE PRESCRIPCION ──────────────────────────────────────────── */
+function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
+  const rx       = String(rxText    || "").toLowerCase();
+  const secLower = String(sectionName || "").toLowerCase();
+  const nameLower= String((exObj && exObj.name) || "").toLowerCase();
+  const restLower= String(restText  || "").toLowerCase();
+  const setRest  = parseSecondsFromText(restText, (exObj && Number(exObj.set_rest_sec)) || 120);
+
+  // 1. CALENTAMIENTO
   const isWarmup = /calentamiento|activaci[oó]n|movilidad articular/.test(secLower) ||
                    /calentamiento|activaci[oó]n/.test(nameLower) ||
                    (/^\d+\s*(?:-\s*\d+\s*)?min/.test(rx.trim()) && !restLower && !/serie|ronda|x\s*\d+/.test(rx));
   if (isWarmup) {
     const warmupSec = parseSecondsFromText(rxText, parseSecondsFromText(sectionName, 900));
-    return {
-      mode: "warmup",
-      prep: 0, work: 0, restRep: 0, reps: 1, sets: 1,
-      setRest: 60,
-      warmupSec,
-      blockWindowSec: 1200
-    };
+    return { mode: "warmup", prep: 0, work: 0, restRep: 0, reps: 1, sets: 1, setRest: 60, warmupSec, blockWindowSec: 1200 };
   }
 
-  // 2. MODO BLOQUE EN MURO
+  // 2. BLOQUE EN MURO
   const blockMinMatch = rx.match(/(\d+(?:\.\d+)?)\s*(?:-\s*\d+\s*)?min/);
-  const isRepeater = /(\d+)\s*:\s*(\d+)/.test(rx);
-  const isShortHold = /(?:x|\()\s*\d+\s*(?:-\s*\d+\s*)?(?:seg|s\b)/.test(rx);
+  const isRepeater    = /(\d+)\s*:\s*(\d+)/.test(rx);
+  const isShortHold   = /(?:x|\()\s*\d+\s*(?:-\s*\d+\s*)?(?:seg|s\b)/.test(rx);
   if (blockMinMatch && !isRepeater && !isShortHold) {
     const blockWindowSec = Math.max(60, Math.round(parseFloat(blockMinMatch[1]) * 60));
-    return {
-      mode: "block",
-      prep: 0, work: 0, restRep: 0, reps: 1, sets: 1,
-      setRest,
-      warmupSec: 900,
-      blockWindowSec
-    };
+    return { mode: "block", prep: 0, work: 0, restRep: 0, reps: 1, sets: 1, setRest, warmupSec: 900, blockWindowSec };
   }
 
-  // 3. MODO INTERVALOS / MULTIPRESA
+  // 3. INTERVALOS / MULTIPRESA
   let sets = (exObj && Number(exObj.sets)) || 3;
   const setsMatch = rx.match(/(\d+)\s*(?:series|rondas)/);
   if (setsMatch) sets = Math.max(1, parseInt(setsMatch[1], 10));
@@ -214,7 +205,7 @@ function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
 
   const repeaterMatch = rx.match(/(\d+)\s*:\s*(\d+)/);
   if (repeaterMatch) {
-    const work = Math.max(1, parseInt(repeaterMatch[1], 10));
+    const work    = Math.max(1, parseInt(repeaterMatch[1], 10));
     const restRep = Math.max(1, parseInt(repeaterMatch[2], 10));
     const repsMatch = rx.match(/x\s*(\d+)\s*rep/);
     const reps = repsMatch ? Math.max(1, parseInt(repsMatch[1], 10)) : ((exObj && Number(exObj.reps)) || 6);
@@ -222,28 +213,23 @@ function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
   }
 
   const unilateralHold = isUnilateralHoldExercise(exObj, rxText);
-  const segMatch = rx.match(/(?:x|\()\s*(\d+)\s*(?:-\s*\d+\s*)?(?:seg|s\b)/);
-  const holdFromDb = exObj ? Number(exObj.hold_sec) : 0;
+  const segMatch       = rx.match(/(?:x|\()\s*(\d+)\s*(?:-\s*\d+\s*)?(?:seg|s\b)/);
+  const holdFromDb     = exObj ? Number(exObj.hold_sec) : 0;
+
   if (segMatch || (holdFromDb > 0 && !rx.includes("rep")) || unilateralHold) {
-    const work = segMatch ? Math.max(1, parseInt(segMatch[1], 10)) : Math.max(1, holdFromDb || 10);
+    const work      = segMatch ? Math.max(1, parseInt(segMatch[1], 10)) : Math.max(1, holdFromDb || 10);
     const isLockoff = /90°|120°|bloqueo/.test(rx);
-    return {
-      mode: "interval",
-      prep: 5,
-      work,
-      restRep: isLockoff ? 3 : (unilateralHold ? 5 : (Number(exObj?.rest_rep_sec) || 0)),
-      reps: isLockoff ? 3 : (unilateralHold ? 2 : (Number(exObj?.reps) || 1)),
-      sets,
-      setRest,
-      warmupSec: 900,
-      blockWindowSec: 1200
-    };
+    // UNILATERAL: siempre 2 reps con 5s de pausa entre manos
+    const restRep   = isLockoff ? 3 : (unilateralHold ? 5 : Math.max(0, Number(exObj && exObj.rest_rep_sec) || 0));
+    const reps      = isLockoff ? 3 : (unilateralHold ? 2 : (Number(exObj && exObj.reps) || 1));
+    return { mode: "interval", prep: 5, work, restRep, reps, sets, setRest, warmupSec: 900, blockWindowSec: 1200 };
   }
 
-  // 4. MODO DESCANSO ENTRE SERIES
+  // 4. DESCANSO ENTRE SERIES
   return { mode: "rest", prep: 0, work: 0, restRep: 0, reps: 1, sets, setRest, warmupSec: 900, blockWindowSec: 1200 };
 }
 
+/* ── CONTROL DE MODO ─────────────────────────────────────────────────── */
 function setTimerMode(newMode) {
   const valid = ["warmup", "block", "rest", "interval"];
   timerCfg.mode = valid.includes(newMode) ? newMode : "rest";
@@ -257,25 +243,24 @@ function setQuickRest(seconds) {
     resetTimer();
     return;
   }
-  if (timerCfg.mode !== "block") {
-    timerCfg.mode = "rest";
-  }
+  if (timerCfg.mode !== "block") timerCfg.mode = "rest";
   timerCfg.setRest = Math.max(10, Number(seconds) || 120);
   resetTimer();
 }
 
+/* ── FASES ───────────────────────────────────────────────────────────── */
 function enterPhase(phase, sec) {
   const safeSec = Math.max(1, Number(sec) || 1);
-  timerRun.phase = phase;
-  timerRun.remaining = safeSec;
+  timerRun.phase      = phase;
+  timerRun.remaining  = safeSec;
   timerRun.phaseTotal = safeSec;
 }
 
 function resetBlockWindow() {
   clearInterval(timerRun.blockIntervalId);
   timerRun.blockIntervalId = null;
-  timerRun.blockRunning = false;
-  timerRun.blockRemaining = timerCfg.blockWindowSec || 1200;
+  timerRun.blockRunning    = false;
+  timerRun.blockRemaining  = timerCfg.blockWindowSec || 1200;
   syncWakeLock();
 }
 
@@ -283,7 +268,7 @@ function toggleBlockWindow() {
   if (timerRun.blockRunning) {
     clearInterval(timerRun.blockIntervalId);
     timerRun.blockIntervalId = null;
-    timerRun.blockRunning = false;
+    timerRun.blockRunning    = false;
     syncWakeLock();
     renderTimer();
     return;
@@ -296,8 +281,8 @@ function toggleBlockWindow() {
     if (timerRun.blockRemaining > 1) {
       timerRun.blockRemaining -= 1;
     } else {
-      timerRun.blockRemaining = 0;
-      timerRun.blockRunning = false;
+      timerRun.blockRemaining  = 0;
+      timerRun.blockRunning    = false;
       clearInterval(timerRun.blockIntervalId);
       timerRun.blockIntervalId = null;
       syncWakeLock();
@@ -310,19 +295,19 @@ function toggleBlockWindow() {
 function resetTimer() {
   clearInterval(timerRun.intervalId);
   timerRun.intervalId = null;
-  timerRun.running = false;
-  timerRun.rep = 1;
-  timerRun.set = 1;
-  timerRun.attempt = 1;
+  timerRun.running    = false;
+  timerRun.rep        = 1;
+  timerRun.set        = 1;
+  timerRun.attempt    = 1;
   resetBlockWindow();
 
   enforceUnilateralTimerState();
 
-  if (timerCfg.mode === "warmup") enterPhase("warmup", timerCfg.warmupSec);
-  else if (timerCfg.mode === "block") enterPhase("setrest", timerCfg.setRest);
-  else if (timerCfg.mode === "rest") enterPhase("setrest", timerCfg.setRest);
-  else if (timerCfg.prep > 0) enterPhase("prep", timerCfg.prep);
-  else enterPhase("work", timerCfg.work);
+  if      (timerCfg.mode === "warmup") enterPhase("warmup",  timerCfg.warmupSec);
+  else if (timerCfg.mode === "block")  enterPhase("setrest", timerCfg.setRest);
+  else if (timerCfg.mode === "rest")   enterPhase("setrest", timerCfg.setRest);
+  else if (timerCfg.prep > 0)          enterPhase("prep",    timerCfg.prep);
+  else                                 enterPhase("work",    timerCfg.work);
 
   syncWakeLock();
   renderTimer();
@@ -333,23 +318,14 @@ function applyIntervalInputs() {
   resetTimer();
 }
 
-function syncIntervalInputsFromCfg() {
-  const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
-  setVal("lat-prep", timerCfg.prep);
-  setVal("lat-work", timerCfg.work);
-  setVal("lat-rest", timerCfg.restRep);
-  setVal("lat-reps", timerCfg.reps);
-  setVal("lat-sets", timerCfg.sets);
-  setVal("lat-setrest", timerCfg.setRest);
-}
-
+/* ── LOGICA DE AVANCE DE FASES ───────────────────────────────────────── */
 function advanceTimerTick() {
   if (timerCfg.mode === "warmup") {
     clearInterval(timerRun.intervalId);
     timerRun.intervalId = null;
-    timerRun.running = false;
-    timerRun.phase = "done";
-    timerRun.remaining = 0;
+    timerRun.running    = false;
+    timerRun.phase      = "done";
+    timerRun.remaining  = 0;
     syncWakeLock();
     beepPhase("done");
     return;
@@ -358,7 +334,7 @@ function advanceTimerTick() {
   if (timerCfg.mode === "block") {
     clearInterval(timerRun.intervalId);
     timerRun.intervalId = null;
-    timerRun.running = false;
+    timerRun.running    = false;
     syncWakeLock();
     beepPhase("work");
     timerRun.attempt += 1;
@@ -369,19 +345,20 @@ function advanceTimerTick() {
   if (timerCfg.mode === "rest") {
     clearInterval(timerRun.intervalId);
     timerRun.intervalId = null;
-    timerRun.running = false;
+    timerRun.running    = false;
     syncWakeLock();
     beepPhase("done");
     if (timerRun.set < timerCfg.sets) {
       timerRun.set += 1;
       enterPhase("setrest", timerCfg.setRest);
     } else {
-      timerRun.phase = "done";
+      timerRun.phase     = "done";
       timerRun.remaining = 0;
     }
     return;
   }
 
+  // ── MODO INTERVAL ──
   enforceUnilateralTimerState();
 
   if (timerRun.phase === "prep") {
@@ -389,9 +366,12 @@ function advanceTimerTick() {
     beepPhase("work");
     return;
   }
+
   if (timerRun.phase === "work") {
     if (timerRun.rep < timerCfg.reps) {
-      if (timerRun.restRep > 0) {
+      // Hay mas reps en esta serie
+      if (timerCfg.restRep > 0) {
+        // Pausa entre reps (p.ej. cambio de mano en unilateral)
         enterPhase("rest", timerCfg.restRep);
         beepPhase("rest");
       } else {
@@ -401,36 +381,41 @@ function advanceTimerTick() {
       }
       return;
     }
+    // Ultima rep de la serie
     if (timerRun.set < timerCfg.sets) {
-      if (timerRun.setRest > 0) {
+      if (timerCfg.setRest > 0) {
         enterPhase("setrest", timerCfg.setRest);
         beepPhase("rest");
       } else {
         timerRun.set += 1;
-        timerRun.rep = 1;
+        timerRun.rep  = 1;
         enterPhase("work", timerCfg.work);
         beepPhase("work");
       }
       return;
     }
-    timerRun.phase = "done";
-    timerRun.remaining = 0;
-    timerRun.running = false;
+    // Ultima rep de la ultima serie → completado
+    timerRun.phase      = "done";
+    timerRun.remaining  = 0;
+    timerRun.running    = false;
     clearInterval(timerRun.intervalId);
     timerRun.intervalId = null;
     syncWakeLock();
     beepPhase("done");
     return;
   }
+
   if (timerRun.phase === "rest") {
+    // Pausa inter-rep finalizada: avanzar rep
     timerRun.rep += 1;
     enterPhase("work", timerCfg.work);
     beepPhase("work");
     return;
   }
+
   if (timerRun.phase === "setrest") {
     timerRun.set += 1;
-    timerRun.rep = 1;
+    timerRun.rep  = 1;
     if (timerCfg.prep > 0) {
       enterPhase("prep", timerCfg.prep);
       beepPhase("rest");
@@ -441,6 +426,7 @@ function advanceTimerTick() {
   }
 }
 
+/* ── SKIP MANUAL ─────────────────────────────────────────────────────── */
 function advanceSetOrPhase() {
   if (timerCfg.mode === "warmup") {
     completeLinkedExercise();
@@ -449,7 +435,7 @@ function advanceSetOrPhase() {
   if (timerCfg.mode === "block") {
     clearInterval(timerRun.intervalId);
     timerRun.intervalId = null;
-    timerRun.running = false;
+    timerRun.running    = false;
     syncWakeLock();
     timerRun.attempt += 1;
     enterPhase("setrest", timerCfg.setRest);
@@ -459,13 +445,13 @@ function advanceSetOrPhase() {
   if (timerCfg.mode === "rest") {
     clearInterval(timerRun.intervalId);
     timerRun.intervalId = null;
-    timerRun.running = false;
+    timerRun.running    = false;
     syncWakeLock();
     if (timerRun.set < timerCfg.sets) {
       timerRun.set += 1;
       enterPhase("setrest", timerCfg.setRest);
     } else {
-      timerRun.phase = "done";
+      timerRun.phase     = "done";
       timerRun.remaining = 0;
     }
     renderTimer();
@@ -476,11 +462,12 @@ function advanceSetOrPhase() {
   renderTimer();
 }
 
+/* ── TOGGLE INICIO / PAUSA ───────────────────────────────────────────── */
 function toggleTimer() {
   if (timerRun.running) {
     clearInterval(timerRun.intervalId);
     timerRun.intervalId = null;
-    timerRun.running = false;
+    timerRun.running    = false;
     syncWakeLock();
     renderTimer();
     return;
@@ -507,107 +494,117 @@ function toggleTimer() {
   }, 1000);
 }
 
+/* ── RENDER ──────────────────────────────────────────────────────────── */
 function renderTimer() {
-  const pill = document.getElementById("lat-phase-pill");
-  const digits = document.getElementById("lat-digits");
-  const sr = document.getElementById("lat-sr");
-  const totalEl = document.getElementById("lat-total-left");
-  const fill = document.getElementById("lat-phase-fill");
-  const toggleIcon = document.getElementById("lat-toggle-icon");
+  const pill        = document.getElementById("lat-phase-pill");
+  const digits      = document.getElementById("lat-digits");
+  const sr          = document.getElementById("lat-sr");
+  const totalEl     = document.getElementById("lat-total-left");
+  const fill        = document.getElementById("lat-phase-fill");
+  const toggleIcon  = document.getElementById("lat-toggle-icon");
   const toggleLabel = document.getElementById("lat-toggle-label");
-  const skipLabel = document.getElementById("lat-skip-label");
-  const exTitle = document.getElementById("lat-ex-title");
-  const exSub = document.getElementById("lat-ex-sub");
+  const skipLabel   = document.getElementById("lat-skip-label");
+  const exTitle     = document.getElementById("lat-ex-title");
+  const exSub       = document.getElementById("lat-ex-sub");
   const paramsPanel = document.getElementById("lat-params-panel");
-  const presetsBar = document.getElementById("rest-presets-bar");
-  const blockBar = document.getElementById("block-window-bar");
+  const presetsBar  = document.getElementById("rest-presets-bar");
+  const blockBar    = document.getElementById("block-window-bar");
   const blockDigits = document.getElementById("block-window-digits");
-  const blockBtn = document.getElementById("block-window-btn");
-  const queueEl = document.getElementById("lat-queue");
+  const blockBtn    = document.getElementById("block-window-btn");
+  const queueEl     = document.getElementById("lat-queue");
   if (!pill || !digits || !sr) return;
 
   const isUnilateral = enforceUnilateralTimerState();
 
   const mode = timerCfg.mode;
-  ["warmup", "block", "rest", "interval"].forEach(m => {
+  ["warmup","block","rest","interval"].forEach(m => {
     document.getElementById(`mode-btn-${m}`)?.classList.toggle("active", mode === m);
   });
 
   const showPresets = mode === "rest" || mode === "block";
-  if (presetsBar) presetsBar.classList.toggle("hidden", !showPresets);
+  if (presetsBar)  presetsBar.classList.toggle("hidden", !showPresets);
   if (paramsPanel) paramsPanel.classList.toggle("hidden", mode !== "interval" || timerRun.running);
-  if (blockBar) blockBar.classList.toggle("hidden", mode !== "block");
+  if (blockBar)    blockBar.classList.toggle("hidden", mode !== "block");
 
   if (mode === "block" && blockDigits && blockBtn) {
     blockDigits.textContent = fmtSec(timerRun.blockRemaining);
-    blockBtn.textContent = timerRun.blockRunning ? "Pausar Bloque" : "Iniciar Bloque";
+    blockBtn.textContent    = timerRun.blockRunning ? "Pausar Bloque" : "Iniciar Bloque";
   }
 
   if (showPresets && presetsBar) {
     presetsBar.querySelectorAll(".preset-chip").forEach(btn => {
       const secMatch = btn.getAttribute("onclick")?.match(/\((\d+)\)/);
-      const sVal = secMatch ? Number(secMatch[1]) : 0;
+      const sVal     = secMatch ? Number(secMatch[1]) : 0;
       btn.classList.toggle("active", sVal === timerCfg.setRest);
     });
   }
 
-  const handLabel = isUnilateral ? (timerRun.rep === 1 ? "MANO DERECHA" : "MANO IZQUIERDA") : "TRABAJO EN MURO / BARRA";
+  // Etiquetas de fase dinamicas segun si es unilateral
+  const handLabel    = isUnilateral
+    ? (timerRun.rep === 1 ? "MANO DERECHA" : "MANO IZQUIERDA")
+    : "TRABAJO EN MURO / BARRA";
   const restRepLabel = isUnilateral ? "ALISTAR OTRA MANO" : "PAUSA ENTRE REPS";
 
   const meta = {
-    warmup: { label: "CALENTAMIENTO", cls: "p-warmup", color: "#fb923c" },
-    prep: { label: "PREPARACIÓN", cls: "p-prep", color: "#38bdf8" },
-    work: { label: handLabel, cls: "p-work", color: "#2dd4bf" },
-    rest: { label: restRepLabel, cls: "p-rest", color: "#34d399" },
-    setrest: { label: mode === "block" ? "PAUSA ENTRE PEGUES" : "PAUSA ENTRE SERIES", cls: "p-setrest", color: "#fbbf24" },
-    done: { label: "COMPLETADO", cls: "p-done", color: "#34d399" }
+    warmup:  { label: "CALENTAMIENTO",          cls: "p-warmup",  color: "#fb923c" },
+    prep:    { label: "PREPARACION",             cls: "p-prep",    color: "#38bdf8" },
+    work:    { label: handLabel,                 cls: "p-work",    color: "#2dd4bf" },
+    rest:    { label: restRepLabel,              cls: "p-rest",    color: "#34d399" },
+    setrest: { label: mode === "block" ? "PAUSA ENTRE PEGUES" : "PAUSA ENTRE SERIES",
+                                                 cls: "p-setrest", color: "#fbbf24" },
+    done:    { label: "COMPLETADO",              cls: "p-done",    color: "#34d399" }
   };
   const cur = meta[timerRun.phase] || meta.setrest;
 
-  pill.textContent = cur.label;
-  pill.className = `phase-pill ${cur.cls}`;
+  pill.textContent   = cur.label;
+  pill.className     = `phase-pill ${cur.cls}`;
   digits.textContent = fmtSec(timerRun.remaining);
   digits.style.color = cur.color;
 
   if (mode === "warmup") {
-    sr.textContent = `Activación (${Math.round(timerCfg.warmupSec / 60)} min)`;
+    sr.textContent = `Activacion (${Math.round(timerCfg.warmupSec / 60)} min)`;
     if (totalEl) totalEl.textContent = timerRun.phase === "done"
       ? "Calentamiento listo · Pasa al primer ejercicio"
       : "Activa articulaciones y dedos a tu ritmo";
     if (toggleLabel) toggleLabel.textContent = timerRun.running ? "Pausar" : "Iniciar Calentamiento";
-    if (skipLabel) skipLabel.textContent = "Listo → Rutina";
+    if (skipLabel)   skipLabel.textContent   = "Listo → Rutina";
   } else if (mode === "block") {
     sr.textContent = `Pegue ${timerRun.attempt}`;
     if (totalEl) totalEl.textContent = timerRun.running
       ? "Recuperando ATP-PC antes del siguiente pegue..."
       : "Baja del muro y pulsa Iniciar Descanso";
     if (toggleLabel) toggleLabel.textContent = timerRun.running ? "Pausar" : "Iniciar Descanso";
-    if (skipLabel) skipLabel.textContent = "+1 Pegue";
+    if (skipLabel)   skipLabel.textContent   = "+1 Pegue";
   } else if (mode === "rest") {
     sr.textContent = `Serie ${timerRun.set} de ${timerCfg.sets}`;
     if (totalEl) totalEl.textContent = timerRun.phase === "done"
       ? "Todas las series completadas"
       : (timerRun.running ? "Descansando antes de la siguiente serie..." : "Haz tus reps y pulsa Iniciar Descanso");
     if (toggleLabel) toggleLabel.textContent = timerRun.running ? "Pausar" : "Iniciar Descanso";
-    if (skipLabel) skipLabel.textContent = "+1 Serie";
+    if (skipLabel)   skipLabel.textContent   = "+1 Serie";
   } else {
-    const ladoTxt = isUnilateral ? ` · ${timerRun.rep === 1 ? "Mano derecha" : "Mano izquierda"}` : "";
+    // Modo interval
+    const ladoTxt = isUnilateral
+      ? ` · ${timerRun.rep === 1 ? "Mano derecha" : "Mano izquierda"}`
+      : "";
     sr.textContent = `Serie ${timerRun.set}/${timerCfg.sets} · Rep ${timerRun.rep}/${timerCfg.reps}${ladoTxt}`;
     if (totalEl) totalEl.textContent = isUnilateral
       ? `Trabajo ${timerCfg.work}s/mano · Cambio ${timerCfg.restRep}s · Descanso ${fmtSec(timerCfg.setRest)}`
       : `Trabajo ${timerCfg.work}s · Descanso serie ${fmtSec(timerCfg.setRest)}`;
     if (toggleLabel) toggleLabel.textContent = timerRun.running ? "Pausar" : "Iniciar";
-    if (skipLabel) skipLabel.textContent = "Saltar Fase";
+    if (skipLabel)   skipLabel.textContent   = "Saltar Fase";
   }
 
   if (exTitle) exTitle.textContent = latLinked.exName;
-  if (exSub) exSub.textContent = latLinked.rx
+  if (exSub)   exSub.textContent   = latLinked.rx
     ? `${latLinked.rx}${latLinked.restText ? ` · Pausa: ${latLinked.restText}` : ""}`
     : "Selecciona un ejercicio abajo";
 
   if (fill) {
-    const pct = timerRun.phaseTotal > 0 ? Math.max(0, Math.min(100, (timerRun.remaining / timerRun.phaseTotal) * 100)) : 0;
-    fill.style.width = `${timerRun.phase === "done" ? 100 : pct}%`;
+    const pct = timerRun.phaseTotal > 0
+      ? Math.max(0, Math.min(100, (timerRun.remaining / timerRun.phaseTotal) * 100))
+      : 0;
+    fill.style.width      = `${timerRun.phase === "done" ? 100 : pct}%`;
     fill.style.background = cur.color;
   }
 
@@ -616,15 +613,17 @@ function renderTimer() {
   const queue = getDayExerciseQueue();
   if (queueEl) {
     queueEl.innerHTML = queue.map((q, idx) => `
-      <button type="button" class="q-chip ${idx === latLinked.queueIndex ? "active" : ""}" onclick="loadQueueExerciseAt(${idx}, false)">
+      <button type="button" class="q-chip ${idx === latLinked.queueIndex ? "active" : ""}"
+        onclick="loadQueueExerciseAt(${idx}, false)">
         ${idx + 1}. ${q.exName}
       </button>
     `).join("");
   }
 }
 
+/* ── LISTENER INPUT CHANGE ───────────────────────────────────────────── */
 document.addEventListener("change", (e) => {
-  if (["lat-prep", "lat-work", "lat-rest", "lat-reps", "lat-sets", "lat-setrest"].includes(e.target?.id)) {
+  if (["lat-prep","lat-work","lat-rest","lat-reps","lat-sets","lat-setrest"].includes(e.target && e.target.id)) {
     applyIntervalInputs();
   }
 });

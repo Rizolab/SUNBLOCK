@@ -241,10 +241,27 @@ function sendExerciseToTimer(exId) {
   if (idx >= 0) { loadQueueExerciseAt(idx, false); return; }
 
   const holdSec = Number(ex.hold_sec) || 0;
-  const sets = Math.max(1, Number(ex.sets) || 3);
+  const sets    = Math.max(1, Number(ex.sets) || 3);
   const setRest = Math.max(30, Number(ex.set_rest_sec) || 90);
-  latLinked = { checkKey: null, exId: ex.id, exName: ex.name, sectionName: "", rx: holdSec > 0 ? `${sets} x ${holdSec}s` : `${sets} series`, restText: `${setRest}s`, queueIndex: 0 };
-  timerCfg = { mode: holdSec > 0 ? "interval" : "rest", prep: 5, work: holdSec || 10, restRep: Number(ex.rest_rep_sec) || 0, reps: Number(ex.reps) || 1, sets, setRest, warmupSec: 900, blockWindowSec: 1200 };
+  // Detectar si es unilateral ANTES de asignar restRep para nunca sobrescribir con 0
+  const isUnilateral = /ex-pinch|ex-nohang/.test(ex.id) ||
+    /pinza en bloque|no-hang|unilateral/.test((ex.name || "").toLowerCase());
+  const rawRestRep = Number(ex.rest_rep_sec) || 0;
+  const safeRestRep = isUnilateral ? Math.max(5, rawRestRep) : rawRestRep;
+  const safeReps    = isUnilateral ? 2 : (Number(ex.reps) || 1);
+
+  latLinked = {
+    checkKey: null, exId: ex.id, exName: ex.name, sectionName: "",
+    rx: holdSec > 0 ? `${sets} x ${holdSec}s` : `${sets} series`,
+    restText: `${setRest}s`, queueIndex: 0
+  };
+  timerCfg = {
+    mode: holdSec > 0 ? "interval" : "rest",
+    prep: 5, work: holdSec || 10,
+    restRep: safeRestRep,
+    reps: safeReps,
+    sets, setRest, warmupSec: 900, blockWindowSec: 1200
+  };
   syncIntervalInputsFromCfg();
   resetTimer();
   renderTrainView();
