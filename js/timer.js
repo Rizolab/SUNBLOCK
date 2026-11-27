@@ -148,6 +148,24 @@ function enforceUnilateralTimerState() {
   return true;
 }
 
+function readIntervalInputsIfPresent() {
+  if (timerCfg.mode !== "interval") return;
+  const prepEl = document.getElementById("lat-prep");
+  const workEl = document.getElementById("lat-work");
+  const restEl = document.getElementById("lat-rest");
+  const repsEl = document.getElementById("lat-reps");
+  const setsEl = document.getElementById("lat-sets");
+  const setRestEl = document.getElementById("lat-setrest");
+  if (!prepEl || !workEl || !restEl || !repsEl || !setsEl || !setRestEl) return;
+
+  timerCfg.prep = Math.max(0, Number(prepEl.value) || 0);
+  timerCfg.work = Math.max(1, Number(workEl.value) || 10);
+  timerCfg.restRep = Math.max(0, Number(restEl.value) || 0);
+  timerCfg.reps = Math.max(1, Number(repsEl.value) || 1);
+  timerCfg.sets = Math.max(1, Number(setsEl.value) || 1);
+  timerCfg.setRest = Math.max(10, Number(setRestEl.value) || 60);
+}
+
 function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
   const rx = String(rxText || "").toLowerCase();
   const secLower = String(sectionName || "").toLowerCase();
@@ -155,7 +173,7 @@ function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
   const restLower = String(restText || "").toLowerCase();
   const setRest = parseSecondsFromText(restText, (exObj && Number(exObj.set_rest_sec)) || 120);
 
-  // 1. MODO CALENTAMIENTO: sección o ejercicio de calentamiento / activación o duración única sin series
+  // 1. MODO CALENTAMIENTO
   const isWarmup = /calentamiento|activaci[oó]n|movilidad articular/.test(secLower) ||
                    /calentamiento|activaci[oó]n/.test(nameLower) ||
                    (/^\d+\s*(?:-\s*\d+\s*)?min/.test(rx.trim()) && !restLower && !/serie|ronda|x\s*\d+/.test(rx));
@@ -170,7 +188,7 @@ function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
     };
   }
 
-  // 2. MODO BLOQUE EN MURO: tiene ventana total en minutos (ej. "20 min") + descanso entre pegues/intentos (ej. "2 min"), sin ser multipresa
+  // 2. MODO BLOQUE EN MURO
   const blockMinMatch = rx.match(/(\d+(?:\.\d+)?)\s*(?:-\s*\d+\s*)?min/);
   const isRepeater = /(\d+)\s*:\s*(\d+)/.test(rx);
   const isShortHold = /(?:x|\()\s*\d+\s*(?:-\s*\d+\s*)?(?:seg|s\b)/.test(rx);
@@ -185,7 +203,7 @@ function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
     };
   }
 
-  // 3. MODO INTERVALOS / MULTIPRESA (ej. 7:3 x 6 reps, suspensiones de 10s o unilaterales por mano)
+  // 3. MODO INTERVALOS / MULTIPRESA
   let sets = (exObj && Number(exObj.sets)) || 3;
   const setsMatch = rx.match(/(\d+)\s*(?:series|rondas)/);
   if (setsMatch) sets = Math.max(1, parseInt(setsMatch[1], 10));
@@ -222,7 +240,7 @@ function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
     };
   }
 
-  // 4. MODO DESCANSO ENTRE SERIES (Fuerza, barra, core, antagonistas)
+  // 4. MODO DESCANSO ENTRE SERIES
   return { mode: "rest", prep: 0, work: 0, restRep: 0, reps: 1, sets, setRest, warmupSec: 900, blockWindowSec: 1200 };
 }
 
@@ -311,12 +329,7 @@ function resetTimer() {
 }
 
 function applyIntervalInputs() {
-  timerCfg.prep = Math.max(0, Number(document.getElementById("lat-prep")?.value) || 0);
-  timerCfg.work = Math.max(1, Number(document.getElementById("lat-work")?.value) || 10);
-  timerCfg.restRep = Math.max(0, Number(document.getElementById("lat-rest")?.value) || 0);
-  timerCfg.reps = Math.max(1, Number(document.getElementById("lat-reps")?.value) || 1);
-  timerCfg.sets = Math.max(1, Number(document.getElementById("lat-sets")?.value) || 1);
-  timerCfg.setRest = Math.max(10, Number(document.getElementById("lat-setrest")?.value) || 60);
+  readIntervalInputsIfPresent();
   resetTimer();
 }
 
@@ -472,10 +485,15 @@ function toggleTimer() {
     renderTimer();
     return;
   }
-  if (timerRun.phase === "done") resetTimer();
-  else enforceUnilateralTimerState();
+  if (timerRun.phase === "done") {
+    readIntervalInputsIfPresent();
+    resetTimer();
+  } else {
+    readIntervalInputsIfPresent();
+    enforceUnilateralTimerState();
+    if (timerRun.phase === "prep") enterPhase("prep", timerCfg.prep);
+  }
 
-  // En modo Bloque en Muro, arrancar el descanso también activa la ventana total si estaba detenida
   if (timerCfg.mode === "block" && !timerRun.blockRunning && timerRun.blockRemaining > 0) {
     toggleBlockWindow();
   }
@@ -604,3 +622,9 @@ function renderTimer() {
     `).join("");
   }
 }
+
+document.addEventListener("change", (e) => {
+  if (["lat-prep", "lat-work", "lat-rest", "lat-reps", "lat-sets", "lat-setrest"].includes(e.target?.id)) {
+    applyIntervalInputs();
+  }
+});
