@@ -10,6 +10,7 @@ const STORAGE_KEYS = {
   BLOCK: "sunblock_block_v3",
   WEEK: "sunblock_week_v3",
   CHECKS: "sunblock_checks_v3",
+  EXTRAS: "sunblock_extras_v3",
   CACHE: "sunblock_cache_v3",
   PENDING_QUEUE: "sunblock_offline_queue_v3",
   DELOAD_ALERT: "sunblock_deload_alert_v3"

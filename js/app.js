@@ -3,7 +3,7 @@
    ======================================================================== */
 const ICONS = {
   home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>`,
-  train: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="m7 7 5-4 5 4"/><path d="M5 13h4"/><path d="M15 13h4"/><path d="m8 20 4-3 4 3"/></svg>`,
+  train: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c0-1.1.9-2 2-2s2 .9 2 2c0 2.2-1.8 4-4 4-3.3 0-6-2.7-6-6 0-4.4 3.6-8 8-8 5.5 0 10 4.5 10 10 0 6.6-5.4 12-12 12-7.7 0-14-6.3-14-14"/></svg>`,
   ency: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8"/><path d="M8 11h6"/></svg>`,
   log: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`,
   gear: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l-.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
@@ -34,6 +34,7 @@ let state = {
   currentView: "home",
   prevView: null,
   checks: safeJsonParse(safeStorage.get(STORAGE_KEYS.CHECKS), {}),
+  extras: safeJsonParse(safeStorage.get(STORAGE_KEYS.EXTRAS || "sunblock_extras_v3"), {}),
   traffic: { dedos: "verde", codos: "verde" },
   encyGroup: "",
   encyFocus: "",
@@ -45,7 +46,7 @@ let state = {
 function renderStaticIcons() {
   const setHtml = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
   setHtml("nav-icon-home", iconSvg("home", 18));
-  setHtml("nav-icon-train", iconSvg("train", 18));
+  setHtml("nav-icon-train", iconSvg("train", 20));
   setHtml("nav-icon-ency", iconSvg("ency", 18));
   setHtml("nav-icon-log", iconSvg("log", 18));
   setHtml("hdr-gear-icon", iconSvg("gear", 14));
@@ -90,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initApp() {
+  initBackNavigation();
   renderAll();
   syncFromSheets(false);
 }
@@ -181,6 +183,60 @@ function resetCurrentBlock() {
   renderAll();
 }
 
+function getSessionExtraKey(dayCode = state.dayCode) {
+  return `${state.blockId}_w${state.week}_${dayCode}`;
+}
+
+function getExtraExercisesForDay(dayCode = state.dayCode) {
+  const key = getSessionExtraKey(dayCode);
+  return Array.isArray(state.extras[key]) ? state.extras[key] : [];
+}
+
+function addExtraExerciseToCurrentDay(exId, rxText, restText) {
+  const key = getSessionExtraKey(state.dayCode);
+  const list = Array.isArray(state.extras[key]) ? [...state.extras[key]] : [];
+  if (!list.some(it => it.exId === exId)) {
+    list.push({
+      exId,
+      rx: rxText || "3 series",
+      rest: restText || "90 seg",
+      addedAt: new Date().toISOString().slice(0, 10)
+    });
+    state.extras[key] = list;
+    safeStorage.set(STORAGE_KEYS.EXTRAS || "sunblock_extras_v3", JSON.stringify(state.extras));
+  }
+}
+
+function removeExtraExercise(exId, event) {
+  if (event) event.stopPropagation();
+  const key = getSessionExtraKey(state.dayCode);
+  const list = Array.isArray(state.extras[key]) ? state.extras[key] : [];
+  const idx = list.findIndex(it => it.exId === exId);
+  if (idx >= 0) {
+    const checkKey = `${state.blockId}_w${state.week}_${state.dayCode}_extra_${exId}`;
+    delete state.checks[checkKey];
+    safeStorage.set(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
+    list.splice(idx, 1);
+    state.extras[key] = list;
+    safeStorage.set(STORAGE_KEYS.EXTRAS || "sunblock_extras_v3", JSON.stringify(state.extras));
+    if (latLinked.checkKey === checkKey) {
+      latLinked.checkKey = null;
+    }
+    renderHome();
+    renderTrainView();
+    syncQueueForCurrentDay(true);
+  }
+}
+
+function resolveSectionAccentClass(secName, isExtra = false) {
+  if (isExtra) return "sec-extra";
+  const s = String(secName || "").toLowerCase();
+  if (/calentamiento|activaci[oó]n|movilidad|prehab|antagonista/.test(s)) return "sec-warmup";
+  if (/multipresa|dedos|suspensi[oó]n|fuerza|pinza|regleta|no-hang|tracci[oó]n|lastre/.test(s)) return "sec-strength";
+  if (/muro|b[uú]lder|bloque|t[eé]cnica|potencia|resistencia|4x4|continuidad|placa|desplome/.test(s)) return "sec-wall";
+  return "sec-strength";
+}
+
 // INICIO
 function renderHome() {
   const block = getActiveBlock();
@@ -199,18 +255,31 @@ function renderHome() {
   const isDeload = state.week === block.weeks && block.weeks >= 4;
   const isPhase2 = !isDeload && state.week >= 3;
 
-  document.getElementById("home-today-code").textContent = `${day.code} · Sem ${state.week}`;
-  document.getElementById("home-today-pct").textContent = `${pct}% Sem (${doneInWeek}/${totalTarget})`;
-
   const flatItems = [];
-  (day.sections || []).forEach(sec => {
-    (sec.items || []).forEach(item => {
+  (day.sections || []).forEach((sec, sIdx) => {
+    (sec.items || []).forEach((item, iIdx) => {
       const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { id: item.exId, name: item.exId };
       const grp = resolveExerciseGroup(ex);
       const rxText = (isDeload && item.p3) ? item.p3 : ((isPhase2 && item.p2) ? item.p2 : item.rx);
-      flatItems.push({ id: ex.id, name: ex.name, rx: rxText, color: grp.color });
+      const checkKey = `${state.blockId}_w${state.week}_${day.code}_s${sIdx}_i${iIdx}`;
+      flatItems.push({ id: ex.id, name: ex.name, rx: rxText, color: grp.color, checkKey, isExtra: false });
     });
   });
+
+  const dayExtras = getExtraExercisesForDay(day.code);
+  dayExtras.forEach(item => {
+    const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { id: item.exId, name: item.exId };
+    const checkKey = `${state.blockId}_w${state.week}_${day.code}_extra_${item.exId}`;
+    flatItems.push({ id: ex.id, name: ex.name, rx: item.rx, color: "#a78bfa", checkKey, isExtra: true });
+  });
+
+  const doneTodayCount = flatItems.filter(it => !!state.checks[it.checkKey]).length;
+  const todayPct = flatItems.length ? Math.round((doneTodayCount / flatItems.length) * 100) : pct;
+
+  document.getElementById("home-today-code").textContent = `${day.code} · Sem ${state.week}`;
+  document.getElementById("home-today-pct").textContent = flatItems.length
+    ? `${todayPct}% Hoy (${doneTodayCount}/${flatItems.length}) · ${pct}% Sem`
+    : `${pct}% Sem (${doneInWeek}/${totalTarget})`;
 
   const previewHtml = flatItems.length
     ? `<div class="today-ex-list">${flatItems.slice(0, 5).map(it => `
@@ -308,12 +377,12 @@ function getDayExerciseQueue() {
   const days = getBlockDays();
   const day = days.find(d => d.code === state.dayCode) || days[0];
   const queue = [];
-  if (!day || !day.sections) return queue;
+  if (!day) return queue;
   const block = getActiveBlock();
   const isDeload = state.week === block.weeks && block.weeks >= 4;
   const isPhase2 = !isDeload && state.week >= 3;
 
-  day.sections.forEach((sec, sIdx) => {
+  (day.sections || []).forEach((sec, sIdx) => {
     sec.items.forEach((item, iIdx) => {
       const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { id: item.exId, name: item.exId };
       const rxText = (isDeload && item.p3) ? item.p3 : ((isPhase2 && item.p2) ? item.p2 : item.rx);
@@ -324,10 +393,27 @@ function getDayExerciseQueue() {
         exName: ex.name,
         sectionName: sec.name,
         rx: rxText,
-        restText: item.rest || ""
+        restText: item.rest || "",
+        isExtra: false
       });
     });
   });
+
+  const extras = getExtraExercisesForDay(day.code);
+  extras.forEach(item => {
+    const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { id: item.exId, name: item.exId };
+    queue.push({
+      checkKey: `${state.blockId}_w${state.week}_${day.code}_extra_${item.exId}`,
+      exId: item.exId,
+      exObj: ex,
+      exName: ex.name,
+      sectionName: "Extra · Enciclopedia",
+      rx: item.rx || "3 series",
+      restText: item.rest || "90 seg",
+      isExtra: true
+    });
+  });
+
   return queue;
 }
 
@@ -391,6 +477,7 @@ function completeLinkedExercise() {
   if (!latLinked.checkKey) return;
   state.checks[latLinked.checkKey] = true;
   safeStorage.set(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
+  renderHome();
   nextQueueExercise();
 }
 
@@ -414,7 +501,10 @@ function renderTrainView() {
   document.getElementById("day-focus").textContent = day.focus;
 
   const secEl = document.getElementById("day-sections");
-  if (!day.sections || day.sections.length === 0) {
+  const extras = getExtraExercisesForDay(day.code);
+  const hasBaseSections = day.sections && day.sections.length > 0;
+
+  if (!hasBaseSections && !extras.length) {
     secEl.innerHTML = `<p class="muted-small" style="padding:8px 0;">Día de descanso programado. Sin carga física.</p>`;
     return;
   }
@@ -422,7 +512,8 @@ function renderTrainView() {
   const isDeload = state.week === block.weeks && block.weeks >= 4;
   const isPhase2 = !isDeload && state.week >= 3;
 
-  secEl.innerHTML = day.sections.map((sec, sIdx) => {
+  const baseHtml = (day.sections || []).map((sec, sIdx) => {
+    const secAccent = resolveSectionAccentClass(sec.name, false);
     const itemsHtml = sec.items.map((item, iIdx) => {
       const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { id: item.exId, name: item.exId };
       const grp = resolveExerciseGroup(ex);
@@ -440,13 +531,13 @@ function renderTrainView() {
         : "";
 
       return `
-        <div class="ex-item ${isChecked ? "checked" : ""} ${isLinked ? "active-linked" : ""}">
+        <div class="ex-item ${secAccent} ${isChecked ? "checked" : ""} ${isLinked ? "active-linked" : ""}">
           <input type="checkbox" class="ex-check" ${isChecked ? "checked" : ""} onchange="toggleCheck('${checkKey}')" />
           ${imgSrc ? `<img src="${imgSrc}" alt="${ex.name}" class="ex-thumb" loading="lazy" onclick="openExerciseDetail('${ex.id}')" onerror="this.style.display='none'" />` : ""}
           <div class="ex-body" onclick="openExerciseDetail('${ex.id}')">
             <div class="ex-name"><span class="grp-dot" style="background:${grp.color};"></span><span>${ex.name}</span></div>
             <div class="ex-meta">
-              <span>${rxText}</span>
+              <span class="ex-rx-text">${rxText}</span>
               ${item.rest ? `<span>· Pausa: ${item.rest}</span>` : ""}
               <button type="button" class="ex-timer-btn" onclick="event.stopPropagation(); loadExerciseByKey('${checkKey}', false)">
                 ${iconSvg("clock", 11)}<span>Timer</span>
@@ -457,8 +548,52 @@ function renderTrainView() {
         </div>
       `;
     }).join("");
-    return `<div class="sec-header">${sec.name}</div>${itemsHtml}`;
+    return `<div class="sec-block ${secAccent}"><div class="sec-header">${sec.name}</div>${itemsHtml}</div>`;
   }).join("");
+
+  let extrasHtml = "";
+  if (extras.length) {
+    const extraItemsHtml = extras.map(item => {
+      const ex = state.data.encyclopedia.find(e => e.id === item.exId) || { id: item.exId, name: item.exId };
+      const checkKey = `${state.blockId}_w${state.week}_${day.code}_extra_${item.exId}`;
+      const isChecked = !!state.checks[checkKey];
+      const isLinked = latLinked.checkKey === checkKey;
+      const imgSrc = ex.media_url ? (ex.media_url.startsWith("http") ? ex.media_url : `./${ex.media_url}`) : "";
+
+      return `
+        <div class="ex-item sec-extra ${isChecked ? "checked" : ""} ${isLinked ? "active-linked" : ""}">
+          <input type="checkbox" class="ex-check" ${isChecked ? "checked" : ""} onchange="toggleCheck('${checkKey}')" />
+          ${imgSrc ? `<img src="${imgSrc}" alt="${ex.name}" class="ex-thumb" loading="lazy" onclick="openExerciseDetail('${ex.id}')" onerror="this.style.display='none'" />` : ""}
+          <div class="ex-body" onclick="openExerciseDetail('${ex.id}')">
+            <div class="ex-name">
+              <span class="grp-dot" style="background:#a78bfa;"></span>
+              <span>${ex.name}</span>
+              <span class="extra-pill-badge">Extra · Enciclopedia</span>
+            </div>
+            <div class="ex-meta">
+              <span class="ex-rx-text">${item.rx}</span>
+              ${item.rest ? `<span>· Pausa: ${item.rest}</span>` : ""}
+              <button type="button" class="ex-timer-btn" onclick="event.stopPropagation(); loadExerciseByKey('${checkKey}', false)">
+                ${iconSvg("clock", 11)}<span>Timer</span>
+              </button>
+            </div>
+          </div>
+          <button type="button" class="extra-remove-btn" title="Quitar ejercicio extra" onclick="removeExtraExercise('${ex.id}', event)">×</button>
+        </div>
+      `;
+    }).join("");
+    extrasHtml = `
+      <div class="sec-block sec-extra">
+        <div class="sec-header sec-header-extra">
+          <span>Extra · Enciclopedia</span>
+          <span class="extra-pill-badge">${extras.length} añadido${extras.length > 1 ? "s" : ""}</span>
+        </div>
+        ${extraItemsHtml}
+      </div>
+    `;
+  }
+
+  secEl.innerHTML = baseHtml + extrasHtml;
 }
 
 function selectDay(code) {
@@ -472,6 +607,7 @@ function selectDay(code) {
 function toggleCheck(key) {
   state.checks[key] = !state.checks[key];
   safeStorage.set(STORAGE_KEYS.CHECKS, JSON.stringify(state.checks));
+  renderHome();
   renderTrainView();
 }
 
@@ -624,6 +760,7 @@ function openEditLogModal(rowIndex) {
   document.getElementById("edit-codos").value = log.codos;
   document.getElementById("edit-note").value = log.note;
   document.getElementById("edit-log-modal").classList.add("open");
+  pushAppHistory({ modal: "edit-log" });
 }
 
 function closeEditLogModal() {
@@ -656,6 +793,7 @@ async function saveEditedLog() {
 
 function openBenchmarkModal() {
   document.getElementById("bench-modal").classList.add("open");
+  pushAppHistory({ modal: "bench" });
 }
 
 function closeBenchmarkModal() {
@@ -688,6 +826,7 @@ async function saveBenchmarks() {
 function openConfigModal() {
   document.getElementById("api-url-input").value = getApiUrl();
   document.getElementById("cfg-modal").classList.add("open");
+  pushAppHistory({ modal: "cfg" });
 }
 function closeConfigModal() { document.getElementById("cfg-modal").classList.remove("open"); }
 function saveApiUrl() {
@@ -697,7 +836,79 @@ function saveApiUrl() {
   syncFromSheets(true);
 }
 
-function switchView(viewName, btn) {
+let backExitArmed = false;
+let backExitTimer = null;
+let navHistoryStack = ["home"];
+
+function pushAppHistory(entry = {}) {
+  try {
+    history.pushState({ sunblock: true, view: state.currentView, ...entry }, "");
+  } catch (_) {}
+}
+
+function showBackExitToast() {
+  const toast = document.getElementById("back-exit-toast");
+  if (!toast) return;
+  toast.classList.remove("hidden");
+  clearTimeout(backExitTimer);
+  backExitArmed = true;
+  backExitTimer = setTimeout(() => {
+    backExitArmed = false;
+    toast.classList.add("hidden");
+  }, 2000);
+}
+
+function closeAnyOpenOverlay() {
+  const openModalIds = ["edit-log-modal", "bench-modal", "cfg-modal"];
+  for (const id of openModalIds) {
+    const el = document.getElementById(id);
+    if (el && el.classList.contains("open")) {
+      el.classList.remove("open");
+      return true;
+    }
+  }
+  if (state.encyDetailId) {
+    closeExerciseDetail(true);
+    return true;
+  }
+  return false;
+}
+
+function initBackNavigation() {
+  try {
+    history.replaceState({ sunblock: true, root: true, view: "home" }, "");
+    history.pushState({ sunblock: true, view: "home" }, "");
+  } catch (_) {}
+
+  window.addEventListener("popstate", () => {
+    // Prioridad 1: Cerrar modales o vista de detalle de ejercicio
+    if (closeAnyOpenOverlay()) {
+      pushAppHistory({ view: state.currentView });
+      return;
+    }
+
+    // Prioridad 2: Si está en otra pestaña, regresar a la pestaña anterior o a Inicio
+    if (state.currentView !== "home") {
+      navHistoryStack.pop();
+      const targetView = navHistoryStack.pop() || "home";
+      switchView(targetView, document.querySelector(`.nav-btn[data-view="${targetView}"]`), true);
+      pushAppHistory({ view: targetView });
+      return;
+    }
+
+    // Prioridad 3: En Inicio sin modales abiertos → protección con toast 2s
+    if (!backExitArmed) {
+      showBackExitToast();
+      pushAppHistory({ view: "home" });
+    }
+  });
+}
+
+function switchView(viewName, btn, skipHistory = false) {
+  if (state.currentView !== viewName) {
+    navHistoryStack.push(viewName);
+    if (navHistoryStack.length > 12) navHistoryStack.shift();
+  }
   state.currentView = viewName;
   if (viewName === "ency") {
     state.encyDetailId = null;
@@ -710,4 +921,7 @@ function switchView(viewName, btn) {
   document.getElementById("global-plan-card")?.classList.toggle("hidden", viewName === "ency");
   document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
   if (btn) btn.classList.add("active");
+  if (!skipHistory) {
+    pushAppHistory({ view: viewName });
+  }
 }

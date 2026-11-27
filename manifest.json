@@ -10,10 +10,10 @@
   "background_color": "#0d1117",
   "icons": [
     {
-      "src": "./assets/icon.svg",
+      "src": "./assets/icon.svg?v=4",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "./assets/icon-192.png",

@@ -547,7 +547,7 @@ function renderTimer() {
 
   const meta = {
     warmup:  { label: "CALENTAMIENTO",          cls: "p-warmup",  color: "#fb923c" },
-    prep:    { label: "PREPARACION",             cls: "p-prep",    color: "#38bdf8" },
+    prep:    { label: "PREPARACIÓN",             cls: "p-prep",    color: "#38bdf8" },
     work:    { label: handLabel,                 cls: "p-work",    color: "#2dd4bf" },
     rest:    { label: restRepLabel,              cls: "p-rest",    color: "#34d399" },
     setrest: { label: mode === "block" ? "PAUSA ENTRE PEGUES" : "PAUSA ENTRE SERIES",
@@ -562,7 +562,7 @@ function renderTimer() {
   digits.style.color = cur.color;
 
   if (mode === "warmup") {
-    sr.textContent = `Activacion (${Math.round(timerCfg.warmupSec / 60)} min)`;
+    sr.textContent = `Activación (${Math.round(timerCfg.warmupSec / 60)} min)`;
     if (totalEl) totalEl.textContent = timerRun.phase === "done"
       ? "Calentamiento listo · Pasa al primer ejercicio"
       : "Activa articulaciones y dedos a tu ritmo";

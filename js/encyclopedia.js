@@ -61,7 +61,7 @@ function clearEncyFilters() {
   clearEncySearch();
 }
 
-function openExerciseDetail(exId) {
+function openExerciseDetail(exId, skipHistory = false) {
   const ex = state.data.encyclopedia.find(e => e.id === exId);
   if (!ex) return;
 
@@ -77,17 +77,20 @@ function openExerciseDetail(exId) {
 
   renderEncyclopedia();
   window.scrollTo({ top: 0, behavior: "smooth" });
+  if (!skipHistory && typeof pushAppHistory === "function") {
+    pushAppHistory({ view: "ency", detailId: exId, prevView: state.prevView });
+  }
 }
 
-function closeExerciseDetail() {
+function closeExerciseDetail(skipHistory = false) {
   const returnTo = state.prevView;
   state.encyDetailId = null;
   state.prevView = null;
   if (returnTo && returnTo !== "ency") {
-    switchView(returnTo, document.querySelector(`.nav-btn[data-view="${returnTo}"]`));
+    switchView(returnTo, document.querySelector(`.nav-btn[data-view="${returnTo}"]`), skipHistory);
     return;
   }
-  switchView("ency", document.querySelector('.nav-btn[data-view="ency"]'));
+  switchView("ency", document.querySelector('.nav-btn[data-view="ency"]'), skipHistory);
 }
 
 function renderEncyclopedia() {
@@ -236,24 +239,42 @@ function sendExerciseToTimer(exId) {
   state.prevView = null;
   switchView("train", document.querySelector('.nav-btn[data-view="train"]'));
 
-  const queue = getDayExerciseQueue();
-  const idx = queue.findIndex(q => q.exId === exId);
-  if (idx >= 0) { loadQueueExerciseAt(idx, false); return; }
+  let queue = getDayExerciseQueue();
+  let idx = queue.findIndex(q => q.exId === exId);
+  if (idx >= 0) {
+    loadQueueExerciseAt(idx, false);
+    return;
+  }
 
   const holdSec = Number(ex.hold_sec) || 0;
   const sets    = Math.max(1, Number(ex.sets) || 3);
   const setRest = Math.max(30, Number(ex.set_rest_sec) || 90);
-  // Detectar si es unilateral ANTES de asignar restRep para nunca sobrescribir con 0
   const isUnilateral = /ex-pinch|ex-nohang/.test(ex.id) ||
     /pinza en bloque|no-hang|unilateral/.test((ex.name || "").toLowerCase());
-  const rawRestRep = Number(ex.rest_rep_sec) || 0;
+  const rawRestRep  = Number(ex.rest_rep_sec) || 0;
   const safeRestRep = isUnilateral ? Math.max(5, rawRestRep) : rawRestRep;
   const safeReps    = isUnilateral ? 2 : (Number(ex.reps) || 1);
 
+  const rxStr = holdSec > 0
+    ? (isUnilateral ? `${sets} x ${holdSec}s por mano` : `${sets} x ${holdSec}s`)
+    : `${sets} series`;
+  const restStr = `${setRest} seg`;
+
+  if (typeof addExtraExerciseToCurrentDay === "function") {
+    addExtraExerciseToCurrentDay(ex.id, rxStr, restStr);
+  }
+
+  queue = getDayExerciseQueue();
+  idx = queue.findIndex(q => q.exId === exId);
+  if (idx >= 0) {
+    loadQueueExerciseAt(idx, false);
+    return;
+  }
+
   latLinked = {
-    checkKey: null, exId: ex.id, exName: ex.name, sectionName: "",
-    rx: holdSec > 0 ? `${sets} x ${holdSec}s` : `${sets} series`,
-    restText: `${setRest}s`, queueIndex: 0
+    checkKey: null, exId: ex.id, exName: ex.name, sectionName: "Extra · Enciclopedia",
+    rx: rxStr,
+    restText: restStr, queueIndex: 0
   };
   timerCfg = {
     mode: holdSec > 0 ? "interval" : "rest",
