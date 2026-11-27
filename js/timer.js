@@ -111,6 +111,17 @@ function parseSecondsFromText(text, fallbackSec) {
   return fallbackSec;
 }
 
+function isUnilateralHoldExercise(exObj, rxText) {
+  const id = String((exObj && exObj.id) || "").toLowerCase();
+  const rx = String(rxText || "").toLowerCase();
+  const repsDb = Number(exObj && exObj.reps) || 1;
+  const holdDb = Number(exObj && exObj.hold_sec) || 0;
+  return id === "ex-pinch" ||
+         id === "ex-nohang" ||
+         /\/\s*mano|por mano|cada mano|\/\s*lado|por lado/.test(rx) ||
+         (holdDb > 0 && repsDb === 2);
+}
+
 function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
   const rx = String(rxText || "").toLowerCase();
   const secLower = String(sectionName || "").toLowerCase();
@@ -136,7 +147,7 @@ function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
   // 2. MODO BLOQUE EN MURO: tiene ventana total en minutos (ej. "20 min") + descanso entre pegues/intentos (ej. "2 min"), sin ser multipresa
   const blockMinMatch = rx.match(/(\d+(?:\.\d+)?)\s*(?:-\s*\d+\s*)?min/);
   const isRepeater = /(\d+)\s*:\s*(\d+)/.test(rx);
-  const isShortHold = /(?:x|\()\s*\d+\s*(?:seg|s\b)/.test(rx);
+  const isShortHold = /(?:x|\()\s*\d+\s*(?:-\s*\d+\s*)?(?:seg|s\b)/.test(rx);
   if (blockMinMatch && !isRepeater && !isShortHold) {
     const blockWindowSec = Math.max(60, Math.round(parseFloat(blockMinMatch[1]) * 60));
     return {
@@ -148,7 +159,7 @@ function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
     };
   }
 
-  // 3. MODO INTERVALOS / MULTIPRESA (ej. 7:3 x 6 reps o suspensiones de 10s)
+  // 3. MODO INTERVALOS / MULTIPRESA (ej. 7:3 x 6 reps, suspensiones de 10s o unilaterales por mano)
   let sets = (exObj && Number(exObj.sets)) || 3;
   const setsMatch = rx.match(/(\d+)\s*(?:series|rondas)/);
   if (setsMatch) sets = Math.max(1, parseInt(setsMatch[1], 10));
@@ -166,17 +177,18 @@ function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
     return { mode: "interval", prep: 5, work, restRep, reps, sets, setRest, warmupSec: 900, blockWindowSec: 1200 };
   }
 
-  const segMatch = rx.match(/(?:x|\()\s*(\d+)\s*(?:seg|s\b)/);
+  const unilateralHold = isUnilateralHoldExercise(exObj, rxText);
+  const segMatch = rx.match(/(?:x|\()\s*(\d+)\s*(?:-\s*\d+\s*)?(?:seg|s\b)/);
   const holdFromDb = exObj ? Number(exObj.hold_sec) : 0;
-  if (segMatch || (holdFromDb > 0 && !rx.includes("rep"))) {
-    const work = segMatch ? Math.max(1, parseInt(segMatch[1], 10)) : holdFromDb;
+  if (segMatch || (holdFromDb > 0 && !rx.includes("rep")) || unilateralHold) {
+    const work = segMatch ? Math.max(1, parseInt(segMatch[1], 10)) : Math.max(1, holdFromDb || 10);
     const isLockoff = /90°|120°|bloqueo/.test(rx);
     return {
       mode: "interval",
       prep: 5,
       work,
-      restRep: isLockoff ? 3 : (Number(exObj?.rest_rep_sec) || 0),
-      reps: isLockoff ? 3 : (Number(exObj?.reps) || 1),
+      restRep: isLockoff ? 3 : (unilateralHold ? 5 : (Number(exObj?.rest_rep_sec) || 0)),
+      reps: isLockoff ? 3 : (unilateralHold ? 2 : (Number(exObj?.reps) || 1)),
       sets,
       setRest,
       warmupSec: 900,
@@ -191,6 +203,12 @@ function parsePrescriptionSmart(exObj, rxText, restText, sectionName = "") {
 function setTimerMode(newMode) {
   const valid = ["warmup", "block", "rest", "interval"];
   timerCfg.mode = valid.includes(newMode) ? newMode : "rest";
+  if (timerCfg.mode === "interval" && isUnilateralHoldExercise({ id: latLinked.exId, hold_sec: timerCfg.work, reps: timerCfg.reps }, latLinked.rx)) {
+    timerCfg.reps = 2;
+    if (!timerCfg.restRep || timerCfg.restRep <= 0) timerCfg.restRep = 5;
+    if (!timerCfg.prep || timerCfg.prep <= 0) timerCfg.prep = 5;
+    syncIntervalInputsFromCfg();
+  }
   resetTimer();
 }
 
@@ -375,8 +393,13 @@ function advanceTimerTick() {
   if (timerRun.phase === "setrest") {
     timerRun.set += 1;
     timerRun.rep = 1;
-    enterPhase("work", timerCfg.work);
-    beepPhase("work");
+    if (timerCfg.prep > 0) {
+      enterPhase("prep", timerCfg.prep);
+      beepPhase("rest");
+    } else {
+      enterPhase("work", timerCfg.work);
+      beepPhase("work");
+    }
   }
 }
 
@@ -481,11 +504,18 @@ function renderTimer() {
     });
   }
 
+  const isUnilateral = mode === "interval" && isUnilateralHoldExercise(
+    { id: latLinked.exId, hold_sec: timerCfg.work, reps: timerCfg.reps },
+    latLinked.rx
+  );
+  const handLabel = isUnilateral ? (timerRun.rep === 1 ? "MANO DERECHA" : "MANO IZQUIERDA") : "TRABAJO EN MURO / BARRA";
+  const restRepLabel = isUnilateral ? "ALISTAR OTRA MANO" : "PAUSA ENTRE REPS";
+
   const meta = {
     warmup: { label: "CALENTAMIENTO", cls: "p-warmup", color: "#fb923c" },
     prep: { label: "PREPARACIÓN", cls: "p-prep", color: "#38bdf8" },
-    work: { label: "TRABAJO EN MURO / BARRA", cls: "p-work", color: "#2dd4bf" },
-    rest: { label: "PAUSA ENTRE REPS", cls: "p-rest", color: "#34d399" },
+    work: { label: handLabel, cls: "p-work", color: "#2dd4bf" },
+    rest: { label: restRepLabel, cls: "p-rest", color: "#34d399" },
     setrest: { label: mode === "block" ? "PAUSA ENTRE PEGUES" : "PAUSA ENTRE SERIES", cls: "p-setrest", color: "#fbbf24" },
     done: { label: "COMPLETADO", cls: "p-done", color: "#34d399" }
   };
@@ -518,8 +548,11 @@ function renderTimer() {
     if (toggleLabel) toggleLabel.textContent = timerRun.running ? "Pausar" : "Iniciar Descanso";
     if (skipLabel) skipLabel.textContent = "+1 Serie";
   } else {
-    sr.textContent = `Serie ${timerRun.set}/${timerCfg.sets} · Rep ${timerRun.rep}/${timerCfg.reps}`;
-    if (totalEl) totalEl.textContent = `Trabajo ${timerCfg.work}s · Descanso serie ${fmtSec(timerCfg.setRest)}`;
+    const ladoTxt = isUnilateral ? ` · ${timerRun.rep === 1 ? "Mano derecha" : "Mano izquierda"}` : "";
+    sr.textContent = `Serie ${timerRun.set}/${timerCfg.sets} · Rep ${timerRun.rep}/${timerCfg.reps}${ladoTxt}`;
+    if (totalEl) totalEl.textContent = isUnilateral
+      ? `Trabajo ${timerCfg.work}s/mano · Cambio ${timerCfg.restRep}s · Descanso ${fmtSec(timerCfg.setRest)}`
+      : `Trabajo ${timerCfg.work}s · Descanso serie ${fmtSec(timerCfg.setRest)}`;
     if (toggleLabel) toggleLabel.textContent = timerRun.running ? "Pausar" : "Iniciar";
     if (skipLabel) skipLabel.textContent = "Saltar Fase";
   }
